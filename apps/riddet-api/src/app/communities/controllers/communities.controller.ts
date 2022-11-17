@@ -1,17 +1,28 @@
-import { Body, Controller, Delete, Get, Logger, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Logger, Param, Patch, Post } from '@nestjs/common';
+import { ParseObjectIdPipe } from '../../shared/pipes/ParseObjectIdPipe';
 import { CreateCommunityDto } from '../dto/create-community.dto';
 import { UpdateCommunityDto } from '../dto/update-community.dto';
 
 import { Community } from "../schemas/community.schema";
 import { CommunitiesService } from '../services/communities.service';
 
-@Controller('community')
+@Controller('communities')
 export class CommunitiesController {
   constructor(private readonly communitiesService: CommunitiesService) {}
 
-  @Get(':userId')
-  async getUser(@Param('userId') userId: string): Promise<Community> {
-    return this.communitiesService.getCommunityById(userId);
+  @Get(':id')
+  async getUser(
+    @Param('id', ParseObjectIdPipe) id: string): Promise<Community> {
+      
+    Logger.log(`Getting community with id: ${id} (READ)`);
+
+    const community = await this.communitiesService.getCommunityById(id);
+    
+    if(!community) {
+      throw new HttpException(`Community with id of ${id}, can't be found!`, HttpStatus.NOT_FOUND);
+    }
+
+    return community;
   }
 
   @Get()
@@ -21,19 +32,35 @@ export class CommunitiesController {
 
   @Post()
   async createUser(@Body() createCommunityDto: CreateCommunityDto): Promise<Community> {
-
-    Logger.log(createCommunityDto);
-
-      return this.communitiesService.createCommunity(createCommunityDto.name, createCommunityDto.description);
+      return this.communitiesService.createCommunity(createCommunityDto.name, createCommunityDto.description)
   }
 
-  @Patch(':userId')
-  async updateUser(@Param('userId') userId: string, @Body() updateCommunityDto: UpdateCommunityDto): Promise<Community> {
-      return this.communitiesService.updateCommunity(userId, updateCommunityDto);
+  @Patch(':id')
+  async updateUser(@Param('userId', ParseObjectIdPipe) id: string, @Body() updateCommunityDto: UpdateCommunityDto): Promise<Community> {
+
+
+    Logger.log(`Getting community with id: ${id} (UPDATE)`);
+
+    const community = await this.communitiesService.getCommunityById(id);
+    
+    if(!community) {
+      throw new HttpException(`Community with id of ${id}, can't be found!`, HttpStatus.NOT_FOUND);
+    }
+
+      return this.communitiesService.updateCommunity(id, updateCommunityDto);
   }
 
-  @Delete(':userId')
-  async deleteUser(@Param('userId') userId: string): Promise<Community> {
-      return this.communitiesService.deleteCommunity(userId);
+  @Delete(':id')
+  async deleteUser(@Param('id', ParseObjectIdPipe) id: string): Promise<Community> {
+
+    Logger.log(`Getting community with id: ${id} (DELETE)`);
+
+    const community = await this.communitiesService.getCommunityById(id);
+    
+    if(!community) {
+      throw new HttpException(`Community with id of ${id}, can't be found!`, HttpStatus.NOT_FOUND);
+    }
+    
+      return this.communitiesService.deleteCommunity(id);
   }
 }
