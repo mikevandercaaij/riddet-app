@@ -18,7 +18,10 @@
           "apps/riddet-app/src/favicon.ico",
           "apps/riddet-app/src/assets"
         ],
-        "styles": ["apps/riddet-app/src/styles.css"],
+        "styles": [
+          "apps/riddet-app/src/styles.css",
+          "node_modules/bootstrap/dist/css/bootstrap.min.css"
+        ],
         "scripts": []
       },
       "configurations": {
