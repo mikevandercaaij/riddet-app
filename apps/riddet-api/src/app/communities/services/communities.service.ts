@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { CommunitiesRepository } from "../repositories/communities.repository";
 import { Community } from "../schemas/community.schema";
 
@@ -15,6 +15,8 @@ export class CommunitiesService {
     }
 
     async createCommunity(name : string, description : string): Promise<Community> {
+        Logger.log(name);
+        Logger.log(description);
         return this.communityRepository.create({
             name,  
             description, 
