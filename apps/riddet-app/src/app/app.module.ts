@@ -6,9 +6,10 @@ import { UiModule } from '@riddet-app/ui';
 import { AppComponent } from './app.component';
 import { appRoutes } from './app.routes';
 import { LoginComponent } from './auth/login/login.component';
+import { CommunitiesComponent } from './communities/communities.component';
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent],
+  declarations: [AppComponent, LoginComponent, CommunitiesComponent],
   imports: [
     BrowserModule,
     RouterModule.forRoot(appRoutes, { initialNavigation: 'enabledBlocking' }),
