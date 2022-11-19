@@ -21,7 +21,8 @@ export class CommunitiesService {
             name,  
             description, 
             creationDate: new Date(), 
-            image: "img_url" 
+            imageUrl: "img_url",
+            isPublic: true
         });
     }
 

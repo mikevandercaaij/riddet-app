@@ -1,0 +1,10 @@
+<div class="col-12">
+  <ul class="list-group" *ngIf="community$ | async as community">
+    <li class="list-group-item active">{{ community._id }}</li>
+    <li class="list-group-item active">{{ community.name }}</li>
+    <li class="list-group-item">description: {{ community.description }}</li>
+    <li class="list-group-item">creationDate: {{ community.creationDate }}</li>
+    <li class="list-group-item">imageUrl: {{ community.imageUrl }}</li>
+    <li class="list-group-item">isPublic: {{ community.isPublic }}</li>
+  </ul>
+</div>

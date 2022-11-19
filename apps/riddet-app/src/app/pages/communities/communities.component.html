@@ -1,0 +1,43 @@
+<div class="col-12">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Description</th>
+        <th scope="col">Creation Date</th>
+        <th scope="col">Image URL</th>
+        <th scope="col">Public</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let community of communities; index as i">
+        <th scope="row">{{ i + 1 }}</th>
+        <td>
+          {{ community.name }}
+        </td>
+        <td>{{ community.description }}</td>
+        <td>{{ community.creationDate }}</td>
+        <td>{{ community.imageUrl }}</td>
+        <td>{{ community.isPublic }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div *ngFor="let community of communities">
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Name: {{ community.name }}</h5>
+      <h6 class="card-subtitle mb-2 text-muted">
+        Description {{ community.description }}
+      </h6>
+      <p class="card-text">creationDate: {{ community.creationDate }}</p>
+      <p class="card-text">imageUrl: {{ community.imageUrl }}</p>
+      <p class="card-text">isPublic: {{ community.isPublic }}</p>
+      <a class="btn btn-primary" [routerLink]="['/communities', community._id]">
+        Details
+      </a>
+    </div>
+  </div>
+</div>
