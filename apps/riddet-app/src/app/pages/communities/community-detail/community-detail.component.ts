@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Community } from '@riddet-app/data';
 import { Observable, Subscription } from 'rxjs';
 
@@ -16,6 +16,7 @@ export class CommunityDetailComponent implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private http: HttpClient
 
   ) {}
@@ -29,5 +30,11 @@ export class CommunityDetailComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
+  }
+
+  delete() : void {
+    this.http.delete(`/api/communities/${this.communityId}`).subscribe(() => {
+      this.router.navigate(['/communities']);
+    });
   }
 }

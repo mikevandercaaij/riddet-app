@@ -1,0 +1,16 @@
+<div *ngFor="let community of communities">
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Name: {{ community.name }}</h5>
+      <h6 class="card-subtitle mb-2 text-muted">
+        Description {{ community.description }}
+      </h6>
+      <p class="card-text">creationDate: {{ community.creationDate }}</p>
+      <p class="card-text">imageUrl: {{ community.imageUrl }}</p>
+      <p class="card-text">isPublic: {{ community.isPublic }}</p>
+      <a class="btn btn-primary" [routerLink]="['/communities', community._id]">
+        Details
+      </a>
+    </div>
+  </div>
+</div>

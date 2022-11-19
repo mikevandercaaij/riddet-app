@@ -6,5 +6,15 @@
     <li class="list-group-item">creationDate: {{ community.creationDate }}</li>
     <li class="list-group-item">imageUrl: {{ community.imageUrl }}</li>
     <li class="list-group-item">isPublic: {{ community.isPublic }}</li>
+    <li class="list-group-item">
+      <a
+        class="btn btn-primary"
+        [routerLink]="['/communities', community._id, 'edit']"
+        >Bewerken</a
+      >
+    </li>
+    <li class="list-group-item">
+      <a class="btn btn-danger" (click)="delete()">Verwijderen</a>
+    </li>
   </ul>
 </div>

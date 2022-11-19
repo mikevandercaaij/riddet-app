@@ -1,12 +1,32 @@
-import { Component, OnInit } from '@angular/core';
-
+import { HttpClient } from '@angular/common/http';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Community } from '@riddet-app/data';
+import { Observable, Subscription } from 'rxjs';
 @Component({
   selector: 'riddet-app-community-edit',
   templateUrl: './community-edit.component.html',
   styleUrls: ['./community-edit.component.css'],
 })
-export class CommunityEditComponent implements OnInit {
-  constructor() {}
+export class CommunityEditComponent implements OnInit, OnDestroy {
+  subscription?: Subscription;
+  communityId: string | undefined;
+  community$: Observable<Community> | undefined;
 
-  ngOnInit(): void {}
+  constructor(
+    private route: ActivatedRoute,
+    private http: HttpClient
+
+  ) {}
+
+  ngOnInit(): void {
+    this.subscription = this.route.paramMap.subscribe((params) => {
+      this.communityId = params.get('id')?.toString();
+      this.community$ = this.http.get<Community>(`/api/communities/${this.communityId}`);
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
+  }
 }
