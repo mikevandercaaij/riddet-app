@@ -1,0 +1,85 @@
+<div *ngIf="community$ | async as community" class="main-content row">
+  <div class="col-sm-12 col-md-8">
+    <h1>{{ community.name }}</h1>
+    <p>{{ community.description }}</p>
+
+    <p>Aangemaakt op: {{ community.creationDate | date: 'dd-MM-yyyy' }}</p>
+
+    <p>Publieke community: {{ community.isPublic ? 'ja' : 'nee' }}</p>
+
+    <button
+      class="btn btn-primary"
+      [routerLink]="['/communities', community._id, 'edit']"
+      style="display: inline-block; margin: 5px 5px 5px 0"
+    >
+      Bewerken
+    </button>
+
+    <button
+      type="button"
+      class="btn btn-danger"
+      data-bs-toggle="modal"
+      data-bs-target="#deleteModal"
+      style="display: inline-block; margin: 5px"
+    >
+      Verwijderen
+    </button>
+  </div>
+
+  <div class="col-sm-12 col-md-4">
+    <img
+      style="width: 100%; margin-bottom: 15px"
+      src="{{ community.imageUrl }}"
+      alt="{{ community.name }}"
+    />
+  </div>
+
+  <!-- Modal -->
+  <div
+    class="modal fade"
+    id="deleteModal"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
+    tabindex="-1"
+    aria-labelledby="staticBackdropLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">
+            Community verwijderen
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          Weet je zeker dat je deze community wilt verwijderen? De community zal
+          permanent worden verwijderd en deze actie kan niet ongedaan worden
+          gemaakt.
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-danger"
+            (click)="delete()"
+            data-bs-dismiss="modal"
+          >
+            Verwijderen
+          </button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Annuleren
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

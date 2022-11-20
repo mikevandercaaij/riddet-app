@@ -3,12 +3,11 @@ import {
   IsDate, IsDefined, IsNotEmpty, IsString, MinLength
 } from 'class-validator';
 import { Document } from 'mongoose';
-
+ 
 export type CommunityDocument = Community & Document;
 
 @Schema()
 export class Community {
-
   @IsString({ message: 'Name must be a string!' })
   @IsDefined({ message: 'Name is required!' })
   @MinLength(5, { message: 'Name must be at least 5 characters long!' })
@@ -27,7 +26,10 @@ export class Community {
 
   @IsString({ message: 'Image must be a string!' })
   @Prop()
-  image: string;
+  imageUrl: string;
+
+  @Prop()
+  isPublic: boolean;
 }
 
 export const CommunitySchema = SchemaFactory.createForClass(Community);

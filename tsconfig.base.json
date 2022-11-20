@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@riddet-app/data": ["libs/data/src/index.ts"],
       "@riddet-app/ui": ["libs/ui/src/index.ts"]
     }
   },

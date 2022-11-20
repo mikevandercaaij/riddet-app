@@ -1,0 +1,35 @@
+<div class="col-12">
+  <div style="margin-top: 15px" class="card">
+    <div class="card-body">
+      <h5 class="card-title">Community bewerken</h5>
+
+      <form class="row g-3">
+        <div class="col-12">
+          <label for="inputNanme4" class="form-label">Naam</label>
+          <input type="text" class="form-control" id="inputNanme4" />
+        </div>
+        <div class="col-12">
+          <label for="descriptionInput" class="form-label">Description</label>
+          <textarea class="form-control" id="descriptionInput"></textarea>
+        </div>
+        <div class="text-center">
+          <button
+            style="margin-right: 5px"
+            type="submit"
+            class="btn btn-primary"
+          >
+            Opslaan
+          </button>
+          <button
+            style="margin-left: 5px"
+            type="reset"
+            class="btn btn-danger"
+            [routerLink]="['/communities', communityId]"
+          >
+            Annuleren
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

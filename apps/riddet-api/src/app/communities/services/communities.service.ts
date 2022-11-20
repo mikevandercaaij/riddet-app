@@ -21,7 +21,8 @@ export class CommunitiesService {
             name,  
             description, 
             creationDate: new Date(), 
-            image: "img_url" 
+            imageUrl: "https://cdn.dribbble.com/users/5745266/screenshots/13977782/media/1bd8a00b559752b86996197fcd7645dd.png?compress=1&resize=400x300&vertical=top",
+            isPublic: true
         });
     }
 

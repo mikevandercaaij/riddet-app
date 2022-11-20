@@ -1,1 +1,13 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans&display=swap');
+
+:root {
+  --main-bg-color: pink;
+}
+
+body {
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+
+nav {
+  margin-bottom: 25px;
+}

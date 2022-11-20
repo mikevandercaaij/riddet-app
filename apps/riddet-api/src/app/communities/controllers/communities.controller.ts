@@ -1,5 +1,4 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Logger, Param, Patch, Post } from '@nestjs/common';
-import { ParseObjectIdPipe } from '../../shared/pipes/ParseObjectIdPipe';
 import { CreateCommunityDto } from '../dto/create-community.dto';
 import { UpdateCommunityDto } from '../dto/update-community.dto';
 
@@ -12,7 +11,7 @@ export class CommunitiesController {
 
   @Get(':id')
   async getUser(
-    @Param('id', ParseObjectIdPipe) id: string): Promise<Community> {
+    @Param('id') id: string): Promise<Community> {
       
     Logger.log(`Getting community with id: ${id} (READ)`);
 
@@ -36,7 +35,7 @@ export class CommunitiesController {
   }
 
   @Patch(':id')
-  async updateUser(@Param('userId', ParseObjectIdPipe) id: string, @Body() updateCommunityDto: UpdateCommunityDto): Promise<Community> {
+  async updateUser(@Param('id') id: string, @Body() updateCommunityDto: UpdateCommunityDto): Promise<Community> {
 
 
     Logger.log(`Getting community with id: ${id} (UPDATE)`);
@@ -51,7 +50,7 @@ export class CommunitiesController {
   }
 
   @Delete(':id')
-  async deleteUser(@Param('id', ParseObjectIdPipe) id: string): Promise<Community> {
+  async deleteUser(@Param('id') id: string): Promise<Community> {
 
     Logger.log(`Getting community with id: ${id} (DELETE)`);
 
