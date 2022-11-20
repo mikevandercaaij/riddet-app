@@ -1,7 +1,6 @@
 
 import { Injectable } from "@angular/core";
 import { Community } from "@riddet-app/data";
-import { Observable, of } from "rxjs";
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable({providedIn: 'root',})
@@ -10,65 +9,79 @@ export class CommunitiesHttpService {
      private communityList: Community[] = [
         {
             "_id": uuidv4(),
-            "name": "Eerstejaars studenten",
-            "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            "name": "thenetherlands",
+            "description": "Welcome to the largest bilingual Reddit community for sharing anything related to the Netherlands: news, sports, humor, culture and questions. Please browse our FAQ before posting!",
             "creationDate": new Date(),
-            "imageUrl": "https://cdn.dribbble.com/users/5745266/screenshots/13977782/media/1bd8a00b559752b86996197fcd7645dd.png?compress=1&resize=400x300&vertical=top",
+            "imageUrl": "https://i1.sndcdn.com/artworks-4DtpzBOYbUV5lYUb-nBD1hw-t500x500.jpg",
             "isPublic": true
         },
         {
             "_id": uuidv4(),
-            "name": "Tweedejaars studenten",
-            "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            "name": "news",
+            "description": "The place for news articles about current events in the United States and the rest of the world. Discuss it all here.",
             "creationDate": new Date(),
-            "imageUrl": "https://cdn.dribbble.com/users/5745266/screenshots/13977782/media/1bd8a00b559752b86996197fcd7645dd.png?compress=1&resize=400x300&vertical=top",
+            "imageUrl": "https://www.baseclear.com/wp-content/uploads/shutterstock_283615094-Medium-500x500.jpg",
             "isPublic": true
         },
+        {
+          "_id": uuidv4(),
+          "name": "Avans",
+          "description": "Avans Hogeschool is in 2004 ontstaan door een fusie tussen Hogeschool Brabant en Hogeschool ’s-Hertogenbosch. Deze kennisinstituten werkten toen al nauw samen onder één College van Bestuur.",
+          "creationDate": new Date(),
+          "imageUrl": "https://tools.avans.nl/tools/image/7c4dZ6JYln.png",
+          "isPublic": true
+      },
+
+      {
+        "_id": uuidv4(),
+        "name": "programming",
+        "description": "The community for coders and programmers! Discuss programming, share your knowledge, and learn from others.",
+        "creationDate": new Date(),
+        "imageUrl": "https://www.cognizantsoftvision.com/wp-content/uploads/2018/12/coding-500x500.jpg",
+        "isPublic": true
+    },
+    {
+      "_id": uuidv4(),
+      "name": "fitness",
+      "description": "A place for the pursuit of physical fitness goals. Please see [the r/Fitness Wiki and FAQ](https://thefitness.wiki) for help with common questions.",
+      "creationDate": new Date(),
+      "imageUrl": "https://lmimirror3pvr.azureedge.net/static/media/14405/9358507e-70de-49fe-86b0-d81f0b36c90f/q4-be-limitless-program-500x500-mb-bp.jpg",
+      "isPublic": true
+  },
     ];
 
-    getList(): Observable<Community[]> {
-        return of(this.communityList);
+    getList(): Community[] {
+        return this.communityList;
       }
 
-    getById(communityId: string):  Observable<Community> {
-        return of(this.communityList.filter(community => community._id === communityId)[0]);
+    getById(communityId: string):  Community {
+        return this.communityList.filter(community => community._id === communityId)[0];
     }
 
-    create(community: Community): Observable<any> {
+    create(community: Community): void {
         this.community = { ...community };
 
         this.community._id = uuidv4();
         this.community.creationDate = new Date();
-        this.community.imageUrl = "https://cdn.dribbble.com/users/5745266/screenshots/13977782/media/1bd8a00b559752b86996197fcd7645dd.png?compress=1&resize=400x300&vertical=top";
         this.community.isPublic = true;
 
         this.communityList.push(this.community);
 
+        console.log(this.communityList.length);
         console.log("Community aangemaakt");
-
-        return of({
-          status: 201,
-          message: 'success',
-        });
       }
     
-      update(community?: Community): Observable<any> {
-        // TO DO: movieList updaten
-        
-        return of({
-          status: 201,
-          message: 'success',
-        });
+      update(updatedCommunity?: Community): void {
+        const community = this.communityList.filter(community => community._id === updatedCommunity?._id)[0];
+        const index = this.communityList.indexOf(community);
+        this.communityList[index] = {...community, ...updatedCommunity};
+
+        console.log("Community bewerkt");
       }
 
     delete(communityId: string) {
         this.communityList = this.communityList.filter(community => community._id !== communityId);
 
         console.log("Community verwijderd");
-
-        return of({
-            status: 201,
-            message: 'success',
-          });
     }
 }

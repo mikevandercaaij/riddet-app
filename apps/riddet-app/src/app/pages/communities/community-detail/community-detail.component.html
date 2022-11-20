@@ -1,9 +1,11 @@
-<div *ngIf="community$ | async as community" class="main-content row">
+<div *ngIf="community" class="main-content row">
   <div class="col-sm-12 col-md-8">
     <h1>{{ community.name }}</h1>
     <p>{{ community.description }}</p>
 
-    <p>Aangemaakt op: {{ community.creationDate | date: 'dd-MM-yyyy' }}</p>
+    <p>
+      Aangemaakt op: {{ community.creationDate | date: 'dd-MM-yyyy HH:mm' }}
+    </p>
 
     <p>Publieke community: {{ community.isPublic ? 'ja' : 'nee' }}</p>
 
@@ -12,7 +14,7 @@
       [routerLink]="['/communities', community._id, 'edit']"
       style="display: inline-block; margin: 5px 5px 5px 0"
     >
-      Bewerken
+      <i class="bi bi-pencil"></i> Bewerken
     </button>
 
     <button
@@ -22,7 +24,7 @@
       data-bs-target="#deleteModal"
       style="display: inline-block; margin: 5px"
     >
-      Verwijderen
+      <i class="bi bi-trash3"></i> Verwijderen
     </button>
   </div>
 
@@ -69,13 +71,14 @@
             (click)="delete()"
             data-bs-dismiss="modal"
           >
-            Verwijderen
+            <i class="bi bi-trash3"></i> Verwijderen
           </button>
           <button
             type="button"
             class="btn btn-secondary"
             data-bs-dismiss="modal"
           >
+            <i class="bi bi-x-lg"></i>
             Annuleren
           </button>
         </div>

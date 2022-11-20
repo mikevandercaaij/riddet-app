@@ -1,5 +1,7 @@
+import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -12,10 +14,10 @@ import { AboutComponent } from './pages/about/about.component';
 import { CommunitiesComponent } from './pages/communities/communities.component';
 import { CommunityDetailComponent } from './pages/communities/community-detail/community-detail.component';
 import { CommunityEditComponent } from './pages/communities/community-edit/community-edit.component';
+import { CommunityListComponent } from './pages/communities/community-list/community-list.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { FooterComponent } from './shared/footer/footer.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
-import { CommunityListComponent } from './pages/communities/community-list/community-list.component';
 
 @NgModule({
   declarations: [
@@ -32,11 +34,15 @@ import { CommunityListComponent } from './pages/communities/community-list/commu
     CommunityListComponent,
   ],
   imports: [
+    CommonModule,
     BrowserModule,
+    FormsModule,
+    ReactiveFormsModule,
     RouterModule.forRoot(appRoutes, { initialNavigation: 'enabledBlocking' }),
     NgbModule,
     UiModule,
     HttpClientModule,
+   
   ],
   providers: [],
   bootstrap: [AppComponent],
