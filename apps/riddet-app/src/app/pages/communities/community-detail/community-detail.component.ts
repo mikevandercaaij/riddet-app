@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Community } from '@riddet-app/data';
 import { Observable, Subscription } from 'rxjs';
-import { CommunitiesHttpService } from '../services/communities-http.service';
+import { CommunitiesHttpService } from '../services/communities.service';
 
 @Component({
   selector: 'riddet-app-community-detail',

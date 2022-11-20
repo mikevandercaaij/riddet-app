@@ -1,28 +1,101 @@
-<div class="col-sm-6 col-md-8 col-lg-9">
-  <h1 id="aboutTitle">Over deze applicatie</h1>
-  <p>
-    Deze applicatie is gemaakt in het kader van het vak 'Clientside web
-    frameworks' van Avans Hogeschool Breda.
-  </p>
-  <h3>Riddet</h3>
-  <p>
-    Hier beschrijft je wat je project inhoudt. Beschrijf ook de
-    entiteiten/domeinobjecten die je gebruikt, en benoem per entiteit de
-    attributen met hun datatype.
-  </p>
-</div>
-<div class="col-sm-6 col-md-4 col-lg-3">
-  <div class="card">
-    <div class="d-flex justify-content-center align-items-center">
-      <img
-        src="assets/img/person.jpg"
-        class="card-img-top profile-pic"
-        alt="..."
-      />
-    </div>
-    <div class="card-body">
-      <h5 class="card-title">Mike van der Caaij</h5>
-      <p class="card-text">Studentnummer: 2184147</p>
+<div class="row">
+  <div class="col-sm-6 col-md-8 col-lg-9">
+    <h1 id="aboutTitle">Over deze applicatie</h1>
+    <p>
+      Deze applicatie is gemaakt in het kader van het vak 'Clientside web
+      frameworks' van Avans Hogeschool Breda.
+    </p>
+    <h3>Riddet</h3>
+    <p>
+      <b>Casusbeschrijving:</b> <br />
+      Dit project is een nabootsing van de website Reddit. Het idee is dat
+      gebruikers een account aan kunnen maken en vervolgens hun eigen community
+      op kunnen zetten of wellicht aan die van andere te participeren. Binnen
+      deze communities kunnen verschillende threads aangemaakt worden waar
+      andere gebruikers over kunnen discussiëren. Dit gebeurd door middel van
+      het plaatsen van reacties. Op deze reacties kunnen meerdere reacties
+      worden geplaatst. Naast deel te nemen aan communities en het lezen van
+      threads is het ook mogelijk om profielen van andere gebruikers te zien en
+      ze te volgen. <br />
+    </p>
+
+    <b>Relatiebeschrijving tussen entiteiten:</b> <br />
+    <ul>
+      <li>
+        User
+        <ul>
+          <li>
+            Een gebruiker staat op zichzelf en is dan ook niet afhankelijk van
+            andere entiteiten.
+          </li>
+          <li>Een gebruiker kan andere gebruikers volgen.</li>
+          <li>
+            Een gebruiker kan reacties plaatsen op threads en onderliggende
+            berichten.
+          </li>
+          <li>
+            Een gebruiker kan zelf een community aanmaken maar ook lid worden
+            van andere communities.
+          </li>
+          <li>
+            Een gebruiker kan een thread aanmaken in een community waar hij lid
+            van is.
+          </li>
+        </ul>
+      </li>
+      <li>
+        Community
+        <ul>
+          <li>Een community wordt aangemaakt door een gebruiker.</li>
+          <li>Er kunnen meerdere gebruikers deelnemen aan een community.</li>
+        </ul>
+      </li>
+      <li>
+        Thread
+        <ul>
+          <li>
+            Een thread is een onderdeel van een community. Binnen een community
+            kunnen er meerdere threads aangemaakt worden.
+          </li>
+        </ul>
+      </li>
+      <li>
+        Message
+        <ul>
+          <li>
+            Is gelinkt aan een thread, een message is dus ook een bericht op een
+            thread.
+          </li>
+          <li>
+            Messages kunnen ook weer messages bevatten. Dit kun je zien als
+            reacties.
+          </li>
+        </ul>
+      </li>
+      <li>
+        Category
+        <ul>
+          <li>
+            Kan worden gebruikt om aan te geven welke categorieën een community
+            of thread bevat.
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <div class="col-sm-6 col-md-4 col-lg-3">
+    <div class="card">
+      <div class="d-flex justify-content-center align-items-center">
+        <img
+          src="assets/img/person.jpg"
+          class="card-img-top profile-pic"
+          alt="persoon"
+        />
+      </div>
+      <div class="card-body">
+        <h5 class="card-title">Mike van der Caaij</h5>
+        <p class="card-text">Studentnummer: 2184147</p>
+      </div>
     </div>
   </div>
 </div>
@@ -82,5 +155,237 @@
       <li>_id: ObjectId</li>
       <li>categoryName: string</li>
     </ul>
+  </div>
+</div>
+
+<div class="row" style="margin-top: 15px">
+  <h3>User stories</h3>
+  <div class="col-sm-12 col-md-6">
+    <ul>
+      <li>
+        Als gebruiker wil ik kunnen inloggen, zodat ik gebruik kan maken van de
+        applicatie
+      </li>
+      <li>
+        Als gebruiker wil ik een account aan kunnen maken, zodat ik toegang heb
+        binnen de applicatie.
+      </li>
+      <li>
+        Als gebruiker wil ik een community aan kunnen maken, zodat ik mijn
+        passie met meerdere mensen kan delen d.m.v. threads
+      </li>
+      <li>
+        Als gebruiker wil ik een categorie mee kunnen geven aan een community,
+        zodat mensen die deel willen nemen aan mijn community, weten waar het
+        over gaat.
+      </li>
+      <li>
+        Als eigenaar wil ik de informatie van mijn community kunnen wijzigen,
+        zodat ik foutieve data kan veranderen.
+      </li>
+      <li>
+        Als eigenaar wil ik mijn community kunnen verwijderen, zodat ik afstand
+        kan doen van ongewilde communities.
+      </li>
+      <li>
+        Als eigenaar wil ik gebruikers uit mijn community kunnen verwijderen,
+        zodat ik afstand kan doen van ongewilde gebruikers.
+      </li>
+      <li>
+        Als eigenaar wil ik threads uit mijn community kunnen verwijderen, zodat
+        er geen ongepaste threads worden gepost
+      </li>
+      <li>
+        Als gebruiker wil ik een thread aan kunnen maken binnen een community,
+        zodat ik een gespreksonderwerp voor kan stellen binnen communityleden.
+      </li>
+      <li>
+        Als gebruiker wil ik de informatie van mijn aangemaakte thread kunnen
+        wijzigen, zodat ik foutieve data kan wijzigen.
+      </li>
+    </ul>
+  </div>
+  <div class="col-sm-12 col-md-6">
+    <ul>
+      <li>
+        Als gebruiker wil ik mijn aangemaakte thread kunnen verwijderen, zodat
+        ik hier geen omkijk meer naar heb.
+      </li>
+      <li>
+        Als gebruiker wil ik binnen een thread comments kunnen plaats, zodat ik
+        mijn mening kan uiten over bepaalde threads.
+      </li>
+      <li>
+        Als gebruiker wil ik de geplaatste comments kunnen wijzigen, zodat ik
+        eventuele spelfouten kan verbeteren.
+      </li>
+      <li>
+        Als gebruiker wil ik geplaatste comments kunnen verwijderen, zodat ik
+        foutgeplaatste comments weg kan halen.
+      </li>
+      <li>
+        Als gebruiker wil ik bij het aanmaken van een thread een categorie mee
+        kunnen geven, op deze manier kunnen mensen een duidelijker beeld krijgen
+        van waar de thread over gaat.
+      </li>
+      <li>
+        Als gebruiker wil ik kunnen reageren op comments, zodat meningen kunnen
+        worden geuit over de comments.
+      </li>
+      <li>
+        Als gebruiker wil ik deze geplaatste reacties kunnen wijzigen, zodat ik
+        eventuele spelfouten kan verbeteren.
+      </li>
+      <li>
+        Als gebruiker wil ik deze geplaatste reacties kunnen verwijderen, zodat
+        ik foutgeplaatste reacties weg kan halen.
+      </li>
+      <li>
+        Als gebruiker wil ik deel kunnen nemen aan een community, zodat ik
+        comment binnen threads in die groep kan plaatsen.
+      </li>
+      <li>
+        Als gebruiker wil ik een community kunnen verlaten, zodat ik geen
+        onderdeel meer ben van deze community.
+      </li>
+    </ul>
+  </div>
+  <div class="col-sm-12 col-md-6">
+    <ul>
+      <li>
+        Als gebruiker wil ik andere gebruikers kunnen volgen, zodat ik ze in de
+        gaten kan houden.
+      </li>
+      <li>
+        Als gebruiker wil ik andere gebruikers kunnen ontvolgen, zodat ik ze
+        niet meer in de gaten ga houden.
+      </li>
+      <li>
+        Als gebruiker wil ik mijn profiel kunnen zien, zodat ik een indruk heb
+        van hoe andere mensen mijn profiel zullen zien.
+      </li>
+      <li>
+        Als gebruiker wil ik de data van mijn profiel kunnen aanpassen, zodat ik
+        incorrecte data kan verwijderen.
+      </li>
+      <li>
+        Als gebruiker wil ik mijn account kunnen verwijderen, zodat mijn
+        gegevens niet meer bekend zijn binnen de applicatie.
+      </li>
+      <li>
+        Als gebruiker wil ik het profiel van andere gebruikers kunnen bekijken,
+        zodat ik informatie over hen kan zien en ze eventueel kan gaan volgen.
+      </li>
+      <li>
+        Als gebruiker wil ik een overzicht hebben van alle thread oplopend
+        gesorteerd, zodat ik door deze heen kan scrollen.
+      </li>
+      <li>
+        Als gebruiker wil ik een overzicht hebben van een community pagina,
+        zodat ik hier informatie over kan lezen.
+      </li>
+      <li>
+        Als gebruiker wil ik op het community overzicht een overzicht hebben van
+        alle threads, zodat ik kan zien wat voor threads er allemaal zijn binnen
+        de server.
+      </li>
+      <li>
+        Als gebruiker wil ik een detailpagina van een thread kunnen zien met
+        hierin de comments, zodat ik een duidelijker beeld heb van de thread en
+        hierop kan reageren.
+      </li>
+    </ul>
+  </div>
+  <div class="col-sm-12 col-md-6">
+    <ul>
+      <li>
+        Als gebruiker wil ik kunnen zoeken naar communities, zodat ik de details
+        kan bekijken en eventueel deel kan nemen aan deze communities.
+      </li>
+      <li>
+        Als gebruiker wil ik kunnen zoeken naar andere gebruikers, zodat ik
+        makkelijk mijn vrienden kan vinden.
+      </li>
+      <li>
+        Als gebruiker wil ik een overzicht hebben van communities waar ik nog
+        niet aan heb deelgenomen, zodat ik een overzicht heb van communities
+        waar ik nog aan kan deelnemen.
+      </li>
+      <li>
+        Als gebruiker wil ik een overzicht hebben van communities waar ik aan
+        deelneem, zodat ik snel kan schakelen.
+      </li>
+      <li>
+        Als gebruiker wil ik op de homepagina filters hebben van bijv.:
+        categorie, community, aantal reacties, datum, zodat ik specifiekere
+        threads kan bekijken.
+      </li>
+      <li>
+        Als gebruiker wil ik op het community overzicht filters hebben van
+        bijv.: categorie, community, aantal reacties, datum, zodat ik
+        specifiekere threads kan bekijken.
+      </li>
+      <li>
+        Als gebruiker wil ik filters hebben op overzicht van niet deelgenomen
+        communties van bijv.: categorie, zodat ik specifiekere threads kan
+        bekijken.
+      </li>
+      <li>
+        Als gebruiker wil ik binnen een community kunnen filteren op mijn eigen
+        gemaakte threads, zodat ik niet lang hoef te zoeken om deze te vinden.
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="row" style="margin-top: 15px">
+  <div class="col-sm-12 col-md-6">
+    <h3>User stories (aanbevelingen/complexe queries)</h3>
+
+    <ul>
+      <li>
+        Als gebruiker wil ik aanbevelingen krijgen van mogelijke communities die
+        ik kan joinen, zodat ik zonder zelf te zoeken leuke communities tegen
+        kan komen
+        <ul>
+          <li>
+            Hiervoor moet er voor alle mensen die ik volg worden gekeken of er
+            meerdere mensen zijn die onderdeel uitmaken van dezelfde community.
+            Dit kan bijvoorbeeld worden gedaan door het op community te groupen
+            en het hoogste aantal aan te bevelen of de top 3 etc.
+          </li>
+        </ul>
+      </li>
+
+      <li>
+        Als gebruiker wil ik aanbevelingen krijgen van gebruikers die worden
+        gevolgd door mensen die ik volg, zodat ik nieuwe mogelijk interessante
+        mensen in de gaten kan houden.
+        <ul>
+          <li>
+            Hiervoor moet er voor alle mensen die ik volg gekeken worden of deze
+            overeenkomende gebruikers volgen. Net als de bovenstaande query kan
+            er dan weer gekeken welke het meest gevolgd wordt.
+          </li>
+        </ul>
+      </li>
+
+      <li>
+        Als gebruiker wil ik aanbevelingen krijgen van leuke threads waar
+        meerdere van de mensen die ik volg op hebben gereageerd, zodat ik mee
+        kan discussiëren met de mensen die ik interessant vind.
+        <ul>
+          <li>
+            Hiervoor moet er voor alle mensen die ik volg gekeken worden als er
+            reacties plaatvinden binnen verschillende threads.
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="col-sm-12 col-md-6">
+    <h3>Entiteit relatie-diagram</h3>
+    <img style="width: 100%" src="assets/img/erd.png" alt="erd" />
   </div>
 </div>

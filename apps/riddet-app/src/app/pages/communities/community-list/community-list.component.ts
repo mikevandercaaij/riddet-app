@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Community } from '@riddet-app/data';
 import { Observable } from 'rxjs';
-import { CommunitiesHttpService } from '../services/communities-http.service';
+import { CommunitiesHttpService } from '../services/communities.service';
 @Component({
   selector: 'riddet-app-community-list',
   templateUrl: './community-list.component.html',
