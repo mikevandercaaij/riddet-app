@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Community } from '@riddet-app/data';
-import { Observable } from 'rxjs';
 import { CommunitiesHttpService } from '../services/communities.service';
 @Component({
   selector: 'riddet-app-community-list',
@@ -8,14 +7,14 @@ import { CommunitiesHttpService } from '../services/communities.service';
   styleUrls: ['./community-list.component.css'],
 })
 export class CommunityListComponent implements OnInit{
-  communities$: Observable<Community[]> | undefined;
+  communities: Community[] | undefined;
 
 
   constructor(private communityService: CommunitiesHttpService) {}
 
 ngOnInit(): void {
   console.log('CommunityListComponent.ngOnInit()');
-    this.communities$ = this.communityService.getList();
+    this.communities = this.communityService.getList();
 }
 
 }

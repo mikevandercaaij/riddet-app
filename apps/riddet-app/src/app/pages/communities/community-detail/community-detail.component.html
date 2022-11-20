@@ -1,9 +1,11 @@
-<div *ngIf="community$ | async as community" class="main-content row">
+<div *ngIf="community" class="main-content row">
   <div class="col-sm-12 col-md-8">
     <h1>{{ community.name }}</h1>
     <p>{{ community.description }}</p>
 
-    <p>Aangemaakt op: {{ community.creationDate | date: 'dd-MM-yyyy' }}</p>
+    <p>
+      Aangemaakt op: {{ community.creationDate | date: 'dd-MM-yyyy HH:mm' }}
+    </p>
 
     <p>Publieke community: {{ community.isPublic ? 'ja' : 'nee' }}</p>
 
