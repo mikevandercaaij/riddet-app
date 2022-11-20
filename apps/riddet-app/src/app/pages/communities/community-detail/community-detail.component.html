@@ -14,7 +14,7 @@
       [routerLink]="['/communities', community._id, 'edit']"
       style="display: inline-block; margin: 5px 5px 5px 0"
     >
-      Bewerken
+      <i class="bi bi-pencil"></i> Bewerken
     </button>
 
     <button
@@ -24,7 +24,7 @@
       data-bs-target="#deleteModal"
       style="display: inline-block; margin: 5px"
     >
-      Verwijderen
+      <i class="bi bi-trash3"></i> Verwijderen
     </button>
   </div>
 
@@ -71,13 +71,14 @@
             (click)="delete()"
             data-bs-dismiss="modal"
           >
-            Verwijderen
+            <i class="bi bi-trash3"></i> Verwijderen
           </button>
           <button
             type="button"
             class="btn btn-secondary"
             data-bs-dismiss="modal"
           >
+            <i class="bi bi-x-lg"></i>
             Annuleren
           </button>
         </div>

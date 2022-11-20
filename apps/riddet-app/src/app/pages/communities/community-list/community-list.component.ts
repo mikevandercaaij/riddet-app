@@ -13,7 +13,6 @@ export class CommunityListComponent implements OnInit{
   constructor(private communityService: CommunitiesHttpService) {}
 
 ngOnInit(): void {
-  console.log('CommunityListComponent.ngOnInit()');
     this.communities = this.communityService.getList();
 }
 

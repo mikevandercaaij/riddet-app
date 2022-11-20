@@ -39,10 +39,6 @@ export class CommunityEditComponent implements OnInit {
   }
     onSubmit() {
       this.submitted = true
-
-      console.log("hoi")
-   
-      console.log('onSubmit: ', this.community)
       if (this.communityId) {
         this.communityService.update(this.community)
       } else {
