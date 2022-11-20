@@ -1,8 +1,8 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Community } from '@riddet-app/data';
 import { Observable, Subscription } from 'rxjs';
+import { CommunitiesHttpService } from '../services/communities-http.service';
 
 @Component({
   selector: 'riddet-app-community-detail',
@@ -17,14 +17,16 @@ export class CommunityDetailComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private http: HttpClient
+    private communityService: CommunitiesHttpService
 
   ) {}
 
   ngOnInit(): void {
     this.subscription = this.route.paramMap.subscribe((params) => {
       this.communityId = params.get('id')?.toString();
-      this.community$ = this.http.get<Community>(`/api/communities/${this.communityId}`);
+      if(this.communityId) {
+        this.community$ = this.communityService.getById(this.communityId);
+      }
     });
   }
 
@@ -33,8 +35,9 @@ export class CommunityDetailComponent implements OnInit, OnDestroy {
   }
 
   delete() : void {
-    this.http.delete(`/api/communities/${this.communityId}`).subscribe(() => {
+    if(this.communityId) {
+      this.communityService.delete(this.communityId);
       this.router.navigate(['/communities']);
-    });
+    }
   }
 }

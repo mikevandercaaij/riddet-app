@@ -1,20 +1,21 @@
-import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Community } from '@riddet-app/data';
+import { Observable } from 'rxjs';
+import { CommunitiesHttpService } from '../services/communities-http.service';
 @Component({
   selector: 'riddet-app-community-list',
   templateUrl: './community-list.component.html',
   styleUrls: ['./community-list.component.css'],
 })
-export class CommunityListComponent {
-  communities: Community[] = [];
+export class CommunityListComponent implements OnInit{
+  communities$: Observable<Community[]> | undefined;
 
 
-  constructor(private http: HttpClient) {
-    this.fetch();
-  }
+  constructor(private communityService: CommunitiesHttpService) {}
 
-  fetch() {
-    this.http.get<Community[]>('/api/communities').subscribe((res) => this.communities = res);
-  }
+ngOnInit(): void {
+  console.log('CommunityListComponent.ngOnInit()');
+    this.communities$ = this.communityService.getList();
+}
+
 }

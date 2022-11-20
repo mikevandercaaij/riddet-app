@@ -4,7 +4,7 @@
     Deze applicatie is gemaakt in het kader van het vak 'Clientside web
     frameworks' van Avans Hogeschool Breda.
   </p>
-  <h3>Naam van jouw project</h3>
+  <h3>Riddet</h3>
   <p>
     Hier beschrijft je wat je project inhoudt. Beschrijf ook de
     entiteiten/domeinobjecten die je gebruikt, en benoem per entiteit de
@@ -15,45 +15,72 @@
   <div class="card">
     <div class="d-flex justify-content-center align-items-center">
       <img
-        src="assets/images/person.png"
-        class="card-img-top rounded-circle border profile-pic"
+        src="assets/img/person.jpg"
+        class="card-img-top profile-pic"
         alt="..."
       />
     </div>
     <div class="card-body">
-      <h5 class="card-title">Jouw naam hier</h5>
-      <p class="card-text">Studentnummer: 12345678</p>
+      <h5 class="card-title">Mike van der Caaij</h5>
+      <p class="card-text">Studentnummer: 2184147</p>
     </div>
   </div>
 </div>
 
-<h3>Entiteiten</h3>
-<div class="row">
+<div class="row" style="margin-top: 15px">
+  <h3>Entiteiten</h3>
   <div class="col-sm-12 col-md-4">
-    <p>Entiteit 1</p>
+    <p>User (strong entity)</p>
     <ul>
-      <li>naam: string</li>
-      <li>id: number</li>
-      <li>birthdate: date</li>
-      <li>isSelected: boolean</li>
+      <li>_id: ObjectId</li>
+      <li>username: string</li>
+      <li>firstName: string</li>
+      <li>lastName: string</li>
+      <li>dateOfBirth: Date</li>
+      <li>emailAddress: string</li>
+      <li>password: string</li>
+      <li>userImageUrl: string</li>
+      <li>creationDate: Date</li>
+      <li>isActive: boolean</li>
     </ul>
   </div>
   <div class="col-sm-12 col-md-4">
-    <p>Entiteit 2</p>
+    <p>Community (weak entity)</p>
     <ul>
-      <li>naam: string</li>
-      <li>id: number</li>
-      <li>birthdate: date</li>
-      <li>isSelected: boolean</li>
+      <li>_id: ObjectId</li>
+      <li>name: string</li>
+      <li>description: string</li>
+      <li>creationDate: Date</li>
+      <li>imageUrl: string</li>
+      <li>isPublic: boolean</li>
     </ul>
   </div>
   <div class="col-sm-12 col-md-4">
-    <p>Entiteit 3</p>
+    <p>Thread (weak entity)</p>
     <ul>
-      <li>naam: string</li>
-      <li>id: number</li>
-      <li>birthdate: date</li>
-      <li>isSelected: boolean</li>
+      <li>_id: ObjectId</li>
+      <li>title: string</li>
+      <li>publicationDate: Date</li>
+      <li>imageUrl: string</li>
+      <li>externLink: string</li>
+      <li>upvotes: Number</li>
+    </ul>
+  </div>
+  <div class="col-sm-12 col-md-4">
+    <p>Message (weak entity)</p>
+    <ul>
+      <li>_id: ObjectId</li>
+      <li>text: string</li>
+      <li>likes: Number</li>
+      <li>dislikes: Date</li>
+      <li>publicationDate: Date</li>
+    </ul>
+  </div>
+  <div class="col-sm-12 col-md-4">
+    <p>Category (strong entity)</p>
+    <ul>
+      <li>_id: ObjectId</li>
+      <li>categoryName: string</li>
     </ul>
   </div>
 </div>

@@ -1,53 +1,73 @@
 
-// import {Injectable} from "@angular/core";
-// import {HttpClient, HttpParams} from "@angular/common/http";
-// import {Observable} from "rxjs";
-// import {map} from "rxjs/operators";
-// import { Community } from "@riddet-app/data";
+import { Injectable } from "@angular/core";
+import { Community } from "@riddet-app/data";
+import { Observable, of } from "rxjs";
+import { v4 as uuidv4 } from 'uuid';
+@Injectable({providedIn: 'root',})
+export class CommunitiesHttpService {
+     private community? : Community;
+     private communityList: Community[] = [
+        {
+            "_id": uuidv4(),
+            "name": "Eerstejaars studenten",
+            "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            "creationDate": new Date(),
+            "imageUrl": "https://cdn.dribbble.com/users/5745266/screenshots/13977782/media/1bd8a00b559752b86996197fcd7645dd.png?compress=1&resize=400x300&vertical=top",
+            "isPublic": true
+        },
+        {
+            "_id": uuidv4(),
+            "name": "Tweedejaars studenten",
+            "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            "creationDate": new Date(),
+            "imageUrl": "https://cdn.dribbble.com/users/5745266/screenshots/13977782/media/1bd8a00b559752b86996197fcd7645dd.png?compress=1&resize=400x300&vertical=top",
+            "isPublic": true
+        },
+    ];
 
+    getList(): Observable<Community[]> {
+        return of(this.communityList);
+      }
 
-// @Injectable()
-// export class CoursesHttpService {
+    getById(communityId: string):  Observable<Community> {
+        return of(this.communityList.filter(community => community._id === communityId)[0]);
+    }
 
-//     constructor(private http:HttpClient) {
+    create(community: Community): Observable<any> {
+        this.community = { ...community };
 
-//     }
+        this.community._id = uuidv4();
+        this.community.creationDate = new Date();
+        this.community.imageUrl = "https://cdn.dribbble.com/users/5745266/screenshots/13977782/media/1bd8a00b559752b86996197fcd7645dd.png?compress=1&resize=400x300&vertical=top";
+        this.community.isPublic = true;
 
-//     findAllCourses(): Observable<Course[]> {
-//         return this.http.get<Course[]>('/api/courses')
-//           .pipe(
-//             map(courses => courses.sort(compareCourses))
-//           );
-//     }
+        this.communityList.push(this.community);
 
-//     findCourseByUrl(courseUrl: string): Observable<Course> {
-//       return this.http.get<Course>(`/api/courses/${courseUrl}`);
-//     }
+        console.log("Community aangemaakt");
 
-//     findLessons(
-//         courseId:string,
-//         pageNumber = 0, pageSize = 3):  Observable<Lesson[]> {
+        return of({
+          status: 201,
+          message: 'success',
+        });
+      }
+    
+      update(community?: Community): Observable<any> {
+        // TO DO: movieList updaten
+        
+        return of({
+          status: 201,
+          message: 'success',
+        });
+      }
 
-//         return this.http.get<Lesson[]>('/api/lessons', {
-//             params: new HttpParams()
-//                 .set('courseId', courseId)
-//                 .set('sortOrder', 'asc')
-//                 .set('pageNumber', pageNumber.toString())
-//                 .set('pageSize', pageSize.toString())
-//         });
-//     }
+    delete(communityId: string) {
+        this.communityList = this.communityList.filter(community => community._id !== communityId);
 
+        console.log("Community verwijderd");
 
-//     updateCourse(courseId: string, changes: Partial<Course>) {
-//         return this.http.put('/api/courses/' + courseId, changes);
-//     }
-
-
-//   deleteCourse(courseId: string) {
-//       return this.http.delete('/api/courses/' + courseId);
-//   }
-
-//   createCourse(changes: Partial<Community>) {
-//       return this.http.post('/api/courses', changes);
-//   }
-// }
+        return of({
+            status: 201,
+            message: 'success',
+          });
+    }
+}
