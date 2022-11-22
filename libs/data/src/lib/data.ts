@@ -1,10 +1,18 @@
-export class Community {
-  constructor(
-    public _id: string,
-    public name: string ,
-    public description: string ,
-    public creationDate: Date,
-    public imageUrl: string ,
-    public isPublic: boolean,
-  ){}
+export interface ICommunity {
+  id: string,
+  name: string ,
+  description: string ,
+  creationDate: Date,
+  imageUrl: string ,
+  isPublic: boolean,
+}
+export interface IThread {
+  id: string;
+  title: string;
+  content: string;
+  publicationDate: Date;
+  imageUrl: string;
+  externLink: string;
+  upvotes: number;
+  communityId: string;
 }
