@@ -44,10 +44,14 @@
           <p class="card-text">
             {{ thread.content }}
           </p>
-          <a *ngIf="thread.externLink" href="{{ thread.externLink }}">{{
-            thread.externLink
-          }}</a>
+          <a
+            *ngIf="thread.externLink"
+            href="{{ thread.externLink }}"
+            target="_blank"
+            >{{ thread.externLink }}</a
+          >
           <img
+            *ngIf="thread.imageUrl"
             class="thread-detail-img"
             src="{{ thread.imageUrl }}"
             alt="{{ thread.title }}"

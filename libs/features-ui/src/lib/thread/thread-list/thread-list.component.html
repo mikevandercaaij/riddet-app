@@ -1,4 +1,11 @@
-<div style="display: flex; align-items: center; justify-content: space-between">
+<div
+  style="
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+  "
+>
   <h2>Threads</h2>
   <button
     class="btn btn-primary"
@@ -8,12 +15,14 @@
   </button>
 </div>
 
+<p *ngIf="threads?.length === 0">Er zijn nog geen threads.</p>
+
 <div class="row row-cols-1 row-cols-md-2 g-4">
   <div *ngFor="let thread of threads" class="col">
     <div
       class="card text-center"
       [routerLink]="['/communities/', communityId, 'threads', thread.id]"
-      style="cursor: pointer"
+      style="cursor: pointer; min-height: 175px"
     >
       <div class="card-body">
         <h5 class="card-title">{{ thread.title }}</h5>

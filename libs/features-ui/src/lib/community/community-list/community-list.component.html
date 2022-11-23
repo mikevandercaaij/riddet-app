@@ -1,3 +1,12 @@
+<div style="display: flex; align-items: center; justify-content: space-between">
+  <h1>Communities</h1>
+  <button class="btn btn-primary" routerLink="/communities/new">
+    <i class="bi bi-plus"></i> Community aanmaken
+  </button>
+</div>
+
+<p *ngIf="communities?.length === 0">Er zijn nog geen communities.</p>
+
 <div class="row">
   <div
     *ngFor="let community of communities"
