@@ -9,7 +9,7 @@ export class ThreadService {
         
         {id: '1',
         title: "‘De nummerborden worden doorgebeld’: reconstructie van Zwarte Piet-geweld in Staphorst",
-        content: "",
+        content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
         publicationDate: new Date(),
         imageUrl: 'https://www.bungalowparkoverzicht.nl/wp-content/uploads/2013/08/zuid-limburg-2-250x250.jpg',
         externLink: 'https://www.google.com/',
@@ -18,7 +18,7 @@ export class ThreadService {
 
         {id: '2',
         title: 'Evidence of cooking 780,000 years ago rewrites human history.',
-        content: "",
+        content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
         publicationDate: new Date(),
         imageUrl: '',
         externLink: 'https://www.google.com/',
@@ -27,7 +27,7 @@ export class ThreadService {
 
         {id: '3',
         title: 'Opgelet!📣 Dinsdag 30 en woensdag 31 augustus stakingen NS 🚊',
-        content: "",
+        content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
         publicationDate: new Date(),
         imageUrl: 'https://www.techtastic.nl/wp-content/uploads/2015/04/ns-logo.png',
         externLink: 'https://www.google.com/',
@@ -36,7 +36,7 @@ export class ThreadService {
 
         {id: '4',
         title: 'What frustates you in Angular',
-        content: "",
+        content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
         publicationDate: new Date(),
         imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Angular_full_color_logo.svg/250px-Angular_full_color_logo.svg.png',
         externLink: 'https://www.google.com/',
@@ -45,7 +45,7 @@ export class ThreadService {
         
         {id: '5',
         title: 'Welke sport doe je en wat kost het je?',
-        content: "",
+        content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
         publicationDate: new Date(),
         imageUrl: 'https://www.fantasticsports.nl/wp-content/uploads/2021/06/Sportschool-Hoogeveen-Fitness-Fantastic-Sports-74-250x250.jpg',
         externLink: 'https://www.google.com/',

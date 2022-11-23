@@ -1,31 +1,33 @@
-<h2>Threads</h2>
+<div style="display: flex; align-items: center; justify-content: space-between">
+  <h2>Threads</h2>
+  <button
+    class="btn btn-primary"
+    [routerLink]="['/communities/', communityId, 'threads', 'new']"
+  >
+    <i class="bi bi-plus"></i> Thread aanmaken
+  </button>
+</div>
 
 <div class="row row-cols-1 row-cols-md-2 g-4">
   <div *ngFor="let thread of threads" class="col">
     <div
-      class="card"
-      [routerLink]="['/threads/', thread.id]"
+      class="card text-center"
+      [routerLink]="['/communities/', communityId, 'threads', thread.id]"
       style="cursor: pointer"
     >
-      <img
-        *ngIf="thread.imageUrl.length > 0"
-        [src]="thread.imageUrl"
-        class="card-img-top"
-        alt="{{ thread.title }}"
-      />
-
-      <img
-        *ngIf="thread.imageUrl.length === 0"
-        src="https://5.imimg.com/data5/RO/FF/XS/SELLER-2817636/premium-sewing-thread-500x500.jpg"
-        class="card-img-top"
-        alt="{{ thread.title }}"
-      />
-
       <div class="card-body">
         <h5 class="card-title">{{ thread.title }}</h5>
         <p class="card-text">
-          {{ thread.content }}
+          {{
+            thread.content.length > 150
+              ? thread.content.substring(0, 150) + '...'
+              : thread.content
+          }}
         </p>
+      </div>
+
+      <div class="card-footer text-muted">
+        Gepubliceerd op {{ thread.publicationDate | date: 'dd-MM-yy HH:mm' }}
       </div>
     </div>
   </div>

@@ -1,1 +1,119 @@
-<p>thread-detail works!</p>
+<div *ngIf="thread" class="col">
+  <div
+    style="display: flex; align-items: center; justify-content: space-between"
+  >
+    <button
+      class="btn btn-primary"
+      style="margin-bottom: 15px"
+      [routerLink]="['/communities/', communityId]"
+    >
+      <i class="bi bi-arrow-left-short"></i> Ga terug
+    </button>
+
+    <div>
+      <button
+        class="btn btn-primary"
+        [routerLink]="[
+          '/communities/',
+          communityId,
+          'threads',
+          thread.id,
+          'edit'
+        ]"
+      >
+        <i class="bi bi-pencil-square"></i> Bewerk
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-danger"
+        data-bs-toggle="modal"
+        data-bs-target="#deleteModal"
+        style="display: inline-block; margin: 5px"
+      >
+        <i class="bi bi-trash3"></i> Verwijder
+      </button>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-center">
+    <div class="col-sm-12 col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">{{ thread.title }}</h5>
+          <p class="card-text">
+            {{ thread.content }}
+          </p>
+          <a *ngIf="thread.externLink" href="{{ thread.externLink }}">{{
+            thread.externLink
+          }}</a>
+          <img
+            class="thread-detail-img"
+            src="{{ thread.imageUrl }}"
+            alt="{{ thread.title }}"
+          />
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 15px">
+        <div class="card-body">
+          <h5 class="card-title">Reacties</h5>
+          <form>
+            <textarea
+              style="margin: 15px 0"
+              class="form-control"
+              rows="3"
+            ></textarea>
+            <button type="submit" class="btn btn-primary">
+              Bericht aanmaken
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="deleteModal"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="staticBackdropLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Thread verwijderen</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        Weet je zeker dat je deze thread wilt verwijderen? De thread zal
+        permanent worden verwijderd en deze actie kan niet ongedaan worden
+        gemaakt.
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-danger"
+          (click)="delete()"
+          data-bs-dismiss="modal"
+        >
+          <i class="bi bi-trash3"></i> Verwijderen
+        </button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <i class="bi bi-x-lg"></i>
+          Annuleren
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
