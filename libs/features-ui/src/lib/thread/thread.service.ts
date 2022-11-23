@@ -68,7 +68,7 @@ export class ThreadService {
     create(thread: Thread): void {
         this.thread = { ...thread };
 
-        this.thread.id = (Math.trunc(Math.random()* (Number.MAX_SAFE_INTEGER - 1)) + 1).toString();
+        this.thread.id = (Math.trunc(Math.random() * (Number.MAX_SAFE_INTEGER - 1)) + 1).toString();
 
         this.thread.publicationDate = new Date();
 

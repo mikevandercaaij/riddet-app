@@ -1,3 +1,11 @@
+<button
+  class="btn btn-primary"
+  style="margin-bottom: 15px"
+  [routerLink]="['/communities/']"
+>
+  <i class="bi bi-arrow-left-short"></i> Ga terug
+</button>
+
 <div *ngIf="community" class="main-content row">
   <div class="col-sm-12 col-md-8">
     <h1>{{ community.name }}</h1>
@@ -7,7 +15,7 @@
       Aangemaakt op: {{ community.creationDate | date: 'dd-MM-yyyy HH:mm' }}
     </p>
 
-    <p>Publieke community: {{ community.isPublic ? 'ja' : 'nee' }}</p>
+    <p>Publieke community: {{ community.isPublic ? '✔️' : '❌' }}</p>
 
     <button
       class="btn btn-primary"

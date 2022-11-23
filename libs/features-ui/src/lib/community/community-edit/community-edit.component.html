@@ -87,6 +87,20 @@
             >
               <div>Foto URL is verplicht!</div>
             </div>
+
+            <div class="form-check" style="margin-top: 15px">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                [(ngModel)]="community!.isPublic"
+                name="communityIsPublic"
+                id="isPublicInput"
+                checked
+              />
+              <label class="form-check-label" for="flexCheckChecked">
+                Publieke community
+              </label>
+            </div>
           </div>
 
           <div class="text-center">
@@ -102,7 +116,7 @@
               style="margin-left: 5px"
               type="reset"
               class="btn btn-danger"
-              [routerLink]="['/communities']"
+              [routerLink]="['/communities', communityId]"
             >
               Annuleren
             </button>
@@ -208,7 +222,7 @@
               style="margin-left: 5px"
               type="reset"
               class="btn btn-danger"
-              [routerLink]="['/communities']"
+              [routerLink]="['/communities', communityId]"
             >
               Annuleren
             </button>
