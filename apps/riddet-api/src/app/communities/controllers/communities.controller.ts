@@ -31,7 +31,7 @@ export class CommunitiesController {
 
   @Post()
   async createUser(@Body() createCommunityDto: CreateCommunityDto): Promise<Community> {
-      return this.communitiesService.createCommunity(createCommunityDto.name, createCommunityDto.description)
+      return this.communitiesService.createCommunity(createCommunityDto.name, createCommunityDto.description, createCommunityDto.imageUrl);
   }
 
   @Patch(':id')
@@ -46,6 +46,7 @@ export class CommunitiesController {
       throw new HttpException(`Community with id of ${id}, can't be found!`, HttpStatus.NOT_FOUND);
     }
 
+    console.log(3)
       return this.communitiesService.updateCommunity(id, updateCommunityDto);
   }
 

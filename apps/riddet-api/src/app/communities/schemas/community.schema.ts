@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { ICommunity } from '@riddet-app/data';
 import {
   IsDate, IsDefined, IsNotEmpty, IsString, MinLength
 } from 'class-validator';
@@ -7,12 +8,15 @@ import { Document } from 'mongoose';
 export type CommunityDocument = Community & Document;
 
 @Schema()
-export class Community {
+export class Community implements ICommunity {
+  id: string;
+
   @IsString({ message: 'Name must be a string!' })
   @IsDefined({ message: 'Name is required!' })
   @MinLength(5, { message: 'Name must be at least 5 characters long!' })
   @Prop()
   name: string;
+
 
   @IsString({ message: 'Description must be a string!' })
   @IsDefined({ message: 'Description is required!' })

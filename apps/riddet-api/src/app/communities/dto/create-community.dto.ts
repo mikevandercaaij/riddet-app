@@ -10,4 +10,11 @@ export class CreateCommunityDto {
   @IsDefined({ message: 'Description is required!' })
   @IsNotEmpty({ message: 'Description cannot be empty!' })
   description: string;
+
+  @IsString({ message: 'ImageUrl must be a string!' })
+  @IsDefined({ message: 'ImageUrl is required!' })
+  @IsNotEmpty({ message: 'ImageUrl cannot be empty!' })
+
+  imageUrl: string;
+  
 }

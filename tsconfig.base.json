@@ -17,7 +17,8 @@
     "paths": {
       "@riddet-app/data": ["libs/data/src/index.ts"],
       "@riddet-app/features-ui": ["libs/features-ui/src/index.ts"],
-      "@riddet-app/ui": ["libs/ui/src/index.ts"]
+      "@riddet-app/ui": ["libs/ui/src/index.ts"],
+      "@riddet-app/util-ui": ["libs/util-ui/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { CommunityService } from '../community.service';
 import { Community } from './../community.model';
 
@@ -12,7 +12,7 @@ import { Community } from './../community.model';
 export class CommunityDetailComponent implements OnInit, OnDestroy {
   subscription?: Subscription;
   communityId: string | undefined;
-  community: Community | undefined;
+  community$: Observable<Community> | undefined;
 
   constructor(
     private route: ActivatedRoute,
@@ -25,7 +25,7 @@ export class CommunityDetailComponent implements OnInit, OnDestroy {
     this.subscription = this.route.paramMap.subscribe((params) => {
       this.communityId = params.get('id')?.toString();
       if(this.communityId) {
-        this.community = this.communityService.getById(this.communityId);
+        this.community$ = this.communityService.getById(this.communityId);
       }
     });
   }
