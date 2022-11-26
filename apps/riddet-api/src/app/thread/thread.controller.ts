@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Logger, Param, Patch, Post } from '@nestjs/common';
+import { Public } from '../auth/auth.module';
 import { ParseObjectIdPipe } from '../shared/pipes/ParseObjectIdPipe';
 import { ThreadDto } from './thread-dto';
 import { Thread } from "./thread.schema";
@@ -8,6 +9,7 @@ import { ThreadService } from './thread.service';
 export class ThreadController {
   constructor(private readonly threadService: ThreadService) {}
 
+  @Public()
   @Get('threads/:id')
   async getThread(
     @Param('id', ParseObjectIdPipe) id: string): Promise<Thread> {
@@ -23,6 +25,7 @@ export class ThreadController {
     return thread;
   }
 
+  @Public()
   @Get('threads')
   async getThreads(): Promise<Thread[]> {
 
@@ -30,6 +33,8 @@ export class ThreadController {
 
     return this.threadService.getThreads();
   }
+
+  @Public() //auth
 
   @Get('communities/:id/threads')
   async getThreadsByCommunityId(
@@ -40,6 +45,7 @@ export class ThreadController {
       return this.threadService.getThreadsByCommunityId(communityId);
     }
 
+  @Public() //auth
   @Post('threads')
   async createThread(@Body() ThreadDto: ThreadDto): Promise<Thread> {
 
@@ -48,6 +54,7 @@ export class ThreadController {
       return this.threadService.createThread(ThreadDto);
   }
 
+  @Public() //auth
   @Patch('threads/:id')
   async updateThread(@Param('id', ParseObjectIdPipe) id: string, @Body() threadDto: ThreadDto): Promise<Thread> {
 
@@ -62,6 +69,7 @@ export class ThreadController {
     return this.threadService.updateThread(id, threadDto);
   }
 
+  @Public() //auth
   @Delete('threads/:id')
   async deleteThread(@Param('id', ParseObjectIdPipe) id: string): Promise<Thread> {
 

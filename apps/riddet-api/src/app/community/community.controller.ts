@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Logger, Param, Patch, Post } from '@nestjs/common';
+import { Public } from '../auth/auth.module';
 import { ParseObjectIdPipe } from '../shared/pipes/ParseObjectIdPipe';
-
 import { CommunityDto } from './community.dto';
 import { Community } from "./community.schema";
 import { CommunitiesService } from './community.service';
@@ -9,6 +9,7 @@ import { CommunitiesService } from './community.service';
 export class CommunitiesController {
   constructor(private readonly communitiesService: CommunitiesService) {}
 
+  @Public()
   @Get(':id')
   async getThread(
     @Param('id', ParseObjectIdPipe) id: string): Promise<Community> {
@@ -24,6 +25,7 @@ export class CommunitiesController {
     return community;
   }
 
+  @Public()
   @Get()
   async getThreads(): Promise<Community[]> {
       Logger.log(`Getting all communities (READ)`);
@@ -31,6 +33,7 @@ export class CommunitiesController {
       return this.communitiesService.getCommunities();
   }
 
+  @Public() //auth
   @Post()
   async createThread(@Body() communityDto: CommunityDto): Promise<Community> {
       Logger.log(`Creating community (CREATE)`);
@@ -38,6 +41,7 @@ export class CommunitiesController {
       return this.communitiesService.createCommunity(communityDto);
   }
 
+  @Public() //auth
   @Patch(':id')
   async updateThread(@Param('id', ParseObjectIdPipe) id: string, @Body() communityDto: CommunityDto): Promise<Community> {
 
@@ -52,6 +56,7 @@ export class CommunitiesController {
     return this.communitiesService.updateCommunity(id, communityDto);
   }
 
+  @Public() //auth
   @Delete(':id')
   async deleteThread(@Param('id', ParseObjectIdPipe) id: string): Promise<Community> {
 
