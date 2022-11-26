@@ -1,7 +1,7 @@
 import { Body, Injectable } from "@nestjs/common";
-import { ThreadDto } from "../dto/thread-dto";
-import { ThreadRepository } from "../repositories/thread.repository";
-import { Thread } from "../schemas/thread.schema";
+import { ThreadDto } from "./thread-dto";
+import { ThreadRepository } from "./thread.repository";
+import { Thread } from "./thread.schema";
 
 @Injectable()
 export class ThreadService {
@@ -12,7 +12,6 @@ export class ThreadService {
     }
 
     async getThreadsByCommunityId(communityId : string): Promise<Thread[]> {
-        console.log(communityId)
         return this.threadRepository.find({communityId : communityId.toString()});
     }
 

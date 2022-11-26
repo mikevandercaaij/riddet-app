@@ -15,7 +15,7 @@ export class ThreadService {
     }
 
     getListByCommunityId(communityId : string): Observable<Thread[]> {
-      return this.http.get(this.configService.getApiEndpoint() + '/threads/communities/' + communityId) as Observable<Thread[]>;
+      return this.http.get(this.configService.getApiEndpoint() + '/communities/' + communityId + '/threads') as Observable<Thread[]>;
   }
 
     getById(threadId: string): Observable<Thread> {
@@ -40,6 +40,7 @@ export class ThreadService {
 
     delete(threadId: string) : void {
         this.http.delete(this.configService.getApiEndpoint() + '/threads/' + threadId).subscribe();
+        
         console.log("Thread verwijderd");
     }
 }

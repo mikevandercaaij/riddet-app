@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { CommunitiesController } from './controllers/community.controller';
-import { CommunitiesRepository } from './repositories/community.repository';
-import { Community, CommunitySchema } from './schemas/community.schema';
-import { CommunitiesService } from './services/community.service';
+import { CommunitiesController } from './community.controller';
+import { CommunitiesRepository } from './community.repository';
+import { Community, CommunitySchema } from './community.schema';
+import { CommunitiesService } from './community.service';
 
 @Module({
   imports: [

@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ThreadController } from './controllers/thread.controller';
-import { ThreadRepository } from './repositories/thread.repository';
-import { Thread, ThreadSchema } from './schemas/thread.schema';
-import { ThreadService } from './services/thread.service';
+import { ThreadController } from './thread.controller';
+import { ThreadRepository } from './thread.repository';
+import { Thread, ThreadSchema } from './thread.schema';
+import { ThreadService } from './thread.service';
 
 @Module({
   imports: [

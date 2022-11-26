@@ -1,10 +1,9 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Logger, Param, Patch, Post } from '@nestjs/common';
-import { ParseObjectIdPipe } from '../../shared/pipes/ParseObjectIdPipe';
-import { CreateCommunityDto } from '../dto/create-community.dto';
-import { UpdateCommunityDto } from '../dto/update-community.dto';
+import { ParseObjectIdPipe } from '../shared/pipes/ParseObjectIdPipe';
 
-import { Community } from "../schemas/community.schema";
-import { CommunitiesService } from '../services/community.service';
+import { CommunityDto } from './community.dto';
+import { Community } from "./community.schema";
+import { CommunitiesService } from './community.service';
 
 @Controller('communities')
 export class CommunitiesController {
@@ -17,7 +16,7 @@ export class CommunitiesController {
     Logger.log(`Getting community with id: ${id} (READ)`);
 
     const community = await this.communitiesService.getCommunityById(id);
-    
+
     if(!community) {
       throw new HttpException(`Community with id of ${id}, can't be found!`, HttpStatus.NOT_FOUND);
     }
@@ -27,17 +26,20 @@ export class CommunitiesController {
 
   @Get()
   async getThreads(): Promise<Community[]> {
+      Logger.log(`Getting all communities (READ)`);
+
       return this.communitiesService.getCommunities();
   }
 
   @Post()
-  async createThread(@Body() createCommunityDto: CreateCommunityDto): Promise<Community> {
-      return this.communitiesService.createCommunity(createCommunityDto.name, createCommunityDto.description, createCommunityDto.imageUrl);
+  async createThread(@Body() communityDto: CommunityDto): Promise<Community> {
+      Logger.log(`Creating community (CREATE)`);
+
+      return this.communitiesService.createCommunity(communityDto);
   }
 
   @Patch(':id')
-  async updateThread(@Param('id', ParseObjectIdPipe) id: string, @Body() updateCommunityDto: UpdateCommunityDto): Promise<Community> {
-
+  async updateThread(@Param('id', ParseObjectIdPipe) id: string, @Body() communityDto: CommunityDto): Promise<Community> {
 
     Logger.log(`Getting community with id: ${id} (UPDATE)`);
 
@@ -47,7 +49,7 @@ export class CommunitiesController {
       throw new HttpException(`Community with id of ${id}, can't be found!`, HttpStatus.NOT_FOUND);
     }
 
-    return this.communitiesService.updateCommunity(id, updateCommunityDto);
+    return this.communitiesService.updateCommunity(id, communityDto);
   }
 
   @Delete(':id')
@@ -61,6 +63,6 @@ export class CommunitiesController {
       throw new HttpException(`Community with id of ${id}, can't be found!`, HttpStatus.NOT_FOUND);
     }
     
-      return this.communitiesService.deleteCommunity(id);
+    return this.communitiesService.deleteCommunity(id);
   }
 }
