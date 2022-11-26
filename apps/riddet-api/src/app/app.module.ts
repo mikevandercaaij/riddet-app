@@ -1,12 +1,14 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { CommunityModule } from '../app/community/community.module';
+import { ThreadModule } from '../app/thread/thread.module';
+import { environment } from '../environments/environment.prod';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { CommunitiesModule } from './communities/communities.module';
 
 @Module({
-  imports: [MongooseModule.forRoot('mongodb://127.0.0.1:27017/riddet'), CommunitiesModule],
+  imports: [MongooseModule.forRoot( environment.DATABASE_CONNECTION ), CommunityModule, ThreadModule],
   controllers: [AppController],
   providers: [AppService],
 })

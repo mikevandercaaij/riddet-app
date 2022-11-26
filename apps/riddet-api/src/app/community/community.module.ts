@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { CommunitiesController } from './controllers/communities.controller';
-import { CommunitiesRepository } from './repositories/communities.repository';
+import { CommunitiesController } from './controllers/community.controller';
+import { CommunitiesRepository } from './repositories/community.repository';
 import { Community, CommunitySchema } from './schemas/community.schema';
-import { CommunitiesService } from './services/communities.service';
+import { CommunitiesService } from './services/community.service';
 
 @Module({
   imports: [
@@ -14,4 +14,4 @@ import { CommunitiesService } from './services/communities.service';
   controllers: [CommunitiesController],
   providers: [CommunitiesService, CommunitiesRepository],
 })
-export class CommunitiesModule {}
+export class CommunityModule {}

@@ -1,17 +1,18 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Logger, Param, Patch, Post } from '@nestjs/common';
+import { ParseObjectIdPipe } from '../../shared/pipes/ParseObjectIdPipe';
 import { CreateCommunityDto } from '../dto/create-community.dto';
 import { UpdateCommunityDto } from '../dto/update-community.dto';
 
 import { Community } from "../schemas/community.schema";
-import { CommunitiesService } from '../services/communities.service';
+import { CommunitiesService } from '../services/community.service';
 
 @Controller('communities')
 export class CommunitiesController {
   constructor(private readonly communitiesService: CommunitiesService) {}
 
   @Get(':id')
-  async getUser(
-    @Param('id') id: string): Promise<Community> {
+  async getThread(
+    @Param('id', ParseObjectIdPipe) id: string): Promise<Community> {
       
     Logger.log(`Getting community with id: ${id} (READ)`);
 
@@ -25,17 +26,17 @@ export class CommunitiesController {
   }
 
   @Get()
-  async getUsers(): Promise<Community[]> {
+  async getThreads(): Promise<Community[]> {
       return this.communitiesService.getCommunities();
   }
 
   @Post()
-  async createUser(@Body() createCommunityDto: CreateCommunityDto): Promise<Community> {
+  async createThread(@Body() createCommunityDto: CreateCommunityDto): Promise<Community> {
       return this.communitiesService.createCommunity(createCommunityDto.name, createCommunityDto.description, createCommunityDto.imageUrl);
   }
 
   @Patch(':id')
-  async updateUser(@Param('id') id: string, @Body() updateCommunityDto: UpdateCommunityDto): Promise<Community> {
+  async updateThread(@Param('id', ParseObjectIdPipe) id: string, @Body() updateCommunityDto: UpdateCommunityDto): Promise<Community> {
 
 
     Logger.log(`Getting community with id: ${id} (UPDATE)`);
@@ -46,12 +47,11 @@ export class CommunitiesController {
       throw new HttpException(`Community with id of ${id}, can't be found!`, HttpStatus.NOT_FOUND);
     }
 
-    console.log(3)
-      return this.communitiesService.updateCommunity(id, updateCommunityDto);
+    return this.communitiesService.updateCommunity(id, updateCommunityDto);
   }
 
   @Delete(':id')
-  async deleteUser(@Param('id') id: string): Promise<Community> {
+  async deleteThread(@Param('id', ParseObjectIdPipe) id: string): Promise<Community> {
 
     Logger.log(`Getting community with id: ${id} (DELETE)`);
 

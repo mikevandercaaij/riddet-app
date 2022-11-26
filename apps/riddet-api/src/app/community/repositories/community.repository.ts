@@ -27,7 +27,6 @@ export class CommunitiesRepository {
   }
 
   async findOneAndUpdate(communityFilterQuery: FilterQuery<Community>, community: Partial<Community>): Promise<Community> {
-    console.log(2)
     return this.communityModel.findOneAndUpdate(communityFilterQuery, community, { new: true });
   }
 

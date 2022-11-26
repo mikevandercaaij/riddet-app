@@ -19,3 +19,13 @@ body {
 nav {
   margin-bottom: 25px;
 }
+
+.community-info-card img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+}
+
+.community-info-card .card-body p {
+  min-height: 50px;
+}

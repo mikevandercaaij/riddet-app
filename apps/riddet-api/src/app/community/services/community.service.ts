@@ -1,5 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { CommunitiesRepository } from "../repositories/communities.repository";
+import { CommunitiesRepository } from "../repositories/community.repository";
 import { Community } from "../schemas/community.schema";
 
 @Injectable()
@@ -25,7 +25,6 @@ export class CommunitiesService {
     }
 
     async updateCommunity(_id: string, community: Partial<Community>): Promise<Community> {
-        console.log(1)
         return this.communityRepository.findOneAndUpdate({ _id }, community);
     }
 

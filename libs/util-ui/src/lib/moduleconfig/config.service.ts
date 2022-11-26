@@ -5,9 +5,7 @@ import { CustomConfig } from './config.module'
   providedIn: 'root'
 })
 export class ConfigService {
-  constructor(private config: CustomConfig) {
-    console.log('ConfigService ' + config.apiEndpoint)
-  }
+  constructor(private config: CustomConfig) {}
 
   public getConfig(): CustomConfig {
     return this.config

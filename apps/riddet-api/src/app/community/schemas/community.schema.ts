@@ -3,13 +3,13 @@ import { ICommunity } from '@riddet-app/data';
 import {
   IsDate, IsDefined, IsNotEmpty, IsString, MinLength
 } from 'class-validator';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
  
 export type CommunityDocument = Community & Document;
 
 @Schema()
 export class Community implements ICommunity {
-  id: string;
+  _id : Types.ObjectId
 
   @IsString({ message: 'Name must be a string!' })
   @IsDefined({ message: 'Name is required!' })

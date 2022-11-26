@@ -1,4 +1,4 @@
-<div *ngIf="thread" class="col">
+<div *ngIf="thread$ | async as thread" class="col">
   <div
     style="display: flex; align-items: center; justify-content: space-between"
   >
@@ -17,7 +17,7 @@
           '/communities/',
           communityId,
           'threads',
-          thread.id,
+          thread._id,
           'edit'
         ]"
       >

@@ -26,7 +26,6 @@ import { NavbarComponent } from './shared/navbar/navbar.component';
     NavbarComponent,
     RegisterComponent,
     AboutComponent,
-    
   ],
   imports: [
     CommonModule,

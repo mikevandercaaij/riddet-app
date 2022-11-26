@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { Thread } from '../thread.model';
 import { ThreadService } from '../thread.service';
 
@@ -10,7 +10,7 @@ import { ThreadService } from '../thread.service';
   styleUrls: ['./thread-detail.component.css'],
 })
 export class ThreadDetailComponent implements OnInit, OnDestroy {
-  thread: Thread | undefined
+  thread$: Observable<Thread> | undefined
   subscription?: Subscription;
   threadId: string | undefined;
   communityId: string | undefined
@@ -24,9 +24,10 @@ export class ThreadDetailComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.subscription = this.route.paramMap.subscribe((params) => {
       this.threadId = params.get('threadId')?.toString();
+      this.communityId = params.get('communityId')?.toString();
+      
       if(this.threadId) {
-        this.thread = this.threadService.getById(this.threadId);
-        this.communityId = this.thread?.communityId;
+        this.thread$ = this.threadService.getById(this.threadId);
       }
     });
   }

@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 export interface ICommunity {
   name: string ,
   description: string ,
@@ -6,12 +7,11 @@ export interface ICommunity {
   isPublic: boolean,
 }
 export interface IThread {
-  id: string;
   title: string;
   content: string;
   publicationDate: Date;
   imageUrl: string;
   externLink: string;
   upvotes: number;
-  communityId: string;
+  communityId: Types.ObjectId;
 }
