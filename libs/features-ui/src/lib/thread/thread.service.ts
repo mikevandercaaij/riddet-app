@@ -23,7 +23,7 @@ export class ThreadService {
         imageUrl: '',
         externLink: 'https://www.google.com/',
         upvotes: 0,
-        communityId: '2'},
+        communityId: '1'},
 
         {id: '3',
         title: 'Opgelet!📣 Dinsdag 30 en woensdag 31 augustus stakingen NS 🚊',
@@ -32,7 +32,7 @@ export class ThreadService {
         imageUrl: 'https://www.techtastic.nl/wp-content/uploads/2015/04/ns-logo.png',
         externLink: 'https://www.google.com/',
         upvotes: 0,
-        communityId: '3'}, 
+        communityId: '1'}, 
 
         {id: '4',
         title: 'What frustates you in Angular',
@@ -41,7 +41,7 @@ export class ThreadService {
         imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Angular_full_color_logo.svg/250px-Angular_full_color_logo.svg.png',
         externLink: 'https://www.google.com/',
         upvotes: 0,
-        communityId: '4'}, 
+        communityId: '1'}, 
         
         {id: '5',
         title: 'Welke sport doe je en wat kost het je?',
@@ -50,7 +50,7 @@ export class ThreadService {
         imageUrl: 'https://www.fantasticsports.nl/wp-content/uploads/2021/06/Sportschool-Hoogeveen-Fitness-Fantastic-Sports-74-250x250.jpg',
         externLink: 'https://www.google.com/',
         upvotes: 0,
-        communityId: '5'}
+        communityId: '1'}
     ];
 
     getList(): Thread[] {
