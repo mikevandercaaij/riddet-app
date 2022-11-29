@@ -1,5 +1,5 @@
 import { Body, Injectable } from "@nestjs/common";
-import { ThreadDto } from "./thread-dto";
+import { CreateThreadDto } from "./thread-dto";
 import { ThreadRepository } from "./thread.repository";
 import { Thread } from "./thread.schema";
 
@@ -7,27 +7,27 @@ import { Thread } from "./thread.schema";
 export class ThreadService {
     constructor(private readonly threadRepository : ThreadRepository) {}
 
-    async getThreadById(_id: string): Promise<Thread> {
+    async getById(_id: string): Promise<Thread> {
         return this.threadRepository.findOne({ _id });
     }
 
-    async getThreadsByCommunityId(communityId : string): Promise<Thread[]> {
+    async getAllByCommunityId(communityId : string): Promise<Thread[]> {
         return this.threadRepository.find({communityId : communityId.toString()});
     }
 
-    async getThreads(): Promise<Thread[]> {
+    async getAll(): Promise<Thread[]> {
         return this.threadRepository.find({});
     }
 
-    async createThread(@Body() threadDto : ThreadDto): Promise<Thread> {
-        return this.threadRepository.create(threadDto);
+    async create(@Body() createThreadDto : CreateThreadDto): Promise<Thread> {
+        return this.threadRepository.create(createThreadDto);
     }
 
-    async updateThread(_id: string, thread: Partial<Thread>): Promise<Thread> {
+    async update(_id: string, thread: Partial<Thread>): Promise<Thread> {
         return this.threadRepository.findOneAndUpdate({ _id }, thread);
     }
 
-    async deleteThread(_id: string): Promise<Thread> {
+    async delete(_id: string): Promise<Thread> {
         return this.threadRepository.findOneAndDelete({ _id });
     }
 }

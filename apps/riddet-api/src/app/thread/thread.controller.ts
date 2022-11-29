@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Logger, Param, Patch, Post } from '@nestjs/common';
 import { Public } from '../auth/auth.module';
 import { ParseObjectIdPipe } from '../shared/pipes/ParseObjectIdPipe';
-import { ThreadDto } from './thread-dto';
+import { CreateThreadDto, UpdateThreadDto } from './thread-dto';
 import { Thread } from "./thread.schema";
 import { ThreadService } from './thread.service';
 
@@ -11,15 +11,15 @@ export class ThreadController {
 
   @Public()
   @Get('threads/:id')
-  async getThread(
+  async getById(
     @Param('id', ParseObjectIdPipe) id: string): Promise<Thread> {
       
     Logger.log(`Getting thread with id: ${id} (READ)`);
 
-    const thread = await this.threadService.getThreadById(id);
+    const thread = await this.threadService.getById(id);
     
     if(!thread) {
-      throw new HttpException(`Thread with id of ${id}, can't be found!`, HttpStatus.NOT_FOUND);
+      throw new HttpException(`Thread with id of ${id} doesn't exist!`, HttpStatus.NOT_FOUND);
     }
 
     return thread;
@@ -27,60 +27,59 @@ export class ThreadController {
 
   @Public()
   @Get('threads')
-  async getThreads(): Promise<Thread[]> {
+  async getAll(): Promise<Thread[]> {
 
     Logger.log(`Getting all threads (READ)`);
 
-    return this.threadService.getThreads();
+    return this.threadService.getAll();
   }
 
-  @Public() //auth
-
+  @Public()
   @Get('communities/:id/threads')
-  async getThreadsByCommunityId(
+  async getAllByCommunityId(
     @Param('id', ParseObjectIdPipe) communityId : string): Promise<Thread[]> {
 
       Logger.log(`Getting all threads from community with an id of: ${communityId} (READ)`);
 
-      return this.threadService.getThreadsByCommunityId(communityId);
+      return this.threadService.getAllByCommunityId(communityId);
     }
 
-  @Public() //auth
+  @Public()
   @Post('threads')
-  async createThread(@Body() ThreadDto: ThreadDto): Promise<Thread> {
+  async create(@Body() createThreadDto: CreateThreadDto): Promise<Thread> {
 
       Logger.log(`Creating thread (CREATE)`);
 
-      return this.threadService.createThread(ThreadDto);
+      return this.threadService.create(createThreadDto);
   }
 
-  @Public() //auth
+  @Public()
   @Patch('threads/:id')
-  async updateThread(@Param('id', ParseObjectIdPipe) id: string, @Body() threadDto: ThreadDto): Promise<Thread> {
+  async update(@Param('id', ParseObjectIdPipe) id: string, @Body() updateThreadDto: UpdateThreadDto): Promise<Thread> {
 
     Logger.log(`Getting thread with id: ${id} (UPDATE)`);
 
-    const thread = await this.threadService.getThreadById(id);
+    const thread = await this.threadService.getById(id);
     
     if(!thread) {
-      throw new HttpException(`Thread with id of ${id}, can't be found!`, HttpStatus.NOT_FOUND);
+      throw new HttpException(`Thread with id of ${id} doesn't exist!`, HttpStatus.NOT_FOUND);
     }
 
-    return this.threadService.updateThread(id, threadDto);
+    return this.threadService.update(id, updateThreadDto);
   }
 
-  @Public() //auth
+  @Public()
   @Delete('threads/:id')
-  async deleteThread(@Param('id', ParseObjectIdPipe) id: string): Promise<Thread> {
+  async delete(@Param('id', ParseObjectIdPipe) id: string): Promise<Thread> {
 
     Logger.log(`Getting thread with id: ${id} (DELETE)`);
 
-    const thread = await this.threadService.getThreadById(id);
+    const thread = await this.threadService.getById(id);
     
     if(!thread) {
-      throw new HttpException(`Thread with id of ${id}, can't be found!`, HttpStatus.NOT_FOUND);
+      throw new HttpException(`Thread with id of ${id} doesn't exist!`, HttpStatus.NOT_FOUND);
     }
     
-    return this.threadService.deleteThread(id);
+    return this.threadService.delete(id);
   }
 }

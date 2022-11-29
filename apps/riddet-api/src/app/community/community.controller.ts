@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Logger, Param, Patch, Post } from '@nestjs/common';
 import { Public } from '../auth/auth.module';
 import { ParseObjectIdPipe } from '../shared/pipes/ParseObjectIdPipe';
-import { CommunityDto } from './community.dto';
+import { CreateCommunityDto, UpdateCommunityDto } from './community.dto';
 import { Community } from "./community.schema";
 import { CommunitiesService } from './community.service';
 
@@ -19,7 +19,7 @@ export class CommunitiesController {
     const community = await this.communitiesService.getCommunityById(id);
 
     if(!community) {
-      throw new HttpException(`Community with id of ${id}, can't be found!`, HttpStatus.NOT_FOUND);
+      throw new HttpException(`Community with id of ${id} doesn't exist!`, HttpStatus.NOT_FOUND);
     }
 
     return community;
@@ -33,30 +33,31 @@ export class CommunitiesController {
       return this.communitiesService.getCommunities();
   }
 
-  @Public() //auth
+
+  @Public()
   @Post()
-  async createThread(@Body() communityDto: CommunityDto): Promise<Community> {
+  async createThread(@Body() createCommunityDto: CreateCommunityDto): Promise<Community> {
       Logger.log(`Creating community (CREATE)`);
 
-      return this.communitiesService.createCommunity(communityDto);
+      return this.communitiesService.createCommunity(createCommunityDto);
   }
 
-  @Public() //auth
+  @Public()
   @Patch(':id')
-  async updateThread(@Param('id', ParseObjectIdPipe) id: string, @Body() communityDto: CommunityDto): Promise<Community> {
+  async updateThread(@Param('id', ParseObjectIdPipe) id: string, @Body() updateCommunityDto: UpdateCommunityDto): Promise<Community> {
 
     Logger.log(`Getting community with id: ${id} (UPDATE)`);
 
     const community = await this.communitiesService.getCommunityById(id);
     
     if(!community) {
-      throw new HttpException(`Community with id of ${id}, can't be found!`, HttpStatus.NOT_FOUND);
+      throw new HttpException(`Community with id of ${id} doesn't exist!`, HttpStatus.NOT_FOUND);
     }
 
-    return this.communitiesService.updateCommunity(id, communityDto);
+    return this.communitiesService.updateCommunity(id, updateCommunityDto);
   }
 
-  @Public() //auth
+  @Public()
   @Delete(':id')
   async deleteThread(@Param('id', ParseObjectIdPipe) id: string): Promise<Community> {
 
@@ -65,7 +66,7 @@ export class CommunitiesController {
     const community = await this.communitiesService.getCommunityById(id);
     
     if(!community) {
-      throw new HttpException(`Community with id of ${id}, can't be found!`, HttpStatus.NOT_FOUND);
+      throw new HttpException(`Community with id of ${id} doesn't exist!`, HttpStatus.NOT_FOUND);
     }
     
     return this.communitiesService.deleteCommunity(id);

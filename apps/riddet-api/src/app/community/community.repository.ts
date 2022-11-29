@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
-import { CommunityDto } from './community.dto';
+import { CreateCommunityDto } from './community.dto';
 import { Community, CommunityDocument } from './community.schema';
 
 @Injectable()
@@ -16,9 +16,9 @@ export class CommunitiesRepository {
     return this.communityModel.find(communityFilterQuery);
   }
 
-  async create(community: CommunityDto): Promise<Community> {
+  async create(createCommunityDto: CreateCommunityDto): Promise<Community> {
 
-    const newCommunity = new this.communityModel({... community, creationDate: new Date(), isPublic: true});
+    const newCommunity = new this.communityModel({...createCommunityDto, creationDate: new Date(), isPublic: true});
     
     return newCommunity.save();
   }

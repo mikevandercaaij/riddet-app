@@ -6,6 +6,7 @@ export interface ICommunity {
   imageUrl: string ,
   isPublic: boolean,
 }
+
 export interface IThread {
   title: string;
   content: string;
@@ -14,4 +15,16 @@ export interface IThread {
   externLink: string;
   upvotes: number;
   communityId: Types.ObjectId;
+}
+
+export interface IUser {
+  username: string;
+  firstname: string;
+  lastname: string;
+  email: string;
+  dateOfBirth: Date;
+  password: string;
+  creationDate: Date;
+  userImageUrl: string;
+  isActive: boolean;
 }

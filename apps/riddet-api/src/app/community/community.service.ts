@@ -1,5 +1,5 @@
 import { Body, Injectable } from "@nestjs/common";
-import { CommunityDto } from "./community.dto";
+import { CreateCommunityDto } from "./community.dto";
 import { CommunitiesRepository } from "./community.repository";
 import { Community } from "./community.schema";
 
@@ -15,8 +15,8 @@ export class CommunitiesService {
         return this.communityRepository.find({});
     }
 
-    async createCommunity(@Body() communityDto : CommunityDto): Promise<Community> {
-        return this.communityRepository.create(communityDto);
+    async createCommunity(@Body() createCommunityDto : CreateCommunityDto): Promise<Community> {
+        return this.communityRepository.create(createCommunityDto);
     }
 
     async updateCommunity(_id: string, community: Partial<Community>): Promise<Community> {

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
-import { ThreadDto } from './thread-dto';
+import { CreateThreadDto } from './thread-dto';
 import { Thread, ThreadDocument } from './thread.schema';
 
 @Injectable()
@@ -16,9 +16,9 @@ export class ThreadRepository {
     return this.threadModel.find(threadFilterQuery);
   }
 
-  async create(thread: ThreadDto): Promise<Thread> {
+  async create(createThreadDto: CreateThreadDto): Promise<Thread> {
 
-    const mergedthread = {... thread, creationDate: new Date(), isPublic: true};
+    const mergedthread = {...createThreadDto, creationDate: new Date(), isPublic: true};
 
     const newthread = new this.threadModel(mergedthread);
     return newthread.save();
