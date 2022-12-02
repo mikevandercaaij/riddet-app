@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import * as bcrypt from 'bcryptjs';
 import { Types } from 'mongoose';
+import { Role } from '../auth/role.enum';
 import { ValidationException } from '../shared/filters/validation.exception';
 import { CreateUserDto } from './user.dto';
 import { UserRepository } from './user.repository';
 import { User } from './user.schema';
+
 
 @Injectable()
 export class UserService {
@@ -40,21 +43,36 @@ export class UserService {
       return this.userRepository.create(createUserDto);
   }
 
-  async update(updateUserId: string, user: Partial<User>, currentUserId : string): Promise<User> {
-      await this.validateUser(user, currentUserId, updateUserId);
+  async update(updateUserId: string, user: Partial<User>, req : any): Promise<User> {
+
+    const currentUser = req.user;
+
+    if(await this.isMyData(updateUserId, currentUser.id) || currentUser.roles.includes(Role.Admin)) {
+      await this.validateUser(user, currentUser.id, updateUserId);
 
       if(user.dateOfBirth) {
         user.dateOfBirth = new Date(user.dateOfBirth);
         user.dateOfBirth.setHours(user.dateOfBirth.getHours() + 1);
       }
 
+      if(user.password) {
+        user.password = await bcrypt.hashSync(user.password, 10)
+      }
+
       return this.userRepository.findOneAndUpdate({ _id : updateUserId }, user);
+    }
+    throw new ValidationException([`You cannot update other users!`]);
   }
 
-  async delete(_id: string): Promise<User> {
-      return this.userRepository.findOneAndDelete({ _id });
-  }
+  async delete(deleteUserId: string, req : any): Promise<User> {
+    const currentUser = req.user
 
+    if(await this.isMyData(deleteUserId, currentUser.id) || currentUser.roles.includes(Role.Admin)) {
+      return this.userRepository.findOneAndDelete({ _id : deleteUserId });
+    }
+
+    throw new ValidationException([`You cannot delete other users!`]);
+  }
 
   async validateUser(user : any, currentUserId : string | undefined, updateUserId : string | undefined) : Promise<void> {
     if((await this.userRepository.find(
@@ -65,12 +83,16 @@ export class UserService {
             { email: user.email }
         ] 
       }, 
-    )).length > 0 && !(new Types.ObjectId(currentUserId).equals(new Types.ObjectId(updateUserId)))) {
+    )).length > 0 && !(await this.isMyData(currentUserId, updateUserId))) {
       throw new ValidationException([`Username or email is already in use!`]);
     }
 
     if(new Date(user.dateOfBirth) > new Date()) {
       throw new ValidationException([`Date of birth cannot be in the future!`]);
     }
+  }
+
+  async isMyData(currentUserId : string | undefined, targetUserId : string | undefined) : Promise<boolean> {
+    return new Types.ObjectId(currentUserId).equals(new Types.ObjectId(targetUserId))
   }
 }

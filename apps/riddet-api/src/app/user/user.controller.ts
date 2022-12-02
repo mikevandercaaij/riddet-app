@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Logger, Param, Patch, Post, Req } from '@nestjs/common';
-import { Public, Roles } from '../auth/auth.module';
+import { Roles } from '../auth/auth.module';
 import { Role } from '../auth/role.enum';
 import { ParseObjectIdPipe } from '../shared/pipes/ParseObjectIdPipe';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
@@ -10,7 +10,6 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Public()
   @Get('users/:id')
   async getById(
     @Param('id', ParseObjectIdPipe) id: string): Promise<User> {
@@ -26,7 +25,6 @@ export class UserController {
     return user;
   }
 
-  @Roles(Role.Admin)
   @Get('users')
   async getAll(): Promise<User[]> {
       Logger.log(`Getting all users (READ)`);
@@ -52,12 +50,11 @@ export class UserController {
       throw new HttpException(`User with id of ${id} doesn't exist!`, HttpStatus.NOT_FOUND);
     }
 
-    return this.userService.update(id, updateUserDto, req.user.id);
+    return this.userService.update(id, updateUserDto, req);
   }
 
-  @Public()
   @Delete('users/:id')
-  async delete(@Param('id', ParseObjectIdPipe) id: string): Promise<User> {
+  async delete(@Req() req, @Param('id', ParseObjectIdPipe) id: string): Promise<User> {
 
     Logger.log(`Getting community with id: ${id} (DELETE)`);
 
@@ -67,6 +64,6 @@ export class UserController {
       throw new HttpException(`User with id of ${id} doesn't exist!`, HttpStatus.NOT_FOUND);
     }
     
-    return this.userService.delete(id);
+    return this.userService.delete(id, req);
   }
 }
