@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
+import { CreateUserDto } from '../user/user.dto';
 import { User } from '../user/user.schema';
 import { UserService } from '../user/user.service';
 
@@ -20,6 +21,11 @@ export class AuthService {
 
     throw new HttpException(`Incorrect credentials!`, HttpStatus.BAD_REQUEST);
 
+  }
+
+  async register(createUserDto: CreateUserDto) {
+    const user : User = await this.userService.create(createUserDto);
+    return this.login(user);
   }
 
   async login(user: any) {

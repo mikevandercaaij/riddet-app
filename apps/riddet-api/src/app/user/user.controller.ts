@@ -33,7 +33,7 @@ export class UserController {
       return this.userService.getAll();
   }
 
-  @Public()
+  @Roles(Role.Admin)
   @Post('users')
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
       Logger.log(`Creating community (CREATE)`);
