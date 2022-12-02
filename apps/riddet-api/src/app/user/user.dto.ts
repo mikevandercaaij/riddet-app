@@ -1,4 +1,4 @@
-import { IsDate, IsDefined, IsEmail, IsOptional, IsString, MinLength } from "class-validator";
+import { IsDefined, IsEmail, IsOptional, IsString, Matches, MinLength } from "class-validator";
 
 export class CreateUserDto {
     @IsString({ message: 'Username must be a string!' })
@@ -19,7 +19,8 @@ export class CreateUserDto {
     @IsDefined({ message: 'Email is required!' })
     email: string;
 
-    @IsDate({ message: 'Creation date must be a date!' })
+    @Matches(/^\d{4}[./-]\d{2}[./-]\d{2}$/, { message: 'Date of birth must be a valid date! (YYYY-MM-DD)' })
+    @IsDefined({ message: 'Date of birth is required!' })
     dateOfBirth: Date;
   
     @IsString({ message: 'Password must be a string!' })
@@ -56,8 +57,9 @@ export class UpdateUserDto {
     @IsDefined({ message: 'Email is required!' })
     email: string;
 
-    @IsDate({ message: 'Creation date must be a date!' })
     @IsOptional()
+    @Matches(/^\d{4}[./-]\d{2}[./-]\d{2}$/, { message: 'Date of birth must be a valid date! (YYYY-MM-DD)' })
+    @IsDefined({ message: 'Date of birth is required!' })
     dateOfBirth: Date;
   
     @IsOptional()

@@ -20,7 +20,6 @@ export class UserRepository {
     }
 
     async create(createUserDto: CreateUserDto): Promise<User> {
-
         const mergedUser = {...createUserDto, creationDate: new Date(), isActive: true, roles: [Role.User], password: await bcrypt.hashSync(createUserDto.password, 10)};
 
         const newUser = new this.communityModel(mergedUser);

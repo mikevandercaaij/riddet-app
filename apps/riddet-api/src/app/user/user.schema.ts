@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IUser } from '@riddet-app/data';
 import {
   IsBoolean,
-  IsDate, IsDefined, IsEmail, IsString, MinLength
+  IsDate, IsDefined, IsEmail, IsString, Matches, MinLength
 } from 'class-validator';
 import { Document, Types } from 'mongoose';
 import { Role } from '../auth/role.enum';
@@ -16,7 +16,7 @@ export class User implements IUser {
   @IsString({ message: 'Username must be a string!' })
   @IsDefined({ message: 'Username is required!' })
   @MinLength(5, { message: 'Username must be at least 5 characters long!' })
-  @Prop()
+  @Prop({unique: true})
   username: string;
 
   @IsString({ message: 'Firstname must be a string!' })
@@ -32,10 +32,11 @@ export class User implements IUser {
   @IsEmail({ message: 'Email must be a valid email!' })
   @IsString({ message: 'Email must be a string!' })
   @IsDefined({ message: 'Email is required!' })
-  @Prop()
+  @Prop({unique: true})
   email: string;
 
-  @IsDate({ message: 'Creation date must be a date!' })
+  @Matches(/^\d{4}[./-]\d{2}[./-]\d{2}$/, { message: 'Date of birth must be a valid date! (YYYY-MM-DD)' })
+  @IsDefined({ message: 'Date of birth is required!' })
   @Prop()
   dateOfBirth: Date;
 

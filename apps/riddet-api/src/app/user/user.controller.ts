@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Logger, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Logger, Param, Patch, Post, Req } from '@nestjs/common';
 import { Public, Roles } from '../auth/auth.module';
 import { Role } from '../auth/role.enum';
 import { ParseObjectIdPipe } from '../shared/pipes/ParseObjectIdPipe';
@@ -41,9 +41,8 @@ export class UserController {
       return this.userService.create(createUserDto);
   }
 
-  @Public()
   @Patch('users/:id')
-  async update(@Param('id', ParseObjectIdPipe) id: string, @Body() updateUserDto: UpdateUserDto): Promise<User> {
+  async update(@Req() req, @Param('id', ParseObjectIdPipe) id: string, @Body() updateUserDto: UpdateUserDto): Promise<User> {
 
     Logger.log(`Getting user with id: ${id} (UPDATE)`);
 
@@ -53,7 +52,7 @@ export class UserController {
       throw new HttpException(`User with id of ${id} doesn't exist!`, HttpStatus.NOT_FOUND);
     }
 
-    return this.userService.update(id, updateUserDto);
+    return this.userService.update(id, updateUserDto, req.user.id);
   }
 
   @Public()
