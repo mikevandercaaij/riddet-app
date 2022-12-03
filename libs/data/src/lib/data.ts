@@ -28,3 +28,10 @@ export interface IUser {
   userImageUrl: string;
   isActive: boolean;
 }
+
+export interface IMessage {
+  text: string;
+  likes: number;
+  dislikes: number;
+  publicationDate: Date;
+}
