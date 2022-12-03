@@ -9,10 +9,9 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
+  app.enableCors();
   const port = process.env.PORT || 9000;
-
   app.useGlobalFilters(new ValidationFilter());
-
   app.useGlobalPipes(new ValidationPipe({
     skipMissingProperties: true, 
     exceptionFactory: (errors: ValidationError[]) => {

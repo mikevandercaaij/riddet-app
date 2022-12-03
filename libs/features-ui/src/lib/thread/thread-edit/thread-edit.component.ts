@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Types } from 'mongoose';
 import { Subscription } from 'rxjs';
 import { Thread } from '../thread.model';
 import { ThreadService } from '../thread.service';
@@ -33,14 +34,15 @@ export class ThreadEditComponent implements OnInit, OnDestroy {
           this.threadId = params.get('threadId')?.toString();
           
           if(this.threadId) {
-            const thread = this.threadService.getById(this.threadId);
-            this.thread = {...this.thread, ...thread};
+            const thread = this.threadService.getById(this.threadId).subscribe((thread) => { this.thread = thread; });;
+            console.log(thread)
+            // this.thread = {...this.thread, ...thread};
           } 
         });
       } 
       else {
         this.thread = new Thread();
-        this.thread = {...this.thread, communityId: this.communityId as string} as Thread;
+        this.thread = { ...this.thread, _id: new Types.ObjectId, communityId: this.communityId as string } as unknown as Thread;
         console.log(this.thread);
       }
     }

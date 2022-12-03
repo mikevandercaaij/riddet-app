@@ -30,8 +30,7 @@ export class CommunityEditComponent implements OnInit, OnDestroy {
           this.communityId = params.get('id')?.toString();
           
           if(this.communityId) {
-            const community = this.communityService.getById(this.communityId);
-            this.community = {...this.community, ...community};
+            this.communityService.getById(this.communityId).subscribe((community) => { this.community = community; });
           } 
         });
       } 

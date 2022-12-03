@@ -1,6 +1,7 @@
-import { Injectable, Logger } from "@nestjs/common";
-import { CommunitiesRepository } from "../repositories/communities.repository";
-import { Community } from "../schemas/community.schema";
+import { Body, Injectable } from "@nestjs/common";
+import { CreateCommunityDto } from "./community.dto";
+import { CommunitiesRepository } from "./community.repository";
+import { Community } from "./community.schema";
 
 @Injectable()
 export class CommunitiesService {
@@ -14,16 +15,8 @@ export class CommunitiesService {
         return this.communityRepository.find({});
     }
 
-    async createCommunity(name : string, description : string): Promise<Community> {
-        Logger.log(name);
-        Logger.log(description);
-        return this.communityRepository.create({
-            name,  
-            description, 
-            creationDate: new Date(), 
-            imageUrl: "https://cdn.dribbble.com/users/5745266/screenshots/13977782/media/1bd8a00b559752b86996197fcd7645dd.png?compress=1&resize=400x300&vertical=top",
-            isPublic: true
-        });
+    async createCommunity(@Body() createCommunityDto : CreateCommunityDto): Promise<Community> {
+        return this.communityRepository.create(createCommunityDto);
     }
 
     async updateCommunity(_id: string, community: Partial<Community>): Promise<Community> {

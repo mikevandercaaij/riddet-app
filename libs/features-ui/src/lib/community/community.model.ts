@@ -1,7 +1,9 @@
 import { ICommunity } from "@riddet-app/data";
+import { Types } from "mongoose";
+
 
 export class Community implements ICommunity {
-    id = '';
+    _id = Types.ObjectId;
     name = '';
     description = '';
     creationDate = new Date();

@@ -6,6 +6,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CommunityModule, ThreadModule } from '@riddet-app/features-ui';
+import { ConfigModule } from '@riddet-app/util-ui';
+import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
 import { appRoutes } from './app.routes';
 import { LoginComponent } from './auth/login/login.component';
@@ -24,13 +26,13 @@ import { NavbarComponent } from './shared/navbar/navbar.component';
     NavbarComponent,
     RegisterComponent,
     AboutComponent,
-    
   ],
   imports: [
     CommonModule,
     BrowserModule,
     FormsModule,
     RouterModule.forRoot(appRoutes, { initialNavigation: 'enabledBlocking' }),
+    ConfigModule.forRoot({ apiEndpoint: environment.SERVER_API_URL }),
     NgbModule,
     HttpClientModule,
     CommunityModule,

@@ -5,15 +5,17 @@
   </button>
 </div>
 
-<p *ngIf="communities?.length === 0">Er zijn nog geen communities.</p>
+<p *ngIf="(communities$ | async)?.length === 0">
+  Er zijn nog geen communities.
+</p>
 
 <div class="row">
   <div
-    *ngFor="let community of communities"
+    *ngFor="let community of communities$ | async"
     class="col-sm-12 col-md-4 col-lg-3"
     style="margin-bottom: 15px"
   >
-    <div class="card">
+    <div class="card community-info-card">
       <img
         src="{{ community.imageUrl }}"
         class="card-img-top"
@@ -28,7 +30,7 @@
               : community.description
           }}
         </p>
-        <a routerLink="/communities/{{ community.id }}" class="btn btn-primary"
+        <a routerLink="/communities/{{ community._id }}" class="btn btn-primary"
           ><i class="bi bi-eye"></i> Bekijk details</a
         >
       </div>
