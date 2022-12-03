@@ -35,3 +35,7 @@ export interface IMessage {
   dislikes: number;
   publicationDate: Date;
 }
+
+export interface ICategory {
+  name: string;
+}

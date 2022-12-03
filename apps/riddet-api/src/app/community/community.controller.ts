@@ -11,7 +11,7 @@ export class CommunitiesController {
 
   @Public()
   @Get(':id')
-  async getThread(
+  async getById(
     @Param('id', ParseObjectIdPipe) id: string): Promise<Community> {
       
     Logger.log(`Getting community with id: ${id} (READ)`);
@@ -27,7 +27,7 @@ export class CommunitiesController {
 
   @Public()
   @Get()
-  async getThreads(): Promise<Community[]> {
+  async getAll(): Promise<Community[]> {
       Logger.log(`Getting all communities (READ)`);
 
       return this.communitiesService.getCommunities();
@@ -36,7 +36,7 @@ export class CommunitiesController {
 
   @Public()
   @Post()
-  async createThread(@Body() createCommunityDto: CreateCommunityDto): Promise<Community> {
+  async create(@Body() createCommunityDto: CreateCommunityDto): Promise<Community> {
       Logger.log(`Creating community (CREATE)`);
 
       return this.communitiesService.createCommunity(createCommunityDto);
@@ -44,7 +44,7 @@ export class CommunitiesController {
 
   @Public()
   @Patch(':id')
-  async updateThread(@Param('id', ParseObjectIdPipe) id: string, @Body() updateCommunityDto: UpdateCommunityDto): Promise<Community> {
+  async update(@Param('id', ParseObjectIdPipe) id: string, @Body() updateCommunityDto: UpdateCommunityDto): Promise<Community> {
 
     Logger.log(`Getting community with id: ${id} (UPDATE)`);
 
@@ -59,7 +59,7 @@ export class CommunitiesController {
 
   @Public()
   @Delete(':id')
-  async deleteThread(@Param('id', ParseObjectIdPipe) id: string): Promise<Community> {
+  async delete(@Param('id', ParseObjectIdPipe) id: string): Promise<Community> {
 
     Logger.log(`Getting community with id: ${id} (DELETE)`);
 

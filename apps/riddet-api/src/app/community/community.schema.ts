@@ -34,6 +34,12 @@ export class Community implements ICommunity {
 
   @Prop()
   isPublic: boolean;
+
+  // @Prop()
+
+  // @Prop()
+  // createdBy: UserDocument
+
 }
 
 export const CommunitySchema = SchemaFactory.createForClass(Community);

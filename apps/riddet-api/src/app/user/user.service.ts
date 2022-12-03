@@ -15,19 +15,7 @@ export class UserService {
      {}
 
   async findByUsernameOrEmail(username: string): Promise<User | undefined> {
-
-    //TODO: into one query with $or
-    const userByUsername = await this.userModel.findOne({ username });
-
-    if(userByUsername === null) {
-      const userByEmail = await this.userModel.findOne({ email: username });
-
-      if(userByEmail === null) {
-        return undefined;
-      }
-      return userByEmail;
-    }
-    return userByUsername;
+    return await this.userModel.findOne({$or: [{username}, { email : username }]});
   }
 
   async getById(_id: string): Promise<User> {
