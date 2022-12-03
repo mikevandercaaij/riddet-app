@@ -1,29 +1,30 @@
 import { Body, Injectable } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
+import { Model } from "mongoose";
 import { CreateCommunityDto } from "./community.dto";
-import { CommunitiesRepository } from "./community.repository";
-import { Community } from "./community.schema";
+import { Community, CommunityDocument } from "./community.schema";
 
 @Injectable()
 export class CommunitiesService {
-    constructor(private readonly communityRepository : CommunitiesRepository) {}
+    constructor(@InjectModel(Community.name) private communityModel: Model<CommunityDocument>) {}
 
     async getCommunityById(_id: string): Promise<Community> {
-        return this.communityRepository.findOne({ _id });
+        return this.communityModel.findOne({ _id });
     }
 
     async getCommunities(): Promise<Community[]> {
-        return this.communityRepository.find({});
+        return this.communityModel.find({});
     }
 
     async createCommunity(@Body() createCommunityDto : CreateCommunityDto): Promise<Community> {
-        return this.communityRepository.create(createCommunityDto);
+        return this.communityModel.create(createCommunityDto);
     }
 
     async updateCommunity(_id: string, community: Partial<Community>): Promise<Community> {
-        return this.communityRepository.findOneAndUpdate({ _id }, community);
+        return this.communityModel.findOneAndUpdate({ _id }, community, { new: true });
     }
 
     async deleteCommunity(_id: string): Promise<Community> {
-        return this.communityRepository.findOneAndDelete({ _id });
+        return this.communityModel.findOneAndDelete({ _id });
     }
 }
