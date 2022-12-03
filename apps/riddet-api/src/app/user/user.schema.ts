@@ -3,7 +3,7 @@ import {
   IsBoolean,
   IsDate, IsDefined, IsEmail, IsString, Matches, MinLength
 } from 'class-validator';
-import { Document, Schema as MongooseSchema, Types } from 'mongoose';
+import { Document, ObjectId, Types } from 'mongoose';
 import { Role } from '../auth/role.enum';
  
 export type UserDocument = User & Document;
@@ -63,17 +63,15 @@ export class User{
 
   @Prop({
     default: [],
-    type: [MongooseSchema.Types.ObjectId],
     ref: 'User',
   })
-  following : [User]
+  following : [ObjectId]
 
   @Prop({
     default: [],
-    type: [MongooseSchema.Types.Mixed],
     ref: 'User',
   })
-  followers : [MongooseSchema.Types.Mixed]
+  followers : [ObjectId]
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

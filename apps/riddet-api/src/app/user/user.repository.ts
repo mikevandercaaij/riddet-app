@@ -26,12 +26,12 @@ export class UserRepository {
         return newUser.save();
     }
 
-    async findOneAndUpdate(userFilterQuery: FilterQuery<User>, user: Partial<User>): Promise<User> {
-        if(user.password) {
-            user.password = await bcrypt.hashSync(user.password, 10);
+    async findOneAndUpdate(userFilterQuery: FilterQuery<User>, update): Promise<User> {
+        if(update.password) {
+            update.password = await bcrypt.hashSync(update.password, 10);
         }
 
-        return this.communityModel.findOneAndUpdate(userFilterQuery, user, { new: true });
+        return this.communityModel.findOneAndUpdate(userFilterQuery, update, { new: true });
     }
 
     async findOneAndDelete(userFilterQuery: FilterQuery<User>): Promise<User> {

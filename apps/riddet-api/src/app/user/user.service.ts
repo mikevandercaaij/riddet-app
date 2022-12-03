@@ -82,18 +82,12 @@ export class UserService {
       throw new ValidationException([`You cannot follow yourself!`]);
     }
     
-    if (await (await this.userRepository.find({ 'following': `${followUserId}` })).length > 0) {
+    if (await (await this.userRepository.find({ $and: [ {_id: req.user.id}, {following: { $in : followUserId}} ] })).length > 0) {
       throw new ValidationException([`You already follow this person!`]);
     }
 
-    const user : User = await this.getById(req.user.id);
-    const otherUser : User = await this.getById(followUserId);
-
-    await (user.following as any).push(followUserId);
-    await (otherUser.followers as any).push(req.user.id)
-    
-    await this.userRepository.findOneAndUpdate({ _id: user._id }, user );
-    await this.userRepository.findOneAndUpdate({ _id: otherUser._id }, otherUser);
+    const user = await this.userRepository.findOneAndUpdate({ _id: req.user.id }, { $push: { following: followUserId } });
+    const otherUser = await this.userRepository.findOneAndUpdate({ _id: followUserId}, { $push: { followers: req.user.id } });
 
     return [user,otherUser]
   }
@@ -103,9 +97,12 @@ export class UserService {
       throw new ValidationException([`You cannot unfollow yourself!`]);
     }
     
-    if (await (await this.userRepository.find({ 'following': `${followUserId}` })).length === 0) {
+    if (await (await this.userRepository.find({ $and: [ {_id: req.user.id}, {following: { $in : followUserId}} ] })).length === 0) {
       throw new ValidationException([`You don't follow this person!`]);
     }
+
+
+    await this.userRepository.findOneAndUpdate({ _id: req.user.id }, { $pull: { following: followUserId } });
 
     let user : User = await this.getById(req.user.id);
     let otherUser : User = await this.getById(followUserId);
