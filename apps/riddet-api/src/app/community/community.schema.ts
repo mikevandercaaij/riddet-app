@@ -3,7 +3,10 @@ import { ICommunity } from '@riddet-app/data';
 import {
   IsDate, IsDefined, IsNotEmpty, IsString, MinLength
 } from 'class-validator';
-import { Document, Types } from 'mongoose';
+import { Document, ObjectId, Types } from 'mongoose';
+import { Category } from '../category/category.schema';
+import { Thread } from '../thread/thread.schema';
+import { User } from '../user/user.schema';
  
 export type CommunityDocument = Community & Document;
 
@@ -14,7 +17,7 @@ export class Community implements ICommunity {
   @IsString({ message: 'Name must be a string!' })
   @IsDefined({ message: 'Name is required!' })
   @MinLength(5, { message: 'Name must be at least 5 characters long!' })
-  @Prop()
+  @Prop({unique: true})
   name: string;
 
 
@@ -34,6 +37,25 @@ export class Community implements ICommunity {
 
   @Prop()
   isPublic: boolean;
+
+  @Prop({
+    default: [],
+  })
+  categories: [Category]
+
+  @Prop({
+    default: [],
+    ref: 'User',
+  })
+  participants: [ObjectId]
+
+  @Prop({
+    default: [],
+  })
+  threads: [Thread]
+
+  @Prop()
+  createdBy: User
 }
 
 export const CommunitySchema = SchemaFactory.createForClass(Community);

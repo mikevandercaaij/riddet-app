@@ -11,19 +11,29 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { RolesGuard } from './auth/roles.guard';
+import { CategoryModule } from './category/category.module';
 import { UserModule } from './user/user.module';
 
 @Module({
-  imports: [MongooseModule.forRoot( environment.DATABASE_CONNECTION ),  CommunityModule, ThreadModule, UserModule, AuthModule],
+  imports: [
+    MongooseModule.forRoot(environment.DATABASE_CONNECTION),
+    CommunityModule,
+    ThreadModule,
+    UserModule,
+    AuthModule,
+    CategoryModule,
+  ],
   controllers: [AppController],
-  providers: [{
+  providers: [
+    {
       provide: APP_GUARD,
-      useClass: JwtAuthGuard
-    }, 
+      useClass: JwtAuthGuard,
+    },
     {
       provide: APP_GUARD,
       useClass: RolesGuard,
     },
-  AppService],
+    AppService,
+  ],
 })
 export class AppModule {}
