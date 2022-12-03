@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ThreadController } from './thread.controller';
-import { ThreadRepository } from './thread.repository';
 import { Thread, ThreadSchema } from './thread.schema';
 import { ThreadService } from './thread.service';
 
@@ -12,6 +11,6 @@ import { ThreadService } from './thread.service';
     ]),
   ],
   controllers: [ThreadController],
-  providers: [ThreadService, ThreadRepository],
+  providers: [ThreadService],
 })
 export class ThreadModule {}
