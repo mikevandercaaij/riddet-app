@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { IUser } from '@riddet-app/data';
 import {
   IsBoolean,
   IsDate, IsDefined, IsEmail, IsString, Matches, MinLength
@@ -9,7 +10,7 @@ import { Role } from '../auth/role.enum';
 export type UserDocument = User & Document;
 
 @Schema()
-export class User{
+export class User implements IUser{
   _id : Types.ObjectId
 
   @IsString({ message: 'Username must be a string!' })

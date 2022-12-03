@@ -5,19 +5,22 @@ import { Model, Types } from 'mongoose';
 import { Role } from '../auth/role.enum';
 import { ValidationException } from '../shared/filters/validation.exception';
 import { CreateUserDto } from './user.dto';
-import { UserRepository } from './user.repository';
 import { User, UserDocument } from './user.schema';
 
 
 @Injectable()
 export class UserService {
-  constructor(private readonly userRepository : UserRepository, @InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<UserDocument>)
+     {}
 
   async findByUsernameOrEmail(username: string): Promise<User | undefined> {
-    const userByUsername = await this.userRepository.findOne({ username });
+
+    //TODO: into one query with $or
+    const userByUsername = await this.userModel.findOne({ username });
 
     if(userByUsername === null) {
-      const userByEmail = await this.userRepository.findOne({ email: username });
+      const userByEmail = await this.userModel.findOne({ email: username });
 
       if(userByEmail === null) {
         return undefined;
@@ -28,11 +31,11 @@ export class UserService {
   }
 
   async getById(_id: string): Promise<User> {
-    return this.userRepository.findOne({ _id });
+    return this.userModel.findOne({ _id });
   }
 
   async getAll(): Promise<User[]> {
-    return this.userRepository.find({});
+    return this.userModel.find({});
   }
 
   async create(createUserDto : CreateUserDto): Promise<User> {
@@ -41,7 +44,9 @@ export class UserService {
       createUserDto.dateOfBirth = new Date(createUserDto.dateOfBirth);
       createUserDto.dateOfBirth.setHours(createUserDto.dateOfBirth.getHours() + 1);
 
-      return this.userRepository.create(createUserDto);
+      const mergedUser = {...createUserDto, creationDate: new Date(), isActive: true, roles: [Role.User], password: await bcrypt.hashSync(createUserDto.password, 10)};
+
+      return new this.userModel(mergedUser).save();
   }
 
   async update(updateUserId: string, user: Partial<User>, req): Promise<User> {
@@ -60,7 +65,7 @@ export class UserService {
         user.password = await bcrypt.hashSync(user.password, 10)
       }
 
-      return this.userRepository.findOneAndUpdate({ _id : updateUserId }, user);
+      return this.userModel.findOneAndUpdate({ _id : updateUserId }, user, { new: true });
     }
     throw new ValidationException([`You cannot update other users!`]);
   }
@@ -69,7 +74,7 @@ export class UserService {
     const currentUser = req.user
 
     if(await this.isMyData(deleteUserId, currentUser.id) || currentUser.roles.includes(Role.Admin)) {
-      return this.userRepository.findOneAndDelete({ _id : deleteUserId });
+      return this.userModel.findOneAndDelete({ _id : deleteUserId });
     }
 
     throw new ValidationException([`You cannot delete other users!`]);
@@ -82,12 +87,12 @@ export class UserService {
       throw new ValidationException([`You cannot follow yourself!`]);
     }
     
-    if (await (await this.userRepository.find({ $and: [ {_id: req.user.id}, {following: { $in : followUserId}} ] })).length > 0) {
+    if (await (await this.userModel.find({ $and: [ {_id: req.user.id}, {following: { $in : followUserId}} ] })).length > 0) {
       throw new ValidationException([`You already follow this person!`]);
     }
 
-    const user = await this.userRepository.findOneAndUpdate({ _id: req.user.id }, { $push: { following: followUserId } });
-    const otherUser = await this.userRepository.findOneAndUpdate({ _id: followUserId}, { $push: { followers: req.user.id } });
+    const user = await this.userModel.findOneAndUpdate({ _id: req.user.id }, { $push: { following: followUserId } }, {new: true});
+    const otherUser = await this.userModel.findOneAndUpdate({ _id: followUserId}, { $push: { followers: req.user.id } }, {new: true});
 
     return [user,otherUser]
   }
@@ -97,21 +102,12 @@ export class UserService {
       throw new ValidationException([`You cannot unfollow yourself!`]);
     }
     
-    if (await (await this.userRepository.find({ $and: [ {_id: req.user.id}, {following: { $in : followUserId}} ] })).length === 0) {
+    if (await (await this.userModel.find({ $and: [ {_id: req.user.id}, {following: { $in : followUserId}} ] })).length === 0) {
       throw new ValidationException([`You don't follow this person!`]);
     }
-
-
-    await this.userRepository.findOneAndUpdate({ _id: req.user.id }, { $pull: { following: followUserId } });
-
-    let user : User = await this.getById(req.user.id);
-    let otherUser : User = await this.getById(followUserId);
-
-    user.following = await (user.following as any).filter(id => !(new Types.ObjectId(id).equals(new Types.ObjectId(followUserId))));
-    otherUser.followers = await (otherUser.followers as any).filter(id => !(new Types.ObjectId(id).equals(new Types.ObjectId(req.user.id))));
     
-    user = await this.userRepository.findOneAndUpdate({ _id: user._id }, user),{ new: true };
-    otherUser = await this.userRepository.findOneAndUpdate({ _id: otherUser._id }, otherUser), { new: true };
+    const user = await this.userModel.findOneAndUpdate({ _id: req.user.id }, {$pull: { following : followUserId }}, { new: true });
+    const otherUser = await this.userModel.findOneAndUpdate({ _id: followUserId }, {$pull: { followers : req.user.id }}, { new: true });
 
     return [user,otherUser]
   }
@@ -119,7 +115,7 @@ export class UserService {
   //validation
 
   async validateUser(user, currentUserId : string | undefined, updateUserId : string | undefined) : Promise<void> {
-    if((await this.userRepository.find(
+    if((await this.userModel.find(
       {
         $or: 
         [
