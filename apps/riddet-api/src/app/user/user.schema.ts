@@ -1,16 +1,15 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IUser } from '@riddet-app/data';
 import {
   IsBoolean,
   IsDate, IsDefined, IsEmail, IsString, Matches, MinLength
 } from 'class-validator';
-import { Document, Types } from 'mongoose';
+import { Document, Schema as MongooseSchema, Types } from 'mongoose';
 import { Role } from '../auth/role.enum';
  
 export type UserDocument = User & Document;
 
 @Schema()
-export class User implements IUser {
+export class User{
   _id : Types.ObjectId
 
   @IsString({ message: 'Username must be a string!' })
@@ -61,6 +60,20 @@ export class User implements IUser {
 
   @Prop()
   roles: Role[];
+
+  @Prop({
+    default: [],
+    type: [MongooseSchema.Types.ObjectId],
+    ref: 'User',
+  })
+  following : [User]
+
+  @Prop({
+    default: [],
+    type: [MongooseSchema.Types.Mixed],
+    ref: 'User',
+  })
+  followers : [MongooseSchema.Types.Mixed]
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

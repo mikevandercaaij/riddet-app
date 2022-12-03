@@ -1,16 +1,17 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcryptjs';
-import { Types } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Role } from '../auth/role.enum';
 import { ValidationException } from '../shared/filters/validation.exception';
 import { CreateUserDto } from './user.dto';
 import { UserRepository } from './user.repository';
-import { User } from './user.schema';
+import { User, UserDocument } from './user.schema';
 
 
 @Injectable()
 export class UserService {
-  constructor(private readonly userRepository : UserRepository) {}
+  constructor(private readonly userRepository : UserRepository, @InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
   async findByUsernameOrEmail(username: string): Promise<User | undefined> {
     const userByUsername = await this.userRepository.findOne({ username });
@@ -43,7 +44,7 @@ export class UserService {
       return this.userRepository.create(createUserDto);
   }
 
-  async update(updateUserId: string, user: Partial<User>, req : any): Promise<User> {
+  async update(updateUserId: string, user: Partial<User>, req): Promise<User> {
 
     const currentUser = req.user;
 
@@ -64,7 +65,7 @@ export class UserService {
     throw new ValidationException([`You cannot update other users!`]);
   }
 
-  async delete(deleteUserId: string, req : any): Promise<User> {
+  async delete(deleteUserId: string, req): Promise<User> {
     const currentUser = req.user
 
     if(await this.isMyData(deleteUserId, currentUser.id) || currentUser.roles.includes(Role.Admin)) {
@@ -74,7 +75,53 @@ export class UserService {
     throw new ValidationException([`You cannot delete other users!`]);
   }
 
-  async validateUser(user : any, currentUserId : string | undefined, updateUserId : string | undefined) : Promise<void> {
+  //following related methods
+
+  async follow(followUserId: string, req): Promise<User[]> {
+    if(await this.isMyData(followUserId, req.user.id)) {
+      throw new ValidationException([`You cannot follow yourself!`]);
+    }
+    
+    if (await (await this.userRepository.find({ 'following': `${followUserId}` })).length > 0) {
+      throw new ValidationException([`You already follow this person!`]);
+    }
+
+    const user : User = await this.getById(req.user.id);
+    const otherUser : User = await this.getById(followUserId);
+
+    await (user.following as any).push(followUserId);
+    await (otherUser.followers as any).push(req.user.id)
+    
+    await this.userRepository.findOneAndUpdate({ _id: user._id }, user );
+    await this.userRepository.findOneAndUpdate({ _id: otherUser._id }, otherUser);
+
+    return [user,otherUser]
+  }
+
+  async unfollow(followUserId: string, req): Promise<User[]> {
+    if(await this.isMyData(followUserId, req.user.id)) {
+      throw new ValidationException([`You cannot unfollow yourself!`]);
+    }
+    
+    if (await (await this.userRepository.find({ 'following': `${followUserId}` })).length === 0) {
+      throw new ValidationException([`You don't follow this person!`]);
+    }
+
+    let user : User = await this.getById(req.user.id);
+    let otherUser : User = await this.getById(followUserId);
+
+    user.following = await (user.following as any).filter(id => !(new Types.ObjectId(id).equals(new Types.ObjectId(followUserId))));
+    otherUser.followers = await (otherUser.followers as any).filter(id => !(new Types.ObjectId(id).equals(new Types.ObjectId(req.user.id))));
+    
+    user = await this.userRepository.findOneAndUpdate({ _id: user._id }, user),{ new: true };
+    otherUser = await this.userRepository.findOneAndUpdate({ _id: otherUser._id }, otherUser), { new: true };
+
+    return [user,otherUser]
+  }
+
+  //validation
+
+  async validateUser(user, currentUserId : string | undefined, updateUserId : string | undefined) : Promise<void> {
     if((await this.userRepository.find(
       {
         $or: 

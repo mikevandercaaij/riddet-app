@@ -66,4 +66,32 @@ export class UserController {
     
     return this.userService.delete(id, req);
   }
+
+  //Follow
+
+  @Post('users/:id/follow')
+  async follow(@Req() req, @Param('id', ParseObjectIdPipe) id: string): Promise<User[]> {
+    Logger.log(`Getting user with id: ${id} (READ)`);
+
+    const user = await this.userService.getById(id);
+    
+    if(!user) {
+      throw new HttpException(`User with id of ${id} doesn't exist!`, HttpStatus.NOT_FOUND);
+    }
+
+    return this.userService.follow(id, req);
+  }
+
+  @Post('users/:id/unfollow')
+  async unfollow(@Req() req, @Param('id', ParseObjectIdPipe) id: string) {
+    Logger.log(`Getting user with id: ${id} (READ)`);
+
+    const user = await this.userService.getById(id);
+    
+    if(!user) {
+      throw new HttpException(`User with id of ${id} doesn't exist!`, HttpStatus.NOT_FOUND);
+    }
+
+    return this.userService.unfollow(id, req);
+  }
 }
