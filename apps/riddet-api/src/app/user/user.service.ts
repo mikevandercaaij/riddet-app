@@ -27,7 +27,7 @@ export class UserService {
   }
 
   async create(createUserDto : CreateUserDto): Promise<User> {
-      await this.validateUser(createUserDto, undefined, undefined);
+      await this.validate(createUserDto);
 
       createUserDto.dateOfBirth = new Date(createUserDto.dateOfBirth);
       createUserDto.dateOfBirth.setHours(createUserDto.dateOfBirth.getHours() + 1);
@@ -42,7 +42,7 @@ export class UserService {
     const currentUser = req.user;
 
     if(await this.isMyData(updateUserId, currentUser.id) || currentUser.roles.includes(Role.Admin)) {
-      await this.validateUser(user, currentUser.id, updateUserId);
+      await this.validate(user, currentUser.id, updateUserId);
 
       if(user.dateOfBirth) {
         user.dateOfBirth = new Date(user.dateOfBirth);
@@ -102,7 +102,7 @@ export class UserService {
 
   //validation
 
-  async validateUser(user, currentUserId : string | undefined, updateUserId : string | undefined) : Promise<void> {
+  async validate(user, currentUserId? : string, updateUserId? : string) : Promise<void> {
     if((await this.userModel.find(
       {
         $or: 
@@ -120,7 +120,7 @@ export class UserService {
     }
   }
 
-  async isMyData(currentUserId : string | undefined, targetUserId : string | undefined) : Promise<boolean> {
+  async isMyData(currentUserId? : string, targetUserId? : string) : Promise<boolean> {
     return new Types.ObjectId(currentUserId).equals(new Types.ObjectId(targetUserId))
   }
 }

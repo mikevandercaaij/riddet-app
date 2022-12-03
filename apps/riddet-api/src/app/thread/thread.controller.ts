@@ -10,7 +10,7 @@ export class ThreadController {
   constructor(private readonly threadService: ThreadService) {}
 
   @Public()
-  @Get('threads/:id')
+  @Get('communities/:communityId/threads/:threadId')
   async getById(
     @Param('id', ParseObjectIdPipe) id: string): Promise<Thread> {
       
@@ -26,17 +26,8 @@ export class ThreadController {
   }
 
   @Public()
-  @Get('threads')
-  async getAll(): Promise<Thread[]> {
-
-    Logger.log(`Getting all threads (READ)`);
-
-    return this.threadService.getAll();
-  }
-
-  @Public()
-  @Get('communities/:id/threads')
-  async getAllByCommunityId(
+  @Get('communities/:communityId/threads')
+  async getAll(
     @Param('id', ParseObjectIdPipe) communityId : string): Promise<Thread[]> {
 
       Logger.log(`Getting all threads from community with an id of: ${communityId} (READ)`);
@@ -44,8 +35,7 @@ export class ThreadController {
       return this.threadService.getAllByCommunityId(communityId);
     }
 
-  @Public()
-  @Post('threads')
+  @Post('communities/:communityId/threads')
   async create(@Body() createThreadDto: CreateThreadDto): Promise<Thread> {
 
       Logger.log(`Creating thread (CREATE)`);
@@ -53,8 +43,7 @@ export class ThreadController {
       return this.threadService.create(createThreadDto);
   }
 
-  @Public()
-  @Patch('threads/:id')
+  @Patch('communities/:communityId/threads/:threadId')
   async update(@Param('id', ParseObjectIdPipe) id: string, @Body() updateThreadDto: UpdateThreadDto): Promise<Thread> {
 
     Logger.log(`Getting thread with id: ${id} (UPDATE)`);
@@ -68,8 +57,7 @@ export class ThreadController {
     return this.threadService.update(id, updateThreadDto);
   }
 
-  @Public()
-  @Delete('threads/:id')
+  @Delete('communities/:communityId/threads/:threadId')
   async delete(@Param('id', ParseObjectIdPipe) id: string): Promise<Thread> {
 
     Logger.log(`Getting thread with id: ${id} (DELETE)`);

@@ -17,8 +17,14 @@ export class CreateCommunityDto {
   imageUrl: string;
 
   @IsBoolean({ message: 'isPublic must be a boolean!' })
+  @IsDefined({ message: 'isPublic is required!' })
   @IsNotEmpty({ message: 'isPublic cannot be empty!' })
   isPublic: boolean;
+
+
+  @IsNotEmpty({ message: 'Categories cannot be empty!' })
+  @IsDefined({ message: 'Categories are required!' })
+  categories : string[]
 }
 
 export class UpdateCommunityDto {
@@ -44,4 +50,9 @@ export class UpdateCommunityDto {
   @IsBoolean({ message: 'isPublic must be a boolean!' })
   @IsNotEmpty({ message: 'isPublic cannot be empty!' })
   isPublic: boolean;
+
+  @IsOptional()
+  @IsNotEmpty({ message: 'Categories cannot be empty!' })
+  categories : string[]
+
 }

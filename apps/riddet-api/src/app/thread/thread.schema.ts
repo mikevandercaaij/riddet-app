@@ -8,12 +8,14 @@ import {
   IsString,
   MinLength
 } from 'class-validator';
-import { Document, Types } from 'mongoose';
+import { Document, ObjectId, Types } from 'mongoose';
+import { Message } from '../message/message.schema';
  
 export type ThreadDocument = Thread & Document;
 
 @Schema()
 export class Thread implements IThread {
+  communityId: Types.ObjectId;
 
   _id : Types.ObjectId
 
@@ -25,10 +27,6 @@ export class Thread implements IThread {
 
   @Prop()
   content: string;
-
-  @IsDate({ message: 'Publication date must be a date!' })
-  @Prop()
-  publicationDate: Date;
 
   @IsString({ message: 'Image URL must be a string!' })
   @Prop()
@@ -46,8 +44,21 @@ export class Thread implements IThread {
   @Prop()
   upvotes: number;
 
+  @IsDate({ message: 'Publication date must be a date!' })
   @Prop()
-  communityId: Types.ObjectId;
+  publicationDate: Date;
+
+  @Prop({
+    default: [],
+  })
+  messages: [Message]
+
+  @Prop({
+    default: [],
+    ref: 'User',
+  })
+  createdBy: [ObjectId]
+
 }
 
 export const ThreadSchema = SchemaFactory.createForClass(Thread);
