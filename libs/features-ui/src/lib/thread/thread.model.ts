@@ -8,6 +8,6 @@ export class Thread implements IThread {
     publicationDate = new Date();
     imageUrl = '';
     externLink = '';
-    upvotes = 0;
+    views = 0;
     communityId = Types.ObjectId as unknown as Types.ObjectId;
 }

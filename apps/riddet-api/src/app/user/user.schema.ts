@@ -16,7 +16,7 @@ export class User implements IUser{
   @IsString({ message: 'Username must be a string!' })
   @IsDefined({ message: 'Username is required!' })
   @MinLength(5, { message: 'Username must be at least 5 characters long!' })
-  @Prop({unique: true})
+  @Prop()
   username: string;
 
   @IsString({ message: 'Firstname must be a string!' })
