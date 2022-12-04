@@ -31,6 +31,4 @@ export class MessageController {
       Logger.log(`Getting all messages (READ)`);
       return await this.messageService.getAll(communityId, threadId);
       }
-
-    
   }

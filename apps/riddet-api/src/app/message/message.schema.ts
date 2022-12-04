@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IMessage } from '@riddet-app/data';
 import {
-    IsDate, IsDefined, IsNumber, IsString
+  IsDate, IsDefined, IsNumber, IsString
 } from 'class-validator';
 import { Document, ObjectId, Types } from 'mongoose';
  
@@ -28,10 +28,8 @@ export class Message implements IMessage{
   @Prop()
   publicationDate: Date;
 
-  @Prop({
-    ref: 'Thread',
-  })
-  ThreadId : ObjectId
+  @Prop({default: []})
+  replies: [Message]
 
   @Prop({
     ref: 'User',

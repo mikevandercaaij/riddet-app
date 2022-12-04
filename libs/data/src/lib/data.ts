@@ -1,4 +1,3 @@
-import { Types } from "mongoose";
 export interface ICommunity {
   name: string ,
   description: string ,
@@ -14,7 +13,6 @@ export interface IThread {
   imageUrl: string;
   externLink: string;
   upvotes: number;
-  communityId: Types.ObjectId;
 }
 
 export interface IUser {
