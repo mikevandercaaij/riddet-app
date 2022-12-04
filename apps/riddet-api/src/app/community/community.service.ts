@@ -138,7 +138,7 @@ export class CommunityService {
     async isAllowedToAlter(currentUserId? : string, communityId? : string, req?) : Promise<void> {
         const community = await this.communityModel.findOne({ _id : communityId });
 
-        if(!(new Types.ObjectId(currentUserId).equals(community.createdBy._id) && !(req.user.roles.includes(Role.Admin)))) {
+        if(!(new Types.ObjectId(currentUserId).equals(community.createdBy._id)) && !(req.user.roles.includes(Role.Admin))) {
             throw new ValidationException([`Only the creator can alter data of this community!`]);
         }
     }

@@ -12,6 +12,7 @@ import { AppService } from './app.service';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { RolesGuard } from './auth/roles.guard';
 import { CategoryModule } from './category/category.module';
+import { MessageModule } from './message/message.module';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -22,6 +23,7 @@ import { UserModule } from './user/user.module';
     UserModule,
     AuthModule,
     CategoryModule,
+    MessageModule
   ],
   controllers: [AppController],
   providers: [
