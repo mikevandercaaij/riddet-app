@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Logger, Param, Patch, Post, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Logger, Param, Patch, Post, Req } from '@nestjs/common';
 import { Public } from '../auth/auth.module';
 import { ParseObjectIdPipe } from '../shared/pipes/ParseObjectIdPipe';
 import { CreateThreadDto, UpdateThreadDto } from './thread-dto';
@@ -33,7 +33,6 @@ export class ThreadController {
 
   @Post('communities/:communityId/threads')
   async create(@Param('communityId', ParseObjectIdPipe) communityId : string, @Req() req, @Body() createThreadDto: CreateThreadDto): Promise<Thread> {
-
       Logger.log(`Creating thread (CREATE)`);
 
       return this.threadService.create(createThreadDto, communityId, req);
@@ -44,14 +43,7 @@ export class ThreadController {
   @Param('threadId', ParseObjectIdPipe) threadId: string,
   @Req() req,
   @Body() updateThreadDto: UpdateThreadDto): Promise<Thread> {
-
     Logger.log(`Getting thread with id: ${threadId} (UPDATE)`);
-
-    const thread = await this.threadService.getById(communityId, threadId);
-    
-    if(!thread) {
-      throw new HttpException(`Thread with id of ${threadId} doesn't exist!`, HttpStatus.NOT_FOUND);
-    }
 
     return this.threadService.update(communityId, threadId, req, updateThreadDto);
   }
@@ -65,4 +57,14 @@ export class ThreadController {
     
     return this.threadService.delete(communityId, threadId, req);
   }
+
+  @Post('communities/:communityId/threads/:threadId/upvote')
+  async upvote(@Param('communityId', ParseObjectIdPipe) communityId : string,
+   @Param('threadId', ParseObjectIdPipe) threadId : string,
+   @Req() req): Promise<Thread> {
+      Logger.log(`Creating thread (CREATE)`);
+
+      return this.threadService.upvote(communityId, threadId, req);
+  }
+
 }

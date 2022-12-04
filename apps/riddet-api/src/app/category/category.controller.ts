@@ -10,7 +10,6 @@ import { CategoryService } from './category.service';
 export class CommunitiesController {
   constructor(private readonly categoryService: CategoryService) {}
 
-  @Roles(Role.Admin)
   @Get(':id')
   async getById(
     @Param('id', ParseObjectIdPipe) id: string): Promise<Category> {

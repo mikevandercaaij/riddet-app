@@ -16,6 +16,8 @@ export class ThreadService {
     async getById(communityId : string, threadId : string): Promise<Thread> {
         await this.doesExist(communityId, threadId);
 
+        await this.communityModel.findOneAndUpdate({_id : communityId, "threads._id" : threadId}, {$inc: {"threads.$.views" : 1}});
+
         return (await this.communityModel.findOne(
             {_id: communityId}, 
             {threads:{$elemMatch:{_id: threadId}}}))
@@ -33,15 +35,16 @@ export class ThreadService {
 
         const community = await this.communityModel.findOne({ _id : communityId });
 
-        if(!(await this.communityModel.find({$and: [{_id: communityId}, {members: { $in : [req.user.id]}}]}) 
+        if(!(await this.communityModel.find({$and: [{_id: communityId}, {members: { $in : [req.user.id]}}]}))
         && community.createdBy._id.equals(new Types.ObjectId(req.user.id))
-        && !(req.user.roles.includes(Role.Admin)))) {
+        && !(req.user.roles.includes(Role.Admin))) {
             throw new ValidationException(["You are not a member of this community"]);
         }
 
         const mergedthread = {_id: new Types.ObjectId(), 
             ...createThreadDto, 
-            upvotes: 0, 
+            views: 0, 
+            upvotes: [],
             publicationDate: new Date(), 
             messages: [], 
             createdBy: req.user.id
@@ -56,7 +59,10 @@ export class ThreadService {
     async update(communityId: string, threadId : string, req, updateThreadDto: UpdateThreadDto): Promise<Thread> {
         await this.doesExist(communityId, threadId);
 
-        const thread = await this.getById(communityId, threadId);
+        const thread = (await this.communityModel.findOne(
+            {_id: communityId}, 
+            {threads:{$elemMatch:{_id: threadId}}}))
+            .threads.filter(async thread => thread._id === new Types.ObjectId(threadId))[0];
 
         if(!(await this.isMyData(thread.createdBy.toString(), req.user.id)) && !(req.user.roles.includes(Role.Admin))) {
             throw new ValidationException([`You cannot alter data that isn't yours!`]);
@@ -71,7 +77,10 @@ export class ThreadService {
     async delete(communityId : string, threadId : string, req): Promise<Thread> {
         await this.doesExist(communityId, threadId);
 
-        const thread = await this.getById(communityId, threadId);
+        const thread = (await this.communityModel.findOne(
+            {_id: communityId}, 
+            {threads:{$elemMatch:{_id: threadId}}}))
+            .threads.filter(async thread => thread._id === new Types.ObjectId(threadId))[0];
 
         if(!(await this.isMyData(thread.createdBy.toString(), req.user.id)) && !(req.user.roles.includes(Role.Admin))) {
             throw new ValidationException([`You cannot alter data that isn't yours!`]);
@@ -83,10 +92,24 @@ export class ThreadService {
             { new: true }))
     }
 
+    async upvote(communityId : string, threadId : string, req): Promise<Thread> {
+        await this.doesExist(communityId, threadId);
 
+        let community;
+
+        if ((await this.communityModel.find({ $and: [{_id: communityId}, {threads: {$elemMatch: {_id: threadId, upvotes: {$in: [req.user.id]}}}}]})).length === 0) {
+            community = await this.communityModel.findOneAndUpdate({_id : communityId, "threads._id" : threadId}, {$push: {"threads.$.upvotes" : req.user.id}} , {new: true});
+        } else {
+            community = await this.communityModel.findOneAndUpdate({_id : communityId, "threads._id" : threadId}, {$pull: {"threads.$.upvotes" : req.user.id}} , {new: true});
+        }
+
+        return community.threads.filter(async thread => thread._id === new Types.ObjectId(threadId))[0];
+    }
+
+    //validation
     async isMyData(currentUserId? : string, targetUserId? : string) : Promise<boolean> {
         return new Types.ObjectId(currentUserId).equals(new Types.ObjectId(targetUserId))
-      }
+    }
 
     async doesExist(communityId : string, threadId? : string) : Promise<void> {
         const community = await this.communityModel.findOne({ _id : communityId });
