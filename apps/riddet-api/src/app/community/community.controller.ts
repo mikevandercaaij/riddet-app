@@ -3,11 +3,11 @@ import { Public } from '../auth/auth.module';
 import { ParseObjectIdPipe } from '../shared/pipes/ParseObjectIdPipe';
 import { CreateCommunityDto, UpdateCommunityDto } from './community.dto';
 import { Community } from "./community.schema";
-import { CommunitiesService } from './community.service';
+import { CommunityService } from './community.service';
 
 @Controller('communities')
 export class CommunitiesController {
-  constructor(private readonly communitiesService: CommunitiesService) {}
+  constructor(private readonly communityService: CommunityService) {}
 
   @Public()
   @Get(':id')
@@ -16,7 +16,7 @@ export class CommunitiesController {
       
     Logger.log(`Getting community with id: ${id} (READ)`);
 
-    return await this.communitiesService.getById(id);
+    return await this.communityService.getById(id);
   }
 
   @Public()
@@ -24,7 +24,7 @@ export class CommunitiesController {
   async getAll(): Promise<Community[]> {
       Logger.log(`Getting all communities (READ)`);
 
-      return this.communitiesService.getAll();
+      return this.communityService.getAll();
   }
 
 
@@ -32,7 +32,7 @@ export class CommunitiesController {
   async create(@Body() createCommunityDto: CreateCommunityDto, @Req() req): Promise<Community> {
       Logger.log(`Creating community (CREATE)`);
 
-      return this.communitiesService.create(createCommunityDto, req);
+      return this.communityService.create(createCommunityDto, req);
   }
 
   @Patch(':id')
@@ -40,7 +40,7 @@ export class CommunitiesController {
 
     Logger.log(`Getting community with id: ${id} (UPDATE)`);
 
-    return this.communitiesService.update(id, updateCommunityDto, req);
+    return this.communityService.update(id, updateCommunityDto, req);
   }
 
   @Delete(':id')
@@ -48,7 +48,7 @@ export class CommunitiesController {
 
     Logger.log(`Getting community with id: ${id} (DELETE)`);
 
-    return this.communitiesService.delete(id, req);
+    return this.communityService.delete(id, req);
   }
 
 
@@ -59,7 +59,7 @@ export class CommunitiesController {
 
     Logger.log(`Getting community with id: ${id} (DELETE)`);
 
-    return this.communitiesService.join(id, req);
+    return this.communityService.join(id, req);
   }
 
   @Post(':id/leave')
@@ -67,6 +67,6 @@ export class CommunitiesController {
 
     Logger.log(`Getting community with id: ${id} (DELETE)`);
 
-    return this.communitiesService.leave(id, req);
+    return this.communityService.leave(id, req);
   }
 }

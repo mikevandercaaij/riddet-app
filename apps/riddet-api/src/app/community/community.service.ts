@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
 import { Role } from "../auth/role.enum";
@@ -6,15 +6,16 @@ import { Category } from "../category/category.schema";
 import { CategoryService } from "../category/category.service";
 import { ValidationException } from "../shared/filters/validation.exception";
 import { ParseObjectIdPipe } from "../shared/pipes/ParseObjectIdPipe";
+import { User } from "../user/user.schema";
 import { UserService } from "../user/user.service";
 import { CreateCommunityDto, UpdateCommunityDto } from "./community.dto";
 import { Community, CommunityDocument } from "./community.schema";
 
 @Injectable()
-export class CommunitiesService {
+export class CommunityService {
     constructor(@InjectModel(Community.name) private communityModel: Model<CommunityDocument>,
     private readonly categoryService : CategoryService,
-    private readonly userService : UserService) {}
+    @Inject(forwardRef(() => UserService)) private userService : UserService) {}
     
 
     async getById(_id: string): Promise<Community> {
@@ -64,7 +65,6 @@ export class CommunitiesService {
             }
 
             delete updateCommunityDto.categories;
-
             updateObject = {categories};
         }
 
@@ -110,8 +110,13 @@ export class CommunitiesService {
         return this.communityModel.findOneAndUpdate({ _id : communityId }, { $pull : { participants : req.user.id } }, { new: true });
     }
 
-    //validation
 
+    //update creator
+    async updateCreator(creatorId : string, creator : Partial<User>) : Promise<void> {
+        await this.communityModel.updateMany({ "createdBy._id" : creatorId }, { $set : { createdBy : creator } });
+    }
+
+    //validation
     async validate(community : CreateCommunityDto, currentCommunityId?: string) {
         if(community.name) {
             if((await this.communityModel.find({$and: [{name: community.name }, {_id : { $ne: currentCommunityId }}]})).length > 0 ) {

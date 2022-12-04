@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcryptjs';
 import { Model, Types } from 'mongoose';
 import { Role } from '../auth/role.enum';
+import { CommunityService } from '../community/community.service';
 import { ValidationException } from '../shared/filters/validation.exception';
 import { CreateUserDto } from './user.dto';
 import { User, UserDocument } from './user.schema';
@@ -11,8 +12,8 @@ import { User, UserDocument } from './user.schema';
 @Injectable()
 export class UserService {
   constructor(
-    @InjectModel(User.name) private userModel: Model<UserDocument>)
-     {}
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @Inject(forwardRef(() => CommunityService)) private communityService : CommunityService){}
 
   async findByUsernameOrEmail(username: string): Promise<User | undefined> {
     return await this.userModel.findOne({$or: [{username}, { email : username }]});
@@ -56,21 +57,12 @@ export class UserService {
         user.password = await bcrypt.hashSync(user.password, 10)
       }
 
+      //update embedded users
+      await this.communityService.updateCreator(updateUserId, {...(await this.userModel.findOne({ _id : updateUserId })).toObject(), ...user });
+
       return this.userModel.findOneAndUpdate({ _id : updateUserId }, user, { new: true });
     }
     throw new ValidationException([`You cannot update other users!`]);
-  }
-
-  async delete(deleteUserId: string, req): Promise<User> {
-    await this.doesExist(deleteUserId);
-
-    const currentUser = req.user
-
-    if(await this.isMyData(deleteUserId, currentUser.id) || currentUser.roles.includes(Role.Admin)) {
-      return this.userModel.findOneAndDelete({ _id : deleteUserId });
-    }
-
-    throw new ValidationException([`You cannot delete other users!`]);
   }
 
   //following related methods

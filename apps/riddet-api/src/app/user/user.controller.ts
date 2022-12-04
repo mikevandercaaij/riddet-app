@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Logger, Param, Patch, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Param, Patch, Post, Req } from '@nestjs/common';
 import { Roles } from '../auth/auth.module';
 import { Role } from '../auth/role.enum';
 import { ParseObjectIdPipe } from '../shared/pipes/ParseObjectIdPipe';
@@ -41,16 +41,7 @@ export class UserController {
     return this.userService.update(id, updateUserDto, req);
   }
 
-  @Delete('users/:id')
-  async delete(@Req() req, @Param('id', ParseObjectIdPipe) id: string): Promise<User> {
-
-    Logger.log(`Getting community with id: ${id} (DELETE)`);
-
-    return this.userService.delete(id, req);
-  }
-
   //Follow
-
   @Post('users/:id/follow')
   async follow(@Req() req, @Param('id', ParseObjectIdPipe) id: string): Promise<User[]> {
     Logger.log(`Getting user with id: ${id} (READ)`);
