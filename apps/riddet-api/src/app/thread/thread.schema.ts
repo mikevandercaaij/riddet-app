@@ -2,9 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IThread } from '@riddet-app/data';
 import {
   IsDate,
-  IsDefined,
-  IsNumber,
-  IsString,
+  IsDefined, IsString,
   MinLength
 } from 'class-validator';
 import { Document, ObjectId, Types } from 'mongoose';
@@ -33,9 +31,14 @@ export class Thread implements IThread {
   @Prop()
   externLink: string;
 
-  @IsNumber()
   @Prop()
-  upvotes: number;
+  views: number;
+
+  @Prop({
+    default: [],
+    ref: 'User',
+  })
+  upvotes: [ObjectId]
 
   @IsDate({ message: 'Publication date must be a date!' })
   @Prop()

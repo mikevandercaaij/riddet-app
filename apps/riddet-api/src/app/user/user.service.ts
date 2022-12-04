@@ -19,6 +19,8 @@ export class UserService {
   }
 
   async getById(_id: string): Promise<User> {
+    await this.doesExist(_id);
+
     return this.userModel.findOne({ _id });
   }
 
@@ -38,6 +40,7 @@ export class UserService {
   }
 
   async update(updateUserId: string, user: Partial<User>, req): Promise<User> {
+    await this.doesExist(updateUserId);
 
     const currentUser = req.user;
 
@@ -59,6 +62,8 @@ export class UserService {
   }
 
   async delete(deleteUserId: string, req): Promise<User> {
+    await this.doesExist(deleteUserId);
+
     const currentUser = req.user
 
     if(await this.isMyData(deleteUserId, currentUser.id) || currentUser.roles.includes(Role.Admin)) {
@@ -71,6 +76,8 @@ export class UserService {
   //following related methods
 
   async follow(followUserId: string, req): Promise<User[]> {
+    await this.doesExist(followUserId);
+
     if(await this.isMyData(followUserId, req.user.id)) {
       throw new ValidationException([`You cannot follow yourself!`]);
     }
@@ -86,6 +93,8 @@ export class UserService {
   }
 
   async unfollow(followUserId: string, req): Promise<User[]> {
+    await this.doesExist(followUserId);
+
     if(await this.isMyData(followUserId, req.user.id)) {
       throw new ValidationException([`You cannot unfollow yourself!`]);
     }
@@ -122,5 +131,13 @@ export class UserService {
 
   async isMyData(currentUserId? : string, targetUserId? : string) : Promise<boolean> {
     return new Types.ObjectId(currentUserId).equals(new Types.ObjectId(targetUserId))
+  }
+
+  async doesExist(userId: string) : Promise<void> {
+    const user = await this.userModel.findOne({_id: userId});
+
+    if(!user) {
+      throw new ValidationException([`User with id of ${userId} doesn't exist!`]);
+    }
   }
 }

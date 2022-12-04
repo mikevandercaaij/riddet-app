@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
+import { Role } from "../auth/role.enum";
 import { Category } from "../category/category.schema";
 import { CategoryService } from "../category/category.service";
 import { ValidationException } from "../shared/filters/validation.exception";
@@ -17,6 +18,8 @@ export class CommunitiesService {
     
 
     async getById(_id: string): Promise<Community> {
+        await this.doesExist(_id);
+        
         return this.communityModel.findOne({ _id });
     }
 
@@ -33,17 +36,22 @@ export class CommunitiesService {
             embedCategories.push(await this.categoryService.getById(category));
         }
 
+        const creator = await this.userService.getById(req.user.id);
+        delete creator.password;
+
         const mergedCommunity = new this.communityModel(
             {...createCommunityDto, 
             creationDate: new Date(), 
             categories : embedCategories, 
-            createdBy: await this.userService.getById(req.user.id) 
+            createdBy: creator
         });
 
         return this.communityModel.create(mergedCommunity);
     }
 
-    async update(_id: string, updateCommunityDto: UpdateCommunityDto, updateId : string): Promise<Community> {
+    async update(updateId: string, updateCommunityDto: UpdateCommunityDto, req): Promise<Community> {
+        await this.doesExist(updateId);
+        await this.isAllowedToAlter(req.user.id, updateId, req);
         await this.validate(updateCommunityDto, updateId);
 
         let updateObject = {};
@@ -62,13 +70,47 @@ export class CommunitiesService {
 
         updateObject = {...updateCommunityDto, ...updateObject};
 
-        return this.communityModel.findOneAndUpdate({ _id }, updateObject, { new: true });
+        return this.communityModel.findOneAndUpdate({ _id : updateId }, updateObject, { new: true });
     }
 
-    async delete(_id: string): Promise<Community> {
-        return this.communityModel.findOneAndDelete({ _id });
+    async delete(_id: string, req): Promise<Community> {
+        await this.doesExist(_id);
+        await this.isAllowedToAlter(req.user.id, _id, req);
+
+        return await this.communityModel.findOneAndDelete({ _id });
     }
 
+    //participating in communities
+
+    async join(communityId : string, req) : Promise<Community> {
+        await this.doesExist(communityId);
+
+        if((await this.communityModel.find({$and: [{_id : communityId}, { "createdBy._id" : req.user.id }]})).length > 0) {
+            throw new ValidationException([`You cannot join a community you created!`]);
+        }
+        
+        else if (await (await this.communityModel.find({ $and: [ {_id: communityId}, {participants: { $in : req.user.id}} ] })).length > 0) {
+            throw new ValidationException([`You are already a participant of this community!`]);
+        }
+
+        return this.communityModel.findOneAndUpdate({ _id : communityId }, { $push : { participants : req.user.id } }, { new: true });
+    }
+
+    async leave(communityId : string, req) : Promise<Community> {
+        await this.doesExist(communityId);
+
+        if((await this.communityModel.find({$and: [{_id : communityId}, { "createdBy._id" : req.user.id }]})).length > 0) {
+            throw new ValidationException([`You cannot leave a community you created!`]);
+        }
+        
+        else if (await (await this.communityModel.find({ $and: [ {_id: communityId}, {participants: { $in : req.user.id}} ] })).length === 0) {
+            throw new ValidationException([`You are not a participant of this community!`]);
+        }
+
+        return this.communityModel.findOneAndUpdate({ _id : communityId }, { $pull : { participants : req.user.id } }, { new: true });
+    }
+
+    //validation
 
     async validate(community : CreateCommunityDto, currentCommunityId?: string) {
         if(community.name) {
@@ -86,5 +128,21 @@ export class CommunitiesService {
 
     async areValidObjectIds(value: string[]) {
         return value.every((id) => ParseObjectIdPipe.isValidObjectId(id));
+    }
+
+    async isAllowedToAlter(currentUserId? : string, communityId? : string, req?) : Promise<void> {
+        const community = await this.communityModel.findOne({ _id : communityId });
+
+        if(!(new Types.ObjectId(currentUserId).equals(community.createdBy._id) && !(req.user.roles.includes(Role.Admin)))) {
+            throw new ValidationException([`Only the creator can alter data of this community!`]);
+        }
+    }
+
+    async doesExist(communityId : string) : Promise<void> {
+        const community = await this.communityModel.findOne({ _id : communityId });
+
+        if(!community) {
+            throw new ValidationException([`Community with id of ${communityId} doesn't exist!`]);
+        }
     }
 }

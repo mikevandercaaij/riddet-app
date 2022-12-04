@@ -12,7 +12,7 @@ export interface IThread {
   publicationDate: Date;
   imageUrl: string;
   externLink: string;
-  upvotes: number;
+  views: number;
 }
 
 export interface IUser {
