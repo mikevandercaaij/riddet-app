@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IThread } from '@riddet-app/data';
 import {
-  IsBoolean,
   IsDate,
   IsDefined,
   IsNumber,
@@ -15,8 +14,6 @@ export type ThreadDocument = Thread & Document;
 
 @Schema()
 export class Thread implements IThread {
-  communityId: Types.ObjectId;
-
   _id : Types.ObjectId
 
   @IsString({ message: 'Name must be a string!' })
@@ -36,10 +33,6 @@ export class Thread implements IThread {
   @Prop()
   externLink: string;
 
-  @IsBoolean()
-  @Prop()
-  isPublic: boolean;
-
   @IsNumber()
   @Prop()
   upvotes: number;
@@ -54,11 +47,9 @@ export class Thread implements IThread {
   messages: [Message]
 
   @Prop({
-    default: [],
     ref: 'User',
   })
-  createdBy: [ObjectId]
-
+  createdBy: ObjectId
 }
 
 export const ThreadSchema = SchemaFactory.createForClass(Thread);

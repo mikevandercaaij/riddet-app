@@ -14,5 +14,6 @@ import { CommunitiesService } from './community.service';
   ],
   controllers: [CommunitiesController],
   providers: [CommunitiesService],
+  exports: [CommunitiesService, MongooseModule]
 })
-export class CommunityModule {}
+export class CommunityModule  {}

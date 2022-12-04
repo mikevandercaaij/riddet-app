@@ -1,5 +1,4 @@
 import { IsDefined, IsOptional, IsString, MinLength } from "class-validator";
-import { Types } from "mongoose";
 
 export class CreateThreadDto {
   @IsString({ message: 'Title must be a string!' })
@@ -18,8 +17,6 @@ export class CreateThreadDto {
   @IsString({ message: 'ExternLink must be a string!' })
   @IsDefined({ message: 'ExternLink is required!' })
   externLink: string;
-
-  communityId: Types.ObjectId;
 }
 
 export class UpdateThreadDto {
@@ -43,7 +40,4 @@ export class UpdateThreadDto {
   @IsString({ message: 'ExternLink must be a string!' })
   @IsDefined({ message: 'ExternLink is required!' })
   externLink: string;
-
-  @IsOptional()
-  communityId: Types.ObjectId;
 }
