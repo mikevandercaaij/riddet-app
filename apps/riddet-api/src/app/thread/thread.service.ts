@@ -4,14 +4,12 @@ import { Model, Types } from "mongoose";
 import { Role } from "../auth/role.enum";
 import { Community, CommunityDocument } from "../community/community.schema";
 import { ValidationException } from "../shared/filters/validation.exception";
-import { UserService } from "../user/user.service";
 import { CreateThreadDto, UpdateThreadDto } from "./thread-dto";
 import { Thread } from "./thread.schema";
 
 @Injectable()
 export class ThreadService {
-    constructor(@InjectModel(Community.name) private communityModel: Model<CommunityDocument>,
-    private readonly userService : UserService) {}
+    constructor(@InjectModel(Community.name) private communityModel: Model<CommunityDocument>) {}
 
     async getById(communityId : string, threadId : string): Promise<Thread> {
         await this.doesExist(communityId, threadId);
@@ -35,8 +33,8 @@ export class ThreadService {
 
         const community = await this.communityModel.findOne({ _id : communityId });
 
-        if(!(await this.communityModel.find({$and: [{_id: communityId}, {members: { $in : [req.user.id]}}]}))
-        && community.createdBy._id.equals(new Types.ObjectId(req.user.id))
+        if(!((await this.communityModel.find({$and: [{_id: communityId}, {participants: { $in : [req.user.id]}}]})).length > 0)
+        && !(community.createdBy._id.equals(new Types.ObjectId(req.user.id)))
         && !(req.user.roles.includes(Role.Admin))) {
             throw new ValidationException(["You are not a member of this community"]);
         }

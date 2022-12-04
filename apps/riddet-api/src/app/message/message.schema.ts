@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IMessage } from '@riddet-app/data';
 import {
-  IsDate, IsDefined, IsNumber, IsString
+  IsDate, IsDefined, IsString
 } from 'class-validator';
 import { Document, ObjectId, Types } from 'mongoose';
  
@@ -9,6 +9,7 @@ export type MessageDocument = Message & Document;
 
 @Schema()
 export class Message implements IMessage{
+  containsReplies: boolean;
   _id : Types.ObjectId
 
   @IsString({ message: 'Text must be a string!' })
@@ -16,20 +17,15 @@ export class Message implements IMessage{
   @Prop({unique: true})
   text: string;
 
-  @IsNumber()
-  @Prop()
-  likes: number;
-
-  @IsNumber()
-  @Prop()
-  dislikes: number;
+  @Prop({
+    dedfault: [],
+    ref: 'User',
+  })
+  likes : [ObjectId]
 
   @IsDate({ message: 'Creation date must be a date!' })
   @Prop()
   publicationDate: Date;
-
-  @Prop({default: []})
-  replies: [Message]
 
   @Prop({
     ref: 'User',

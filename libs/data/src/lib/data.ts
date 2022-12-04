@@ -29,8 +29,6 @@ export interface IUser {
 
 export interface IMessage {
   text: string;
-  likes: number;
-  dislikes: number;
   publicationDate: Date;
 }
 

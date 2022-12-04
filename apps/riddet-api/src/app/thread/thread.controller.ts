@@ -32,7 +32,9 @@ export class ThreadController {
     }
 
   @Post('communities/:communityId/threads')
-  async create(@Param('communityId', ParseObjectIdPipe) communityId : string, @Req() req, @Body() createThreadDto: CreateThreadDto): Promise<Thread> {
+  async create(@Param('communityId', ParseObjectIdPipe) communityId : string, 
+  @Req() req, 
+  @Body() createThreadDto: CreateThreadDto): Promise<Thread> {
       Logger.log(`Creating thread (CREATE)`);
 
       return this.threadService.create(createThreadDto, communityId, req);

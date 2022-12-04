@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
+import { Role } from '../auth/role.enum';
+import { Community, CommunityDocument } from '../community/community.schema';
+import { ValidationException } from '../shared/filters/validation.exception';
+import { Thread } from '../thread/thread.schema';
 import { MessageDto } from './message.dto';
 import { Message, MessageDocument } from './message.schema';
 
@@ -8,57 +12,113 @@ import { Message, MessageDocument } from './message.schema';
 @Injectable()
 export class MessageService {
   constructor(
-    @InjectModel(Message.name) private messageModel: Model<MessageDocument>) {}
+    @InjectModel(Community.name) private communityModel: Model<CommunityDocument>,
+    @InjectModel(Message.name) private messageModel: Model<MessageDocument>
+    ) {}
 
 
-  async getById(_id: string): Promise<Message> {
-    return this.messageModel.findOne({ _id });
+  async getById(communityId: string, threadId : string, messageId : string): Promise<Message> {
+    await this.doesExist(communityId, threadId, messageId);
+
+    const community = await this.communityModel.findOne({_id: communityId, "threads._id": threadId, "messages._id": messageId});
+    return community.threads.filter(thread => thread._id.equals(new Types.ObjectId(threadId)))[0].messages.filter(message => message._id.equals(new Types.ObjectId(messageId)))[0];
   }
 
-  async getAll(communityId, threadId): Promise<Message[]> {
+  async getAll(communityId : string, threadId : string): Promise<Message[]> {
+    await this.doesExist(communityId, threadId);
 
-    
-
-    return this.messageModel.find({});
+    const community = await this.communityModel.findOne({_id: communityId, "threads._id": threadId});
+    return community.threads.filter(thread => thread._id.equals(new Types.ObjectId(threadId)))[0].messages;
   }
 
-  async create(messageDto : MessageDto, req, threadId): Promise<Message> {
-      const mergedMessage = {...messageDto, publicationDate: new Date(), likes: 0, dislikes: 0, threadId: threadId, createdBy: req.user.id};
+  async create(communityId, threadId, req, messageDto : MessageDto) : Promise<Message> {
+      await this.doesExist(communityId, threadId);
 
-      return new this.messageModel(mergedMessage).save();
+      const community = await this.communityModel.findOne({ _id: communityId });
+
+      if(!((await this.communityModel.find({$and: [{_id: communityId}, {participants: { $in : [req.user.id]}}]})).length > 0)
+      && !(community.createdBy._id.equals(new Types.ObjectId(req.user.id)))
+      && !(req.user.roles.includes(Role.Admin))) {
+          throw new ValidationException(["You are not a member of this community"]);
+      }
+
+      const mergedMessage = new this.messageModel({
+        ...messageDto, 
+        publicationDate: new Date(), 
+        containsReplies: false,
+        createdBy: req.user.id
+      }) 
+
+      const result = await this.communityModel.findOneAndUpdate({ _id : communityId } , { $push: { "threads.$[thread].messages" : mergedMessage } }, { arrayFilters: [{ "thread._id": new Types.ObjectId(threadId) }], new: true });
+      return result.threads.filter(thread => thread._id.equals(new Types.ObjectId(threadId)))[0].messages.filter(message => message._id.equals(mergedMessage._id))[0];
   }
 
-//   async update(updateUserId: string, user: Partial<User>, req): Promise<User> {
+  async update(communityId: string, threadId: string, messageId: string, messageDto: MessageDto, req): Promise<Message> {
+      await this.doesExist(communityId, threadId, messageId);
+      
+      const oldMessage = await this.getById(communityId, threadId, messageId);
+      const message = {...oldMessage, ...messageDto};
 
-//     const currentUser = req.user;
+      if(!(await this.isMyData(message.createdBy.toString(), req.user.id)) && !(req.user.roles.includes(Role.Admin))) {
+          throw new ValidationException([`You cannot alter data that isn't yours!`]);
+      }
 
-//     if(await this.isMyData(updateUserId, currentUser.id) || currentUser.roles.includes(Role.Admin)) {
+      await this.communityModel.findOneAndUpdate({_id: new Types.ObjectId(communityId), "threads._id": new Types.ObjectId(threadId)}, {$pull: {"threads.$.messages": oldMessage}});
+      return (await this.communityModel.findOneAndUpdate({_id: new Types.ObjectId(communityId), "threads._id": new Types.ObjectId(threadId)}, {$push: {"threads.$.messages": {...message, ...messageDto}}}, {new: true})).threads.filter(thread => thread._id.equals(new Types.ObjectId(threadId)))[0].messages.filter(message => message._id.equals(new Types.ObjectId(messageId)))[0];
 
-//       if(user.dateOfBirth) {
-//         user.dateOfBirth = new Date(user.dateOfBirth);
-//         user.dateOfBirth.setHours(user.dateOfBirth.getHours() + 1);
-//       }
+    }
 
-//       if(user.password) {
-//         user.password = await bcrypt.hashSync(user.password, 10)
-//       }
+  async delete(communityId : string, threadId : string, messageId : string, req): Promise<Thread> {
+    await this.doesExist(communityId, threadId, messageId);
 
-//       return this.communityModel.findOneAndUpdate({ _id : updateUserId }, user, { new: true });
-//     }
-//     throw new ValidationException([`You cannot update other users!`]);
-//   }
+    const message = await this.getById(communityId, threadId, messageId);
 
-//   async delete(deleteUserId: string, req): Promise<User> {
-//     const currentUser = req.user
+    if(!(await this.isMyData(message.createdBy.toString(), req.user.id)) && !(req.user.roles.includes(Role.Admin))) {
+        throw new ValidationException([`You cannot alter data that isn't yours!`]);
+    }
 
-//     if(await this.isMyData(deleteUserId, currentUser.id) || currentUser.roles.includes(Role.Admin)) {
-//       return this.communityModel.findOneAndDelete({ _id : deleteUserId });
-//     }
+    return (await this.communityModel.findOneAndUpdate({_id: new Types.ObjectId(communityId), "threads._id": new Types.ObjectId(threadId)}, {$pull: {"threads.$.messages": message}}, {new : true})).threads.filter(thread => thread._id.equals(new Types.ObjectId(threadId)))[0];
+  }
 
-//     throw new ValidationException([`You cannot delete other users!`]);
-//   }
+
+async like(communityId : string, threadId : string, messageId : string, req): Promise<Message> {
+  await this.doesExist(communityId, threadId, messageId);
+
+  let community;
+
+  if ((await this.communityModel.find({ $and: [{_id: communityId}, {threads: {$elemMatch: {_id: threadId, messages : {$elemMatch : {_id: messageId, likes : {$in: [req.user.id] } } } } } } ]})).length === 0) {
+    community = (await this.communityModel.findOneAndUpdate({_id: new Types.ObjectId(communityId), "threads._id": new Types.ObjectId(threadId)}, {$push: {"threads.$.messages.$[message].likes": req.user.id}}, {arrayFilters: [{ "message._id": new Types.ObjectId(messageId) }], new: true}))
+  } 
+  else {
+    community = (await this.communityModel.findOneAndUpdate({_id: new Types.ObjectId(communityId), "threads._id": new Types.ObjectId(threadId)}, {$pull: {"threads.$.messages.$[message].likes": req.user.id}}, {arrayFilters: [{ "message._id": new Types.ObjectId(messageId) }], new: true}))
+  }
+
+  return community.threads.filter(thread => thread._id.equals(new Types.ObjectId(threadId)))[0].messages.filter(message => message._id.equals(new Types.ObjectId(messageId)))[0];
+}
 
   async isMyData(currentUserId : string | undefined, targetUserId : string | undefined) : Promise<boolean> {
-    return new Types.ObjectId(currentUserId).equals(new Types.ObjectId(targetUserId))
+    return new Types.ObjectId(currentUserId).equals(new Types.ObjectId(targetUserId) )
+  }
+
+  async doesExist(communityId : string, threadId? : string, messageId? : string) : Promise<void> {
+    const community = await this.communityModel.findOne({ _id : communityId });
+    let threads : Thread[];
+
+    if(!community) {
+      throw new ValidationException([`Community with id of ${communityId} doesn't exist!`]);
+    }
+
+    if(threadId) {
+      threads = await community.threads.filter(thread => thread._id.equals(new Types.ObjectId(threadId)));
+      if(!(threads.length > 0)) {
+        throw new ValidationException([`Thread with id of ${threadId} doesn't exist in the community with id of ${communityId}!`]);
+      }
+    }
+
+    if(threadId && messageId) {
+      if(!(threads[0].messages.filter(message => message._id.equals(new Types.ObjectId(messageId))).length > 0)) {
+        throw new ValidationException([`Message with id of ${messageId} doesn't exist in the thread with id of ${threadId}!`]);
+      }
+    }
   }
 }
