@@ -33,11 +33,14 @@ export class CommunitiesService {
             embedCategories.push(await this.categoryService.getById(category));
         }
 
+        const creator = await this.userService.getById(req.user.id);
+        delete creator.password;
+
         const mergedCommunity = new this.communityModel(
             {...createCommunityDto, 
             creationDate: new Date(), 
             categories : embedCategories, 
-            createdBy: await this.userService.getById(req.user.id) 
+            createdBy: creator
         });
 
         return this.communityModel.create(mergedCommunity);

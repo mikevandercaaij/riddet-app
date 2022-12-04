@@ -18,13 +18,7 @@ export class ThreadController {
     
     Logger.log(`Getting thread with id: ${threadId} from community with id of ${communityId} (READ)`);
     
-    const thread = await this.threadService.getById(communityId, threadId);
-    
-    if(!thread) {
-      throw new HttpException(`Thread with id of ${threadId} doesn't exist in the community with id of ${communityId}!`, HttpStatus.NOT_FOUND);
-    }
-    
-    return thread;
+    return await this.threadService.getById(communityId, threadId);
   }
 
   @Public()
