@@ -4,28 +4,142 @@ import { Model, Types } from "mongoose";
 import { Role } from "../auth/role.enum";
 import { Community, CommunityDocument } from "../community/community.schema";
 import { ValidationException } from "../shared/filters/validation.exception";
+import { UserService } from "../user/user.service";
 import { CreateThreadDto, UpdateThreadDto } from "./thread-dto";
 import { Thread } from "./thread.schema";
 
 @Injectable()
 export class ThreadService {
-    constructor(@InjectModel(Community.name) private communityModel: Model<CommunityDocument>) {}
+    constructor(@InjectModel(Community.name) private communityModel: Model<CommunityDocument>,
+    private readonly userService : UserService ) {}
 
     async getById(communityId : string, threadId : string): Promise<Thread> {
         await this.doesExist(communityId, threadId);
 
-        await this.communityModel.findOneAndUpdate({_id : communityId, "threads._id" : threadId}, {$inc: {"threads.$.views" : 1}});
-
-        return (await this.communityModel.findOne(
-            {_id: communityId}, 
-            {threads:{$elemMatch:{_id: threadId}}}))
-            .threads.filter(async thread => thread._id === new Types.ObjectId(threadId))[0];
+        return (await this.communityModel.aggregate([
+            { $match : { _id : new Types.ObjectId(communityId)}},
+            { $match : { "threads._id" : new Types.ObjectId(threadId)}},
+            { $unwind : { path: "$participants", preserveNullAndEmptyArrays: true }},
+            { $project : {
+                _id : 0,
+                "threads" : {
+                    $filter : {
+                        input : "$threads",
+                        as : "thread",
+                        cond : { $eq : ["$$thread._id", new Types.ObjectId(threadId)]}
+                    }
+                }}
+            },
+            { $unwind : { path: "$threads", preserveNullAndEmptyArrays: true }},
+            { $lookup : { 
+                from : "users",
+                localField : "threads.createdBy",
+                foreignField : "_id",
+                as : "threads.createdBy"
+            }},
+            { $unwind : { path: "$threads.messages", preserveNullAndEmptyArrays: true }},
+            { $lookup : { 
+                from : "users",
+                localField : "threads.messages.createdBy",
+                foreignField : "_id",
+                as : "threads.messages.createdBy"
+            }},
+            { $set: {
+                "threads.messages.createdBy": "$threads.messages.createdBy" 
+            }},
+            { $group: {
+                _id: "$threads._id",
+                title: {
+                  $first: "$threads.title"
+                },
+                content: {
+                  $first: "$threads.content"
+                },
+                views: {
+                  $first: "$threads.views"
+                },
+                imageUrl: {
+                    $first: "$threads.imageUrl"
+                },
+                upvotes: {
+                  $first: "$threads.upvotes"
+                },
+                messages: {
+                  $push: "$threads.messages"   
+                },
+                publicationDate: {
+                    $first: "$threads.publicationDate"
+                },
+                createdBy: {
+                  $first: "$threads.createdBy"
+                }
+            }},
+            { $unset: ["createdBy.password", "createdBy.__v", "messages.createdBy.password", "messages.createdBy.__v"]},
+        ]))[0]; 
     }
 
     async getAll(communityId : string): Promise<Thread[]> {
         await this.doesExist(communityId);
 
-        return (await this.communityModel.findOne({ _id : communityId })).threads;
+        return (await this.communityModel.aggregate([
+            { $match : { _id : new Types.ObjectId(communityId)}},
+            { $unwind : { path: "$participants", preserveNullAndEmptyArrays: true }},
+            { $project : {
+                _id : 0,
+                "threads" : {
+                    $filter : {
+                        input : "$threads",
+                        as : "thread",
+                        cond : true
+                    }
+                }}
+            },
+            { $unwind : { path: "$threads", preserveNullAndEmptyArrays: true }},
+            { $lookup : { 
+                from : "users",
+                localField : "threads.createdBy",
+                foreignField : "_id",
+                as : "threads.createdBy"
+            }},
+            { $unwind : { path: "$threads.messages", preserveNullAndEmptyArrays: true }},
+            { $lookup : { 
+                from : "users",
+                localField : "threads.messages.createdBy",
+                foreignField : "_id",
+                as : "threads.messages.createdBy"
+            }},
+            { $set: {
+                "threads.messages.createdBy": "$threads.messages.createdBy" 
+            }},
+            { $group: {
+                _id: "$threads._id",
+                title: {
+                  $first: "$threads.title"
+                },
+                content: {
+                  $first: "$threads.content"
+                },
+                views: {
+                  $first: "$threads.views"
+                },
+                imageUrl: {
+                    $first: "$threads.imageUrl"
+                },
+                upvotes: {
+                  $first: "$threads.upvotes"
+                },
+                messages: {
+                  $push: "$threads.messages"   
+                },
+                publicationDate: {
+                    $first: "$threads.publicationDate"
+                },
+                createdBy: {
+                  $first: "$threads.createdBy"
+                }
+            }},
+            { $unset: ["createdBy.password", "createdBy.__v", "messages.createdBy.password", "messages.createdBy.__v"]},
+        ])); 
     }
 
     async create(createThreadDto : CreateThreadDto, communityId : string, req): Promise<Thread> {

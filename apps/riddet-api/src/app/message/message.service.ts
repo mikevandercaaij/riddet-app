@@ -20,9 +20,40 @@ export class MessageService {
   async getById(communityId: string, threadId : string, messageId : string): Promise<Message> {
     await this.doesExist(communityId, threadId, messageId);
 
-    const community = await this.communityModel.findOne({_id: communityId, "threads._id": threadId, "messages._id": messageId});
-    return community.threads.filter(thread => thread._id.equals(new Types.ObjectId(threadId)))[0].messages.filter(message => message._id.equals(new Types.ObjectId(messageId)))[0];
-
+    return (await this.communityModel.aggregate([
+      { $match : { _id : new Types.ObjectId(communityId)}},
+      { $match : { "threads._id" : new Types.ObjectId(threadId)}},
+      { $match : { "threads.messages._id" : new Types.ObjectId(messageId)}},
+      { $unwind : { path: "$participants", preserveNullAndEmptyArrays: true }},
+      { $lookup : { 
+          from : "users", 
+          localField : "participants", 
+          foreignField : "_id", 
+          as : "participants" 
+      }},
+      { $project : {
+          _id : 0,
+          "messages" : {
+              $filter : {
+                  input : "$threads.messages",
+                  as : "message",
+                  cond : { $eq : ["$$message._id", new Types.ObjectId(messageId)]}
+              }
+          }}
+      },
+      { $unwind : { path: "$threads.messages", preserveNullAndEmptyArrays: true }},
+      { $unwind : { path: "$threads.messages.createdBy", preserveNullAndEmptyArrays: true }},
+      { $lookup : {
+          from : "users",
+          localField : "threads.messages.createdBy",
+          foreignField : "_id",
+          as : "threads.messages.createdBy"
+       }},
+       { $unset: [
+          "threads.messages.createdBy.password",
+          "threads.messages.createdBy.__v",
+      ]},
+  ]))[0];
   }
 
   async getAll(communityId : string, threadId : string): Promise<Message[]> {

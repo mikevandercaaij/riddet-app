@@ -53,7 +53,6 @@ export class UserService {
         localField: "followers",
         foreignField: "_id",
         as: "followers"
-        
       }},
       {$unset: ["password", "__v"]}
     ])
