@@ -22,6 +22,7 @@ export class MessageService {
 
     const community = await this.communityModel.findOne({_id: communityId, "threads._id": threadId, "messages._id": messageId});
     return community.threads.filter(thread => thread._id.equals(new Types.ObjectId(threadId)))[0].messages.filter(message => message._id.equals(new Types.ObjectId(messageId)))[0];
+
   }
 
   async getAll(communityId : string, threadId : string): Promise<Message[]> {

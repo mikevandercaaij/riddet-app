@@ -22,11 +22,41 @@ export class UserService {
   async getById(_id: string): Promise<User> {
     await this.doesExist(_id);
 
-    return this.userModel.findOne({ _id });
+    return (await this.userModel.aggregate([
+      {$match: { "_id": new Types.ObjectId(_id) }},
+      {$lookup: {
+        from: "users",
+        localField: "following",
+        foreignField: "_id",
+        as: "following"
+      }},
+      {$lookup: {
+        from: "users",
+        localField: "followers",
+        foreignField: "_id",
+        as: "followers"
+      }},
+      {$unset: ["password", "__v"]}
+    ]))[0];
   }
 
   async getAll(): Promise<User[]> {
-    return this.userModel.find({});
+    return await this.userModel.aggregate([
+      {$lookup: {
+        from: "users",
+        localField: "following",
+        foreignField: "_id",
+        as: "following"
+      }},
+      {$lookup: {
+        from: "users",
+        localField: "followers",
+        foreignField: "_id",
+        as: "followers"
+        
+      }},
+      {$unset: ["password", "__v"]}
+    ])
   }
 
   async create(createUserDto : CreateUserDto): Promise<User> {
