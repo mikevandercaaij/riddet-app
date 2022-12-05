@@ -20,12 +20,12 @@ export class CommunityService {
 
     async getById(_id: string): Promise<Community> {
         await this.doesExist(_id);
-        
-        return this.communityModel.findOne({ _id });
+
+        return await this.communityModel.findOne({ _id });
     }
 
     async getAll(): Promise<Community[]> {
-        return this.communityModel.find({});
+        return await this.communityModel.find({})
     }
 
     async create(createCommunityDto : CreateCommunityDto, req): Promise<Community> {
