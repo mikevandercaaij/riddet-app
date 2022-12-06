@@ -1,10 +1,9 @@
-import { forwardRef, Inject, Injectable } from "@nestjs/common";
+import { forwardRef, HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
 import { Role } from "../auth/role.enum";
 import { Category } from "../category/category.schema";
 import { CategoryService } from "../category/category.service";
-import { ValidationException } from "../shared/filters/validation.exception";
 import { ParseObjectIdPipe } from "../shared/pipes/ParseObjectIdPipe";
 import { User } from "../user/user.schema";
 import { UserService } from "../user/user.service";
@@ -125,11 +124,11 @@ export class CommunityService {
         await this.doesExist(communityId);
 
         if((await this.communityModel.find({$and: [{_id : communityId}, { "createdBy._id" : req.user.id }]})).length > 0) {
-            throw new ValidationException([`You cannot join a community you created!`]);
+            throw new HttpException(`You cannot join a community you created!`, HttpStatus.BAD_REQUEST);
         }
         
         else if (await (await this.communityModel.find({ $and: [ {_id: communityId}, {participants: { $in : req.user.id}} ] })).length > 0) {
-            throw new ValidationException([`You are already a participant of this community!`]);
+            throw new HttpException(`You are already a participant of this community!`, HttpStatus.BAD_REQUEST);
         }
 
         await this.userService.addJoinedCommunity(req.user.id, communityId);
@@ -141,11 +140,12 @@ export class CommunityService {
         await this.doesExist(communityId);
 
         if((await this.communityModel.find({$and: [{_id : communityId}, { "createdBy._id" : req.user.id }]})).length > 0) {
-            throw new ValidationException([`You cannot leave a community you created!`]);
+            throw new HttpException(`You cannot leave a community you created!`, HttpStatus.BAD_REQUEST);
+
         }
         
         else if (await (await this.communityModel.find({ $and: [ {_id: communityId}, {participants: { $in : req.user.id}} ] })).length === 0) {
-            throw new ValidationException([`You are not a participant of this community!`]);
+            throw new HttpException(`You are not a participant of this community!`, HttpStatus.BAD_REQUEST);
         }
 
         await this.userService.removeJoinedCommunity(communityId, req.user.id,);
@@ -163,13 +163,13 @@ export class CommunityService {
     async validate(community : CreateCommunityDto, currentCommunityId?: string) {
         if(community.name) {
             if((await this.communityModel.find({$and: [{name: community.name }, {_id : { $ne: currentCommunityId }}]})).length > 0 ) {
-                throw new ValidationException([`Community with the name of ${community.name} already exists!`]);
+                throw new HttpException(`Community with the name of ${community.name} already exists!`, HttpStatus.BAD_REQUEST);
             }
         }
 
         if(community.categories) {
             if(!(await this.areValidObjectIds(community.categories as string[]))) {
-                throw new ValidationException([`Categories contains invalid data, all input must be of type ObjectId!`]);
+                throw new HttpException(`Categories contains invalid data, all input must be of type ObjectId!`, HttpStatus.BAD_REQUEST);
             }
         }
     }
@@ -182,7 +182,8 @@ export class CommunityService {
         const community = await this.communityModel.findOne({ _id : communityId });
 
         if(!(new Types.ObjectId(currentUserId).equals(community.createdBy._id)) && !(req.user.roles.includes(Role.Admin))) {
-            throw new ValidationException([`Only the creator can alter data of this community!`]);
+            throw new HttpException(`Only the creator can alter data of this community!`, HttpStatus.BAD_REQUEST);
+
         }
     }
 
@@ -190,7 +191,7 @@ export class CommunityService {
         const community = await this.communityModel.findOne({ _id : communityId });
 
         if(!community) {
-            throw new ValidationException([`Community with id of ${communityId} doesn't exist!`]);
+            throw new HttpException(`Community with id of ${communityId} doesn't exist!`, HttpStatus.BAD_REQUEST);
         }
     }
 }

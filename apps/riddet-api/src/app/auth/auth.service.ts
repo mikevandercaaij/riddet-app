@@ -20,7 +20,6 @@ export class AuthService {
     } 
 
     throw new HttpException(`Incorrect credentials!`, HttpStatus.BAD_REQUEST);
-
   }
 
   async register(createUserDto: CreateUserDto) {
