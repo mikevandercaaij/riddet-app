@@ -23,7 +23,7 @@ import { UserModule } from './user/user.module';
     UserModule,
     AuthModule,
     CategoryModule,
-    MessageModule
+    MessageModule,
   ],
   controllers: [AppController],
   providers: [

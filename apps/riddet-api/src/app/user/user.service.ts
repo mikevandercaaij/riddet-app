@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcryptjs';
 import { Model, Types } from 'mongoose';
@@ -142,11 +142,11 @@ export class UserService {
         ] 
       }, 
     )).length > 0 && !(await this.isMyData(currentUserId, updateUserId))) {
-      throw new ValidationException([`Username or email is already in use!`]);
+    throw new HttpException(`Username or email is already in use!`, HttpStatus.BAD_REQUEST);
     }
 
     if(new Date(user.dateOfBirth) > new Date()) {
-      throw new ValidationException([`Date of birth cannot be in the future!`]);
+    throw new HttpException(`Date of birth cannot be in the future!`, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -158,7 +158,7 @@ export class UserService {
     const user = await this.userModel.findOne({_id: userId});
 
     if(!user) {
-      throw new ValidationException([`User with id of ${userId} doesn't exist!`]);
+      throw new HttpException(`User with id of ${userId} doesn't exist!`, HttpStatus.BAD_REQUEST);
     }
   }
 }

@@ -1,0 +1,227 @@
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-sm-10 col-md-8 col-lg-6 my-5">
+      <div class="card card-auth shadow-lg p-3 px-md-5 py-md-4">
+        <h2>Register</h2>
+        <form
+          class="form-signin"
+          [formGroup]="registerForm"
+          (ngSubmit)="onSubmit()"
+        >
+          <!--
+          firstName
+         -->
+          <div class="form-group">
+            <label for="inputFirstName">Firstname</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="firstname"
+              id="inputFirstName"
+              [ngClass]="{
+                'is-invalid':
+                  registerForm.get('firstname')?.invalid &&
+                  registerForm.get('firstname')?.touched
+              }"
+            />
+            <span
+              *ngIf="
+                !registerForm.get('firstname')?.valid &&
+                registerForm.get('firstname')?.touched
+              "
+              class="invalid-feedback"
+            >
+              <p id="firstName-invalid">Name is invalid.</p>
+            </span>
+          </div>
+          <!--
+          lastName
+         -->
+          <div class="form-group">
+            <label for="inputLastName">Lastname</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="lastname"
+              id="inputLastName"
+              [ngClass]="{
+                'is-invalid':
+                  registerForm.get('lastname')?.invalid &&
+                  registerForm.get('lastname')?.touched
+              }"
+            />
+            <span
+              *ngIf="
+                !registerForm.get('lastname')?.valid &&
+                registerForm.get('lastname')?.touched
+              "
+              class="invalid-feedback"
+            >
+              <p id="lastName-invalid">Lastname is invalid.</p>
+            </span>
+          </div>
+          <!--
+          birthdate
+         -->
+          <div class="form-group">
+            <label for="inputDateOfBirth">Birthdate</label>
+            <div class="input-group">
+              <input
+                class="form-control"
+                formControlName="dateOfBirth"
+                id="inputDateOfBirth"
+                name="dateOfBirth"
+                ngbDatepicker
+                #d="ngbDatepicker"
+                [ngClass]="{
+                  'is-invalid':
+                    registerForm.get('dateOfBirth')?.invalid &&
+                    registerForm.get('dateOfBirth')?.touched
+                }"
+              />
+              <button
+                class="btn btn-outline-secondary bi bi-calendar3"
+                (click)="d.toggle()"
+                type="button"
+              ></button>
+              <span
+                *ngIf="
+                  !registerForm.get('dateOfBirth')?.valid &&
+                  registerForm.get('dateOfBirth')?.touched
+                "
+                class="invalid-feedback"
+              >
+                <p id="dateOfBirth-invalid">Enter a valid birthdate</p>
+              </span>
+            </div>
+          </div>
+          <!--
+          username
+         -->
+          <div class="form-group">
+            <label for="inputUsername">Username</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="username"
+              id="inputUsername"
+              [ngClass]="{
+                'is-invalid':
+                  registerForm.get('username')?.invalid &&
+                  registerForm.get('username')?.touched
+              }"
+            />
+            <span
+              *ngIf="
+                !registerForm.get('username')?.valid &&
+                registerForm.get('username')?.touched
+              "
+              class="invalid-feedback"
+            >
+              <p id="username-invalid">Username is invalid.</p>
+            </span>
+          </div>
+          <!--
+          email
+         -->
+          <div class="form-group">
+            <label for="inputEmail">Email address</label>
+            <input
+              type="email"
+              class="form-control"
+              formControlName="email"
+              id="inputEmail"
+              aria-describedby="emailHelp"
+              [ngClass]="{
+                'is-invalid':
+                  registerForm.get('email')?.invalid &&
+                  registerForm.get('email')?.touched
+              }"
+            />
+            <span
+              *ngIf="
+                !registerForm.get('email')?.valid &&
+                registerForm.get('email')?.touched
+              "
+              class="invalid-feedback"
+            >
+              <p id="email-invalid">Email is invalid.</p>
+            </span>
+          </div>
+          <!--
+          email
+         -->
+          <div class="form-group">
+            <label for="inputUserImageUrl">Profile Image URL</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="userImageUrl"
+              id="inputUserImageUrl"
+              aria-describedby="userImageUrlHelp"
+              [ngClass]="{
+                'is-invalid':
+                  registerForm.get('userImageUrl')?.invalid &&
+                  registerForm.get('userImageUrl')?.touched
+              }"
+            />
+            <span
+              *ngIf="
+                !registerForm.get('userImageUrl')?.valid &&
+                registerForm.get('userImageUrl')?.touched
+              "
+              class="invalid-feedback"
+            >
+              <p id="userImageUrl-invalid">Profile Image URL is invalid.</p>
+            </span>
+          </div>
+          <!--
+          password
+         -->
+          <div class="form-group">
+            <label for="inputPassword">Password</label>
+            <input
+              type="password"
+              class="form-control"
+              formControlName="password"
+              id="inputPassword"
+              [ngClass]="{
+                'is-invalid':
+                  registerForm.get('password')?.invalid &&
+                  registerForm.get('password')?.touched
+              }"
+            />
+            <span
+              *ngIf="
+                !registerForm.get('password')?.valid &&
+                registerForm.get('password')?.touched
+              "
+              class="invalid-feedback"
+            >
+              <p id="password-invalid">Enter a valid password</p>
+            </span>
+          </div>
+
+          <div class="form-group">
+            <button
+              id="submitbutton"
+              class="btn btn-lg btn-primary btn-block"
+              type="submit"
+              [disabled]="!registerForm.valid"
+            >
+              Register
+            </button>
+          </div>
+          <p class="register-routes">
+            Already have an account?
+            <a
+              style="text-decoration: underline; color: #0d6efd"
+              routerLink="/login"
+              >Login</a
+            >
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
