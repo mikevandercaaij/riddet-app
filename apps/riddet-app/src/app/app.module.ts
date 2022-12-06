@@ -5,13 +5,12 @@ import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { AuthUiModule } from '@riddet-app/auth-ui';
 import { CommunityModule, ThreadModule } from '@riddet-app/features-ui';
-import { ConfigModule } from '@riddet-app/util-ui';
+import { AlertModule, ConfigModule } from '@riddet-app/util-ui';
 import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
 import { appRoutes } from './app.routes';
-import { LoginComponent } from './auth/login/login.component';
-import { RegisterComponent } from './auth/register/register.component';
 import { AboutComponent } from './pages/about/about.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { FooterComponent } from './shared/footer/footer.component';
@@ -20,11 +19,9 @@ import { NavbarComponent } from './shared/navbar/navbar.component';
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent,
     DashboardComponent,
     FooterComponent,
     NavbarComponent,
-    RegisterComponent,
     AboutComponent,
   ],
   imports: [
@@ -36,7 +33,9 @@ import { NavbarComponent } from './shared/navbar/navbar.component';
     NgbModule,
     HttpClientModule,
     CommunityModule,
-    ThreadModule
+    ThreadModule,
+    AuthUiModule,
+    AlertModule
   ],
   providers: [],
   bootstrap: [AppComponent],
