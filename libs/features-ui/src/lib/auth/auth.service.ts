@@ -1,11 +1,11 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { User } from '@riddet-app/features-ui';
 import { AlertService, ConfigService } from '@riddet-app/util-ui';
 import { Types } from 'mongoose';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
+import { User } from '../user/user.model';
 
 @Injectable({
   providedIn: 'root',
@@ -123,7 +123,7 @@ export class AuthService {
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + userData.token,
+        Authorization: 'Bearer ' + userData.access_token,
       }),
     };
     console.log(`validateToken at ${url}`);
@@ -158,6 +158,19 @@ export class AuthService {
   private saveUserToLocalStorage(user: User): void {
     localStorage.setItem(this.CURRENT_USER, JSON.stringify(user));
   }
+
+  getHttpOptions(): object {
+    let token;
+    this.getUserFromLocalStorage().subscribe((p) => {
+      token = p.access_token;
+    }).unsubscribe();
+
+    return { headers: new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + token})
+    }
+  }
+
 
   userMayEdit(itemUserId: string): Observable<boolean> {
     return this.currentUser$.pipe(

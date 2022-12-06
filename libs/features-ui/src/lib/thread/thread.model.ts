@@ -9,5 +9,6 @@ export class Thread implements IThread {
     imageUrl = '';
     externLink = '';
     views = 0;
-    communityId = Types.ObjectId as unknown as Types.ObjectId;
+    messages = [];
+    createdBy = Types.ObjectId;
 }

@@ -3,17 +3,18 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from "@angular/core";
 import { ConfigService } from '@riddet-app/util-ui';
 import { Observable } from "rxjs";
+import { AuthService } from '../auth/auth.service';
 import { Community } from "./community.model";
 
 @Injectable({providedIn: 'root',})
 export class CommunityService {
      private community? : Community;
 
-    constructor(private http : HttpClient, private configService : ConfigService) {}
+    constructor(private http : HttpClient, private configService : ConfigService, private authService : AuthService) {}
 
-      getList(): Observable<Community[]> {
-        return this.http.get(this.configService.getApiEndpoint() + '/communities') as Observable<Community[]>;
-      }
+    getList(endpoint : string): Observable<Community[]> {
+      return this.http.get(this.configService.getApiEndpoint() + endpoint, this.authService.getHttpOptions()) as Observable<Community[]>;
+    }
 
     getById(communityId: string):  Observable<Community> {
       return this.http.get(this.configService.getApiEndpoint() + '/communities/' + communityId) as Observable<Community>;

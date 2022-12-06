@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '@riddet-app/auth-ui';
-import { User } from '@riddet-app/features-ui';
+import { AuthService, User } from '@riddet-app/features-ui';
 import { Observable } from 'rxjs';
 @Component({
   selector: 'riddet-app-navbar',

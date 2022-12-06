@@ -20,7 +20,8 @@ nav {
   margin-bottom: 25px;
 }
 
-.nav-link:hover {
+.nav-link:hover,
+.dropdown-item:hover {
   cursor: pointer !important;
 }
 
