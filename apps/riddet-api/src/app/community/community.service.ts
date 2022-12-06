@@ -28,6 +28,32 @@ export class CommunityService {
         return await this.communityModel.find({})
     }
 
+    async getAllJoinedCommunities(req) : Promise<Community[]> {
+
+        const joinedCommunities : Community[] = []
+
+        const user = await this.userService.getById(req.user.id);
+
+        for await (const communityId of user.joinedCommunities) {
+            joinedCommunities.push(await this.getById(communityId.toString()));
+        }
+
+        return joinedCommunities;
+    }
+
+    async getAllCreatedCommunities(req) : Promise<Community[]> {
+
+        const createdCommunities : Community[] = []
+
+        const user = await this.userService.getById(req.user.id);
+
+        for await (const communityId of user.createdCommunities) {
+            createdCommunities.push(await this.getById(communityId.toString()));
+        }
+
+        return createdCommunities;
+    }
+
     async create(createCommunityDto : CreateCommunityDto, req): Promise<Community> {
         await this.validate(createCommunityDto);
 
@@ -47,7 +73,11 @@ export class CommunityService {
             createdBy: creator
         });
 
-        return this.communityModel.create(mergedCommunity);
+        const community = await this.communityModel.create(mergedCommunity);
+
+        await this.userService.addCreatedCommunity(req.user.id, community._id);
+
+        return community;
     }
 
     async update(updateId: string, updateCommunityDto: UpdateCommunityDto, req): Promise<Community> {
@@ -77,6 +107,15 @@ export class CommunityService {
         await this.doesExist(_id);
         await this.isAllowedToAlter(req.user.id, _id, req);
 
+        const community = await this.communityModel.findOne({ _id });
+        const creator = await this.userService.getById(community.createdBy._id.toString());
+
+        await this.userService.removeCreatedCommunity(creator._id.toString(), community._id);
+
+        for await (const participantId of community.participants) {
+            await this.userService.removeJoinedCommunity(participantId.toString(), community._id);
+        };
+
         return await this.communityModel.findOneAndDelete({ _id });
     }
 
@@ -93,6 +132,8 @@ export class CommunityService {
             throw new ValidationException([`You are already a participant of this community!`]);
         }
 
+        await this.userService.addJoinedCommunity(req.user.id, communityId);
+
         return this.communityModel.findOneAndUpdate({ _id : communityId }, { $push : { participants : req.user.id } }, { new: true });
     }
 
@@ -106,6 +147,8 @@ export class CommunityService {
         else if (await (await this.communityModel.find({ $and: [ {_id: communityId}, {participants: { $in : req.user.id}} ] })).length === 0) {
             throw new ValidationException([`You are not a participant of this community!`]);
         }
+
+        await this.userService.removeJoinedCommunity(communityId, req.user.id,);
 
         return this.communityModel.findOneAndUpdate({ _id : communityId }, { $pull : { participants : req.user.id } }, { new: true });
     }

@@ -10,6 +10,28 @@ export class CommunitiesController {
   constructor(private readonly communityService: CommunityService) {}
 
   @Public()
+  @Get()
+  async getAll(): Promise<Community[]> {
+      Logger.log(`Getting all communities (READ)`);
+
+      return this.communityService.getAll();
+  }
+
+  @Get('/joined')
+  async getAllJoinedCommunities(@Req() req): Promise<Community[]> {
+      Logger.log(`Getting all communities user has joined (READ)`);
+
+    return this.communityService.getAllJoinedCommunities(req);
+  }
+
+  @Get('/created')
+  async getAllCreatedCommunities(@Req() req): Promise<Community[]> {
+      Logger.log(`Getting all communities user has created (READ)`);
+
+    return this.communityService.getAllCreatedCommunities(req);
+  }
+
+  @Public()
   @Get(':id')
   async getById(
     @Param('id', ParseObjectIdPipe) id: string): Promise<Community> {
@@ -18,15 +40,6 @@ export class CommunitiesController {
 
     return await this.communityService.getById(id);
   }
-
-  @Public()
-  @Get()
-  async getAll(): Promise<Community[]> {
-      Logger.log(`Getting all communities (READ)`);
-
-      return this.communityService.getAll();
-  }
-
 
   @Post()
   async create(@Body() createCommunityDto: CreateCommunityDto, @Req() req): Promise<Community> {
