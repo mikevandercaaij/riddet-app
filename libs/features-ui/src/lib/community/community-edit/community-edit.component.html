@@ -1,249 +1,203 @@
 <div class="row">
-  <div class="col-sm-12 col-md-6">
-    <div class="card" style="margin-bottom: 15px">
-      <div class="card-body">
-        <h5 class="card-title">{{ title }}</h5>
-
-        <!--EDIT FORM-->
-        <form
-          *ngIf="editMode"
-          #communityForm="ngForm"
-          name="form"
-          (ngSubmit)="communityForm.form.valid && onSubmit()"
-          novalidate
-          class="row g-3"
-        >
-          <div class="col-12">
-            <label for="nameInput" class="form-label">Naam</label>
-            <input
-              type="text"
-              class="form-control"
-              name="communityName"
-              [(ngModel)]="community!.name"
-              #communityName="ngModel"
-              [ngClass]="{
-                'is-invalid':
-                  communityName.invalid &&
-                  (communityName.dirty || communityName.touched)
-              }"
-              required
-              minlength="5"
-            />
-            <div
-              *ngIf="communityName.invalid && communityName.touched"
-              class="invalid-feedback"
-            >
-              <div>Naam moet uit minimaal minimaal 5 karakters bestaan!</div>
+  <div class="d-flex justify-content-center">
+    <div class="col-sm-12 col-md-6">
+      <div class="card" style="margin-bottom: 15px">
+        <div class="card-body">
+          <h5 class="card-title">{{ title }}</h5>
+          <!--FORM-->
+          <form
+            [formGroup]="communityForm"
+            (ngSubmit)="onSubmit()"
+            class="row g-3"
+          >
+            <div class="col-12">
+              <label for="inputName" class="form-label">Name</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="name"
+                id="inputName"
+                aria-describedby="nameHelp"
+                [ngClass]="{
+                  'is-invalid':
+                    communityForm.get('name')?.invalid &&
+                    communityForm.get('name')?.touched
+                }"
+              />
+              <span
+                *ngIf="
+                  !communityForm.get('name')?.valid &&
+                  communityForm.get('name')?.touched
+                "
+                class="invalid-feedback"
+              >
+                <p id="name-invalid">
+                  Name must be at least 5 characters long!
+                </p>
+              </span>
             </div>
+
+            <div class="col-12">
+              <label for="inputDescription" class="form-label"
+                >Description</label
+              >
+              <textarea
+                type="text"
+                class="form-control"
+                formControlName="description"
+                id="inputDescription"
+                aria-describedby="descriptionHelp"
+                [ngClass]="{
+                  'is-invalid':
+                    communityForm.get('description')?.invalid &&
+                    communityForm.get('description')?.touched
+                }"
+              ></textarea>
+              <span
+                *ngIf="
+                  !communityForm.get('description')?.valid &&
+                  communityForm.get('description')?.touched
+                "
+                class="invalid-feedback"
+              >
+                <p id="description-invalid">
+                  Description must be at least 10 characters long!
+                </p>
+              </span>
+            </div>
+
+            <div class="col-12">
+              <label for="inputImageUrl" class="form-label">Image URL</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="imageUrl"
+                id="inputImageUrl"
+                aria-describedby="imageUrlHelp"
+                [ngClass]="{
+                  'is-invalid':
+                    communityForm.get('imageUrl')?.invalid &&
+                    communityForm.get('imageUrl')?.touched
+                }"
+              />
+              <span
+                *ngIf="
+                  !communityForm.get('imageUrl')?.valid &&
+                  communityForm.get('imageUrl')?.touched
+                "
+                class="invalid-feedback"
+              >
+                <p id="imageUrl-invalid">Please enter a valid image url!</p>
+              </span>
+            </div>
+
+            <!--CATEGORIES-->
+            <div class="col-12">
+              <label for="inputTheme" class="form-label">Select Categories</label>
+              <!-- CREATE -->
+              <div *ngIf="!community">
+                  <div *ngFor="let category of categories" class="form-check">
+                      <input
+                      id="inputTheme"
+                      class="form-check-input"
+                      (change)="onChange(category._id.toString())"
+                      type="checkbox"
+                      >
+                      {{ category.name }}
+                  </div>
+              </div>
+              
+              <!-- EDIT -->
+              <div *ngIf="community">
+                  <div *ngFor="let category of chosenCategories" class="form-check">
+                      <input
+                      id="inputTheme"
+                      class="form-check-input"
+                      (change)="onChange(category._id.toString())"
+                      type="checkbox"
+                      checked="true"
+                      >
+                      {{ category.name }}
+                  </div>
+                  <div *ngFor="let category of categories" class="form-check">
+                      <input
+                      id="inputTheme"
+                      class="form-check-input"
+                      (change)="onChange(category._id.toString())"
+                      type="checkbox"
+                      >
+                      {{ category.name }}
+                  </div>
+              </div>
           </div>
+            <!--END CATEGORIES-->
 
-          <div class="col-12">
-            <label for="descriptionInput" class="form-label"
-              >Beschrijving</label
-            >
-            <textarea
-              class="form-control"
-              name="communityDescription"
-              [(ngModel)]="community!.description"
-              id="descriptionInput"
-              #communityDescription="ngModel"
-              [ngClass]="{
-                'is-invalid':
-                  communityDescription.invalid &&
-                  (communityDescription.dirty || communityDescription.touched)
-              }"
-              required
-              rows="5"
-            ></textarea>
-            <div
-              *ngIf="
-                communityDescription.invalid && communityDescription.touched
-              "
-              class="invalid-feedback"
-            >
-              <div>Beschrijving is verplicht!</div>
-            </div>
-          </div>
 
-          <div class="col-12">
-            <label for="imageUrlInput" class="form-label">Foto URL</label>
-            <input
-              type="text"
-              class="form-control"
-              name="communityImageUrl"
-              [(ngModel)]="community!.imageUrl"
-              id="imageUrlInput"
-              #communityImageUrl="ngModel"
-              [ngClass]="{
-                'is-invalid':
-                  communityImageUrl.invalid &&
-                  (communityImageUrl.dirty || communityImageUrl.touched)
-              }"
-              required
-            />
-            <div
-              *ngIf="communityImageUrl.invalid && communityImageUrl.touched"
-              class="invalid-feedback"
-            >
-              <div>Foto URL is verplicht!</div>
-            </div>
 
+            <div class="col-12">
             <div class="form-check" style="margin-top: 15px">
               <input
                 class="form-check-input"
+                formControlName="isPublic"
                 type="checkbox"
-                [(ngModel)]="community!.isPublic"
-                name="communityIsPublic"
+                name="isPublic"
                 id="isPublicInput"
-                checked
               />
               <label class="form-check-label" for="flexCheckChecked">
-                Publieke community
+                Do you want your community to be public? 
               </label>
             </div>
-          </div>
+            </div>
 
-          <div class="text-center">
-            <button
+            <div class="text-center">
+              <!--CREATE BUTTON-->
+              <button
+                *ngIf="!editMode"
+                style="margin-right: 5px"
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="!communityForm.valid"
+              >
+                Create
+              </button>
+
+              <!--EDIT BUTTON-->
+              <button
+              *ngIf="editMode"
               style="margin-right: 5px"
               type="submit"
-              class="btn btn-success"
+              class="btn btn-primary"
               [disabled]="!communityForm.valid"
             >
-              Opslaan
+              Edit
             </button>
-            <button
-              style="margin-left: 5px"
-              type="reset"
-              class="btn btn-danger"
-              [routerLink]="['/communities', communityId]"
-            >
-              Annuleren
-            </button>
-          </div>
-        </form>
-        <!--EDIT FORM END-->
 
-        <!--CREATE FORM-->
-        <form
-          *ngIf="!editMode"
-          #communityForm="ngForm"
-          name="form"
-          (ngSubmit)="communityForm.form.valid && onSubmit()"
-          novalidate
-          class="row g-3"
-        >
-          <div class="col-12">
-            <label for="nameInput" class="form-label">Naam</label>
-            <input
-              type="text"
-              class="form-control"
-              name="communityName"
-              [(ngModel)]="community!.name"
-              #communityName="ngModel"
-              [ngClass]="{
-                'is-invalid':
-                  communityName.invalid &&
-                  (communityName.dirty || communityName.touched)
-              }"
-              required
-              minlength="5"
-            />
-            <div
-              *ngIf="communityName.invalid && communityName.touched"
-              class="invalid-feedback"
-            >
-              <div>Naam moet uit minimaal minimaal 5 karakters bestaan!</div>
-            </div>
-          </div>
+              <!--EDIT CANCEL BUTTON-->
+              <button 
+                *ngIf="editMode"
+                style="margin-left: 5px"
+                type="reset"
+                class="btn btn-danger"
+                [routerLink]="['/communities', communityId]"
+              >
+                Cancel
+              </button>
 
-          <div class="col-12">
-            <label for="descriptionInput" class="form-label"
-              >Beschrijving</label
-            >
-            <textarea
-              class="form-control"
-              name="communityDescription"
-              [(ngModel)]="community!.description"
-              id="descriptionInput"
-              #communityDescription="ngModel"
-              [ngClass]="{
-                'is-invalid':
-                  communityDescription.invalid &&
-                  (communityDescription.dirty || communityDescription.touched)
-              }"
-              required
-              rows="5"
-            ></textarea>
-            <div
-              *ngIf="
-                communityDescription.invalid && communityDescription.touched
-              "
-              class="invalid-feedback"
-            >
-              <div>Beschrijving is verplicht!</div>
-            </div>
-          </div>
-
-          <div class="col-12">
-            <label for="imageUrlInput" class="form-label">Foto URL</label>
-            <input
-              type="text"
-              class="form-control"
-              name="communityImageUrl"
-              [(ngModel)]="community!.imageUrl"
-              id="imageUrlInput"
-              #communityImageUrl="ngModel"
-              [ngClass]="{
-                'is-invalid':
-                  communityImageUrl.invalid &&
-                  (communityImageUrl.dirty || communityImageUrl.touched)
-              }"
-              required
-            />
-            <div
-              *ngIf="communityImageUrl.invalid && communityImageUrl.touched"
-              class="invalid-feedback"
-            >
-              <div>Foto URL is verplicht!</div>
-            </div>
-          </div>
-
-          <div class="text-center">
-            <button
-              style="margin-right: 5px"
-              type="submit"
-              class="btn btn-success"
-              [disabled]="!communityForm.valid"
-            >
-              Aanmaken
-            </button>
-            <button
+              <!--EDIT CANCEL BUTTON-->
+              <button 
+              *ngIf="!editMode"
               style="margin-left: 5px"
               type="reset"
               class="btn btn-danger"
               [routerLink]="['/communities']"
             >
-              Annuleren
+              Cancel
             </button>
-          </div>
-        </form>
-        <!--CREATE FORM END-->
-      </div>
-    </div>
-  </div>
 
-  <div class="col-sm-12 col-md-6">
-    <div class="card" *ngIf="community">
-      <div class="card-header">Object</div>
-      <div
-        class="card-body"
-        style="display: flex; justify-content: center; align-items: center"
-      >
-        <pre style="margin-bottom: 0"
-          >{{ community | json }}
-      </pre
-        >
+            </div>
+          </form>
+          <!--END FORM-->
+        </div>
       </div>
     </div>
   </div>

@@ -9,6 +9,7 @@ export type MessageDocument = Message & Document;
 
 @Schema()
 export class Message implements IMessage{
+  hasLikes: boolean;
   containsReplies: boolean;
   _id : Types.ObjectId
 
@@ -26,6 +27,7 @@ export class Message implements IMessage{
   @IsDate({ message: 'Creation date must be a date!' })
   @Prop()
   publicationDate: Date;
+
 
   @Prop({
     ref: 'User',

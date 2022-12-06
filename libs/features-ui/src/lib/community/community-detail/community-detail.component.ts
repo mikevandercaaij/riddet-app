@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
+import { AuthService } from '../../auth/auth.service';
 import { CommunityService } from '../community.service';
 import { Community } from './../community.model';
 
@@ -13,12 +14,13 @@ export class CommunityDetailComponent implements OnInit, OnDestroy {
   subscription?: Subscription;
   communityId: string | undefined;
   community$: Observable<Community> | undefined;
+  categoryString : string | undefined
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private communityService: CommunityService
-
+    private communityService: CommunityService,
+    public authService : AuthService
   ) {}
 
   ngOnInit(): void {
@@ -26,6 +28,10 @@ export class CommunityDetailComponent implements OnInit, OnDestroy {
       this.communityId = params.get('id')?.toString();
       if(this.communityId) {
         this.community$ = this.communityService.getById(this.communityId);
+
+        this.community$.subscribe((community) => {
+          this.categoryString = community.categories.map((category) => category.name).join(', ');
+        });
       }
     });
   }
@@ -36,8 +42,11 @@ export class CommunityDetailComponent implements OnInit, OnDestroy {
 
   delete() : void {
     if(this.communityId) {
-      this.communityService.delete(this.communityId);
-      this.router.navigate(['/communities']);
+      this.communityService.delete(this.communityId).subscribe((community) => {
+        if (community) {
+          this.router.navigate(['/communities']);
+        }
+      });
     }
   }
 }

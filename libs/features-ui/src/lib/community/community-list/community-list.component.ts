@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
+import { AuthService } from '../../auth/auth.service';
+import { User } from '../../user/user.model';
 import { CommunityService } from '../community.service';
 import { Community } from './../community.model';
   @Component({
@@ -12,10 +14,13 @@ import { Community } from './../community.model';
     communities: Community[] | undefined;
     subscription: Subscription | undefined;
     type: string | undefined;
+    loggedInUser$!: Observable<User | undefined>;
 
-    constructor(private communityService: CommunityService, private route : ActivatedRoute) {}
+  constructor(private communityService: CommunityService, private route : ActivatedRoute, private authService : AuthService) {}
 
   ngOnInit(): void {
+    this.loggedInUser$ = this.authService.currentUser$;
+
     this.type = this.route.snapshot.data['overviewType'] || undefined;
 
     if (this.type === 'all') {

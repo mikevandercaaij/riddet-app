@@ -4,10 +4,9 @@ import {
   CanActivateChild, Router, RouterStateSnapshot
 } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { User } from '@riddet-app/features-ui';
-import { ModalLeaveYesNoComponent } from '@riddet-app/util-ui';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { User } from '../user/user.model';
 import { AuthService } from './auth.service';
 
 @Injectable()
@@ -43,10 +42,4 @@ export class LoggedInAuthGuard implements CanActivate, CanActivateChild {
 export class SaveEditedWorkGuard {
   constructor(private modalService: NgbModal) {}
 
-  canDeactivate(): Promise<boolean> {
-    return this.modalService
-      .open(ModalLeaveYesNoComponent)
-      .result.then((result) => true)
-      .catch(() => false);
-  }
 }

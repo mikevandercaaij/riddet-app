@@ -1,8 +1,8 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from "@angular/core";
-import { ConfigService } from '@riddet-app/util-ui';
-import { Observable } from "rxjs";
+import { AlertService, ConfigService } from '@riddet-app/util-ui';
+import { catchError, map, Observable, of } from "rxjs";
 import { AuthService } from '../auth/auth.service';
 import { Community } from "./community.model";
 
@@ -10,7 +10,7 @@ import { Community } from "./community.model";
 export class CommunityService {
      private community? : Community;
 
-    constructor(private http : HttpClient, private configService : ConfigService, private authService : AuthService) {}
+    constructor(private http : HttpClient, private configService : ConfigService, private authService : AuthService, private alertService : AlertService ) {}
 
     getList(endpoint : string): Observable<Community[]> {
       return this.http.get(this.configService.getApiEndpoint() + endpoint, this.authService.getHttpOptions()) as Observable<Community[]>;
@@ -20,25 +20,72 @@ export class CommunityService {
       return this.http.get(this.configService.getApiEndpoint() + '/communities/' + communityId) as Observable<Community>;
     }
 
-    create(community: Community): void {
-        this.community = { ...community };
 
-        this.community.creationDate = new Date();
-        this.community.isPublic = true;
+    create(communityData: object): Observable<Community | undefined> {
+      console.log(`creating community at ${this.configService.getConfig().apiEndpoint}/communities`);
+  
+      return this.http
+        .post<Community>(`${this.configService.getConfig().apiEndpoint}/communities`, communityData,
+          this.authService.getHttpOptions()
+        )
+        .pipe(
+          map((community) => {
+            console.dir(community);
+            this.alertService.success('Community has been created');
+            return community;
+          }),
+          catchError((error: any) => {
+            console.log('error:', error);
+            console.log('error.message:', error.message);
+            console.log('error.error.message:', error.error.message);
+            this.alertService.error(error.error.message || error.message);
+            return of(undefined); 
+          })
+        );
+    }
 
-        this.http.post(this.configService.getApiEndpoint() + '/communities', this.community).subscribe();
-
-        console.log("Community aangemaakt");
-      }
+    update(communityData: object, communityId : string): Observable<Community | undefined> {
+      console.log(`updating community at ${this.configService.getConfig().apiEndpoint}/communities/${communityId}`);
     
-      update(updatedCommunity?: Community): void {
-        this.http.patch(this.configService.getApiEndpoint() + '/communities/' + updatedCommunity?._id, updatedCommunity).subscribe();
+      return this.http
+        .patch<Community>(`${this.configService.getConfig().apiEndpoint}/communities/${communityId}`, communityData,
+          this.authService.getHttpOptions()
+        )
+        .pipe(
+          map((community) => {
+            console.dir(community);
+            this.alertService.success('Community has been updated');
+            return community;
+          }),
+          catchError((error: any) => {
+            console.log('error:', error);
+            console.log('error.message:', error.message);
+            console.log('error.error.message:', error.error.message);
+            this.alertService.error(error.error.message || error.message);
+            return of(undefined); 
+          })
+        );
+    }
 
-        console.log("Community bewerkt");
-      }
 
-    delete(communityId: string) : void {
-        this.http.delete(this.configService.getApiEndpoint() + '/communities/' + communityId).subscribe();
-        console.log("Community verwijderd");
+    delete(communityId : string): Observable<Community | undefined> {
+      console.log(`deleting community at ${this.configService.getConfig().apiEndpoint}/communities/${communityId}`);
+    
+      return this.http
+        .delete<Community>(`${this.configService.getConfig().apiEndpoint}/communities/${communityId}`, this.authService.getHttpOptions())
+        .pipe(
+          map((community) => {
+            console.dir(community);
+            this.alertService.error('Community has been deleted');
+            return community;
+          }),
+          catchError((error: any) => {
+            console.log('error:', error);
+            console.log('error.message:', error.message);
+            console.log('error.error.message:', error.error.message);
+            this.alertService.error(error.error.message || error.message);
+            return of(undefined); 
+          })
+        );
     }
 }

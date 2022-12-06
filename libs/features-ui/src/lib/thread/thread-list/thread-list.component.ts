@@ -16,6 +16,6 @@ export class ThreadListComponent implements OnInit {
   @Input() communityId: string | undefined;
 
   ngOnInit(): void {
-      this.threads$ = this.threadService.getListByCommunityId(this.communityId as string);
+      this.threads$ = this.threadService.getList(this.communityId as string);
   }
 }

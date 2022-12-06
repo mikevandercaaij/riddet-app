@@ -10,11 +10,7 @@ export class ThreadService {
 
     constructor(private http : HttpClient, private configService : ConfigService) {}
   
-    getList(): Observable<Thread[]> {
-        return this.http.get(this.configService.getApiEndpoint() + '/threads') as Observable<Thread[]>;
-    }
-
-    getListByCommunityId(communityId : string): Observable<Thread[]> {
+    getList(communityId : string): Observable<Thread[]> {
       return this.http.get(this.configService.getApiEndpoint() + '/communities/' + communityId + '/threads') as Observable<Thread[]>;
   }
 

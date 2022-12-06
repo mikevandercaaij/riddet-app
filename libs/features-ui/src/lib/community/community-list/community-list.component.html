@@ -1,6 +1,13 @@
-<div style="display: flex; align-items: center; justify-content: space-between">
-  <h1>Communities</h1>
-  <button class="btn btn-primary" routerLink="/communities/new">
+<div class="community-list">
+  <h1 *ngIf="type === 'all'">Communities</h1>
+  <h1 *ngIf="type === 'created'">Created Communities</h1>
+  <h1 *ngIf="type === 'joined'">Joined Communities</h1>
+
+  <button
+    *ngIf="loggedInUser$ | async"
+    class="btn btn-primary"
+    routerLink="/communities/new"
+  >
     <i class="bi bi-plus"></i> Create Community
   </button>
 </div>
@@ -26,7 +33,7 @@
     class="col-sm-12 col-md-4 col-lg-3"
     style="margin-bottom: 15px"
   >
-    <div class="card community-info-card">
+    <div class="card mb-4 shadow-sm community-info-card">
       <img
         src="{{ community.imageUrl }}"
         class="card-img-top"
