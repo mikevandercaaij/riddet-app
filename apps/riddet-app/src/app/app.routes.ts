@@ -4,6 +4,6 @@ import { AboutComponent } from './pages/about/about.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 
 export const appRoutes: Route[] = [
-  { path: 'about', pathMatch: 'full', component: AboutComponent },
-  { path: '**', pathMatch: 'full', component: DashboardComponent },
+  { path: 'about', pathMatch: 'full', title: "About", component: AboutComponent },
+  { path: '**', pathMatch: 'full', title: "Dashboard", component: DashboardComponent },
 ];

@@ -4,6 +4,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from "@angular/platform-browser";
 import { RouterModule, Routes } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { AuthUiModule } from "../auth/auth-ui.module";
+import { LoggedInAuthGuard } from "../auth/auth.guards";
 import { ThreadModule } from "../thread/thread.module";
 import { CommunityDetailComponent } from "./community-detail/community-detail.component";
 import { CommunityEditComponent } from "./community-edit/community-edit.component";
@@ -12,10 +14,14 @@ import { CommunityComponent } from "./community.component";
 
 
 const routes: Routes = [
-{ path: 'communities', component: CommunityComponent},
-{ path: 'communities/new', component: CommunityEditComponent, data: { editMode: false, title: 'Community aanmaken'}},  
-{ path: 'communities/:id', component: CommunityDetailComponent },
-{ path: 'communities/:id/edit', component: CommunityEditComponent , data: { editMode: true, title: 'Community bewerken' }},
+{ path: 'communities',  component: CommunityComponent, children: [
+    { path: '', component: CommunityListComponent, title: 'All Communities', data: { overviewType: 'all' } },
+    { path: 'created', component: CommunityListComponent, canActivate: [LoggedInAuthGuard], title: 'Created Communities', data: { overviewType: 'created' } },
+    { path: 'joined', component: CommunityListComponent, canActivate: [LoggedInAuthGuard], title: 'Joined Communities', data: { overviewType: 'joined' } },
+    { path: 'new', component: CommunityEditComponent, canActivate: [LoggedInAuthGuard], title: 'Create Community', data: { editMode: false, title: 'Community aanmaken'}},  
+    { path: ':id', component: CommunityDetailComponent, title: 'Community details', },
+    { path: ':id/edit', component: CommunityEditComponent, canActivate: [LoggedInAuthGuard], title: 'Edit Community', data: { editMode: true, title: 'Community bewerken' }},
+]},
 ]
 
 @NgModule({
@@ -35,6 +41,7 @@ const routes: Routes = [
         NgbModule,
         RouterModule.forChild(routes),
         ThreadModule,
+        AuthUiModule
     ]
 })
   

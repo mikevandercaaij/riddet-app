@@ -15,7 +15,6 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@riddet-app/auth-ui": ["libs/auth-ui/src/index.ts"],
       "@riddet-app/data": ["libs/data/src/index.ts"],
       "@riddet-app/features-ui": ["libs/features-ui/src/index.ts"],
       "@riddet-app/ui": ["libs/ui/src/index.ts"],

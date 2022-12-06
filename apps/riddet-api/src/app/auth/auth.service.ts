@@ -34,7 +34,7 @@ export class AuthService {
 
     return {
       id: loggedInUser._id,
-      username: user.username,
+      username: loggedInUser.username,
       firstname: loggedInUser.firstname,
       lastname: loggedInUser.lastname,
       email: loggedInUser.email,

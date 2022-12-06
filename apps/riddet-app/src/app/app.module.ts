@@ -1,12 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { Injectable, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { BrowserModule } from '@angular/platform-browser';
-import { RouterModule } from '@angular/router';
+import { BrowserModule, Title } from '@angular/platform-browser';
+import { RouterModule, RouterStateSnapshot, TitleStrategy } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { AuthUiModule } from '@riddet-app/auth-ui';
-import { CommunityModule, ThreadModule } from '@riddet-app/features-ui';
+import { AuthUiModule, CommunityModule, ThreadModule } from '@riddet-app/features-ui';
 import { AlertModule, ConfigModule } from '@riddet-app/util-ui';
 import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
@@ -15,6 +14,20 @@ import { AboutComponent } from './pages/about/about.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { FooterComponent } from './shared/footer/footer.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
+
+@Injectable({providedIn: 'root'})
+export class TemplatePageTitleStrategy extends TitleStrategy {
+  constructor(private readonly title: Title) {
+    super();
+  }
+
+  override updateTitle(routerState: RouterStateSnapshot) {
+    const title = this.buildTitle(routerState);
+    if (title !== undefined) {
+      this.title.setTitle(`Riddet | ${title}`);
+    }
+  }
+}
 
 @NgModule({
   declarations: [
@@ -37,7 +50,7 @@ import { NavbarComponent } from './shared/navbar/navbar.component';
     AuthUiModule,
     AlertModule
   ],
-  providers: [],
+  providers: [{provide: TitleStrategy, useClass: TemplatePageTitleStrategy}],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

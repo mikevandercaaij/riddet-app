@@ -1,23 +1,15 @@
 import { Injectable } from '@angular/core';
 import {
-  CanActivate,
-  CanActivateChild,
-  ActivatedRouteSnapshot,
-  RouterStateSnapshot,
-  Router,
+  ActivatedRouteSnapshot, CanActivate,
+  CanActivateChild, Router, RouterStateSnapshot
 } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { User } from '@riddet-app/features-ui';
+import { ModalLeaveYesNoComponent } from '@riddet-app/util-ui';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { User } from '../pages/user/user.model';
-import { ModalConfirmYesNoComponent } from '../shared/modal/modal.confirm-yes-no.component';
-import { ModalLeaveYesNoComponent } from '../shared/modal/modal.leave-yes-no.component';
 import { AuthService } from './auth.service';
 
-/**
- * Verifies that user is logged in before navigating to routes.
- *
- */
 @Injectable()
 export class LoggedInAuthGuard implements CanActivate, CanActivateChild {
   //
@@ -26,8 +18,8 @@ export class LoggedInAuthGuard implements CanActivate, CanActivateChild {
   canActivate(): Observable<boolean> {
     console.log('canActivate LoggedIn');
     return this.authService.currentUser$.pipe(
-      map((user: User) => {
-        if (user && user.token) {
+      map((user: User | undefined) => {
+        if (user) {
           return true;
         } else {
           console.log('not logged in, reroute to /');

@@ -18,7 +18,7 @@ export class AlertComponent implements OnInit, OnDestroy {
       this.alert = alert;
       this.staticAlertClosed = false;
       // auto close alertbox after some time
-      // setTimeout(() => (this.staticAlertClosed = true), 6000);
+      setTimeout(() => (this.staticAlertClosed = true), 6000);
     });
   }
 

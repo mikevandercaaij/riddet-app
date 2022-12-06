@@ -1,17 +1,28 @@
 <div style="display: flex; align-items: center; justify-content: space-between">
   <h1>Communities</h1>
   <button class="btn btn-primary" routerLink="/communities/new">
-    <i class="bi bi-plus"></i> Community aanmaken
+    <i class="bi bi-plus"></i> Create Community
   </button>
 </div>
 
-<p *ngIf="(communities$ | async)?.length === 0">
-  Er zijn nog geen communities.
-</p>
+<div *ngIf="communities?.length === 0">
+  <p *ngIf="type === 'all'">
+    No communities have been created yet. Please come back at a later time.
+  </p>
+
+  <div *ngIf="type === 'created'">
+    <p>You haven't created any communities yet.</p>
+  </div>
+
+  <div *ngIf="type === 'joined'">
+    <p>You haven't joined any communities yet.</p>
+    <a class="btn btn-primary" routerLink="/communities">All communities</a>
+  </div>
+</div>
 
 <div class="row">
   <div
-    *ngFor="let community of communities$ | async"
+    *ngFor="let community of communities"
     class="col-sm-12 col-md-4 col-lg-3"
     style="margin-bottom: 15px"
   >
@@ -31,7 +42,7 @@
           }}
         </p>
         <a routerLink="/communities/{{ community._id }}" class="btn btn-primary"
-          ><i class="bi bi-eye"></i> Bekijk details</a
+          ><i class="bi bi-eye"></i> Show details</a
         >
       </div>
     </div>
