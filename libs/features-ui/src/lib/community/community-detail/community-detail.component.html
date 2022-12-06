@@ -1,4 +1,5 @@
-<button
+<div class="space-between-div">
+  <button
   class="btn btn-primary"
   style="margin-bottom: 15px"
   [routerLink]="['/communities/']"
@@ -6,18 +7,30 @@
   <i class="bi bi-arrow-left-short"></i> Go Back
 </button>
 
-<div *ngIf="community$ | async as community" class="main-content row">
+<button
+class="btn btn-success"
+style="margin-bottom: 15px">
+<i class="bi bi-box-arrow-in-right"></i> Join Community
+</button>
+</div>
+
+
+<div *ngIf="(community$ | async) as community" class="main-content row">
   <div class="col-sm-12 col-md-8">
     <h1>{{ community.name }}</h1>
     <p>{{ community.description }}</p>
+
+    <p>Categories: {{ categoryString }}</p>
+
+    <p>Public Community: {{ community.isPublic ? '✔️' : '❌' }}</p>
 
     <p>
       Creation Date: {{ community.creationDate | date: 'dd-MM-yyyy HH:mm' }}
     </p>
 
-    <p>Public Community: {{ community.isPublic ? '✔️' : '❌' }}</p>
 
     <button
+      *ngIf="authService.userMayEdit(community.createdBy._id.toString())"
       class="btn btn-primary"
       [routerLink]="['/communities', community._id, 'edit']"
       style="display: inline-block; margin: 5px 5px 5px 0"
@@ -26,6 +39,7 @@
     </button>
 
     <button
+      *ngIf="authService.userMayEdit(community.createdBy._id.toString())"
       type="button"
       class="btn btn-danger"
       data-bs-toggle="modal"
@@ -44,6 +58,7 @@
     />
   </div>
 
+
   <!-- Modal -->
   <div
     class="modal fade"
@@ -58,7 +73,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="staticBackdropLabel">
-            Community verwijderen
+            Delete community
           </h5>
           <button
             type="button"
@@ -68,9 +83,7 @@
           ></button>
         </div>
         <div class="modal-body">
-          Weet je zeker dat je deze community wilt verwijderen? De community zal
-          permanent worden verwijderd en deze actie kan niet ongedaan worden
-          gemaakt.
+          Are you sure about deleting this community? This action isn't reversible!
         </div>
         <div class="modal-footer">
           <button
@@ -79,22 +92,24 @@
             (click)="delete()"
             data-bs-dismiss="modal"
           >
-            <i class="bi bi-trash3"></i> Verwijderen
+            <i class="bi bi-trash3"></i> Delete
           </button>
           <button
+            
             type="button"
             class="btn btn-secondary"
             data-bs-dismiss="modal"
           >
             <i class="bi bi-x-lg"></i>
-            Annuleren
+            Cancel
           </button>
         </div>
       </div>
     </div>
   </div>
 
-  <riddet-app-thread-list
+  <!--TODO: Fix this -->
+  <!-- <riddet-app-thread-list
     [communityId]="community._id.toString()"
-  ></riddet-app-thread-list>
+  ></riddet-app-thread-list> -->
 </div>

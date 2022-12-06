@@ -1,8 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { User } from '@riddet-app/features-ui';
 import { Subscription } from 'rxjs';
+import { User } from '../../user/user.model';
 import { AuthService } from '../auth.service';
 
 @Component({

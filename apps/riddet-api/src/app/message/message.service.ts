@@ -76,7 +76,6 @@ export class MessageService {
       const mergedMessage = new this.messageModel({
         ...messageDto, 
         publicationDate: new Date(), 
-        containsReplies: false,
         createdBy: req.user.id
       }) 
 

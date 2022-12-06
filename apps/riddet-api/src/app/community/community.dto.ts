@@ -1,4 +1,4 @@
-import { IsBoolean, IsDefined, IsNotEmpty, IsOptional, IsString, MinLength } from "class-validator";
+import { ArrayNotEmpty, IsBoolean, IsDefined, IsNotEmpty, IsOptional, IsString, MinLength } from "class-validator";
 
 export class CreateCommunityDto {
   @IsString({ message: 'Name must be a string!' })
@@ -22,7 +22,7 @@ export class CreateCommunityDto {
   isPublic: boolean;
 
 
-  @IsNotEmpty({ message: 'Categories cannot be empty!' })
+  @ArrayNotEmpty({ message: 'Categories cannot be empty!' })
   @IsDefined({ message: 'Categories are required!' })
   categories : string[]
 }
@@ -52,6 +52,7 @@ export class UpdateCommunityDto {
   isPublic: boolean;
 
   @IsOptional()
+  @ArrayNotEmpty({ message: 'Categories cannot be empty!' })
   @IsNotEmpty({ message: 'Categories cannot be empty!' })
   categories : string[]
 

@@ -6,6 +6,7 @@ import { Types } from 'mongoose';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { User } from '../user/user.model';
+import { Role } from '../user/user.roles.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -170,11 +171,23 @@ export class AuthService {
       Authorization: 'Bearer ' + token})
     }
   }
+  
+  userMayEdit(itemUserId: string): boolean {
+    let isAdmin;
+    let isOwnerOfData;
+    
+    this.getUserFromLocalStorage().subscribe((user) => {
+      isAdmin = user.roles.includes(Role.Admin);
+      isOwnerOfData = new Types.ObjectId(user._id).equals(new Types.ObjectId(itemUserId));
+    }).unsubscribe();
 
-
-  userMayEdit(itemUserId: string): Observable<boolean> {
-    return this.currentUser$.pipe(
-      map((user: User | undefined) => (user ? user._id.equals(new Types.ObjectId(itemUserId)) : false))
-    );
+    return (isAdmin || isOwnerOfData) ? true : false;
   }
+
+  partOfCommunity(communityId: string): Observable<boolean> {
+    return this.currentUser$.pipe(
+      map((user: User | undefined) => (user ? user.joinedCommunities.includes(new Types.ObjectId(communityId)) : false))
+    ); 
+  }
+
 }

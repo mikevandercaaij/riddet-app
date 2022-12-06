@@ -48,3 +48,21 @@ nav {
 .form-signin .register-routes a:hover {
   cursor: pointer;
 }
+
+.community-list {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.profile-img {
+  height: 25px;
+  width: 25px;
+}
+
+.space-between-div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

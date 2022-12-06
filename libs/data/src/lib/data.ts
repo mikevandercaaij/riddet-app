@@ -30,6 +30,7 @@ export interface IUser {
 export interface IMessage {
   text: string;
   publicationDate: Date;
+  hasLikes : boolean;
 }
 
 export interface ICategory {

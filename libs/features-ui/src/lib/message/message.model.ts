@@ -6,6 +6,7 @@ export class Message implements IMessage {
     text = '';
     likes: Types.ObjectId[] = [];
     publicationDate: Date = new Date();
+    hasLikes = false;
     createdBy: Types.ObjectId = new Types.ObjectId();
 
 }

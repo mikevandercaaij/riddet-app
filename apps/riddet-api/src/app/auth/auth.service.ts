@@ -33,12 +33,13 @@ export class AuthService {
     const loggedInUser = await this.userService.findByUsernameOrEmail(user.username);
 
     return {
-      id: loggedInUser._id,
+      _id: loggedInUser._id,
       username: loggedInUser.username,
       firstname: loggedInUser.firstname,
       lastname: loggedInUser.lastname,
       email: loggedInUser.email,
       roles: loggedInUser.roles,
+      userImageUrl: loggedInUser.userImageUrl,
       access_token: this.jwtService.sign(payload),
     };
   }
