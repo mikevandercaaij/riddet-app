@@ -1,9 +1,8 @@
-import { Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
 import { Role } from "../auth/role.enum";
 import { Community, CommunityDocument } from "../community/community.schema";
-import { ValidationException } from "../shared/filters/validation.exception";
 import { UserService } from "../user/user.service";
 import { CreateThreadDto, UpdateThreadDto } from "./thread-dto";
 import { Thread } from "./thread.schema";
@@ -150,7 +149,7 @@ export class ThreadService {
         if(!((await this.communityModel.find({$and: [{_id: communityId}, {participants: { $in : [req.user.id]}}]})).length > 0)
         && !(community.createdBy._id.equals(new Types.ObjectId(req.user.id)))
         && !(req.user.roles.includes(Role.Admin))) {
-            throw new ValidationException(["You are not a member of this community"]);
+            throw new HttpException(`You are not a member of this community`, HttpStatus.BAD_REQUEST);
         }
 
         const mergedthread = {_id: new Types.ObjectId(), 
@@ -177,7 +176,7 @@ export class ThreadService {
             .threads.filter(async thread => thread._id === new Types.ObjectId(threadId))[0];
 
         if(!(await this.isMyData(thread.createdBy.toString(), req.user.id)) && !(req.user.roles.includes(Role.Admin))) {
-            throw new ValidationException([`You cannot alter data that isn't yours!`]);
+            throw new HttpException(`You cannot alter data that isn't yours!`, HttpStatus.BAD_REQUEST);
         }
 
         return await this.communityModel.findOneAndUpdate(
@@ -195,7 +194,7 @@ export class ThreadService {
             .threads.filter(async thread => thread._id === new Types.ObjectId(threadId))[0];
 
         if(!(await this.isMyData(thread.createdBy.toString(), req.user.id)) && !(req.user.roles.includes(Role.Admin))) {
-            throw new ValidationException([`You cannot alter data that isn't yours!`]);
+            throw new HttpException(`You cannot alter data that isn't yours!`, HttpStatus.BAD_REQUEST);
         }
 
         return (await this.communityModel.findOneAndUpdate(
@@ -227,12 +226,12 @@ export class ThreadService {
         const community = await this.communityModel.findOne({ _id : communityId });
 
         if(!community) {
-            throw new ValidationException([`Community with id of ${communityId} doesn't exist!`]);
+            throw new HttpException(`Community with id of ${communityId} doesn't exist!`, HttpStatus.BAD_REQUEST);
         }
 
         if(threadId) {
             if(!(community.threads.filter(thread => thread._id.equals(new Types.ObjectId(threadId))).length > 0)) {
-                throw new ValidationException([`Thread with id of ${threadId} doesn't exist in the community with id of ${communityId}!`]);
+                throw new HttpException(`Thread with id of ${threadId} doesn't exist in the community with id of ${communityId}!`, HttpStatus.BAD_REQUEST);
             }
         }
     }

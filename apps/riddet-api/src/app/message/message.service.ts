@@ -1,9 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Role } from '../auth/role.enum';
 import { Community, CommunityDocument } from '../community/community.schema';
-import { ValidationException } from '../shared/filters/validation.exception';
 import { Thread } from '../thread/thread.schema';
 import { MessageDto } from './message.dto';
 import { Message, MessageDocument } from './message.schema';
@@ -71,7 +70,7 @@ export class MessageService {
       if(!((await this.communityModel.find({$and: [{_id: communityId}, {participants: { $in : [req.user.id]}}]})).length > 0)
       && !(community.createdBy._id.equals(new Types.ObjectId(req.user.id)))
       && !(req.user.roles.includes(Role.Admin))) {
-          throw new ValidationException(["You are not a member of this community"]);
+        throw new HttpException(`You are not a member of this community!`, HttpStatus.BAD_REQUEST);
       }
 
       const mergedMessage = new this.messageModel({
@@ -92,12 +91,10 @@ export class MessageService {
       const message = {...oldMessage, ...messageDto};
 
       if(!(await this.isMyData(message.createdBy.toString(), req.user.id)) && !(req.user.roles.includes(Role.Admin))) {
-          throw new ValidationException([`You cannot alter data that isn't yours!`]);
+        throw new HttpException(`You cannot alter data that isn't yours!`, HttpStatus.BAD_REQUEST);
       }
 
-      await this.communityModel.findOneAndUpdate({_id: new Types.ObjectId(communityId), "threads._id": new Types.ObjectId(threadId)}, {$pull: {"threads.$.messages": oldMessage}});
       return (await this.communityModel.findOneAndUpdate({_id: new Types.ObjectId(communityId), "threads._id": new Types.ObjectId(threadId)}, {$push: {"threads.$.messages": {...message, ...messageDto}}}, {new: true})).threads.filter(thread => thread._id.equals(new Types.ObjectId(threadId)))[0].messages.filter(message => message._id.equals(new Types.ObjectId(messageId)))[0];
-
     }
 
   async delete(communityId : string, threadId : string, messageId : string, req): Promise<Thread> {
@@ -106,7 +103,7 @@ export class MessageService {
     const message = await this.getById(communityId, threadId, messageId);
 
     if(!(await this.isMyData(message.createdBy.toString(), req.user.id)) && !(req.user.roles.includes(Role.Admin))) {
-        throw new ValidationException([`You cannot alter data that isn't yours!`]);
+        throw new HttpException(`You cannot alter data that isn't yours!`, HttpStatus.BAD_REQUEST);
     }
 
     return (await this.communityModel.findOneAndUpdate({_id: new Types.ObjectId(communityId), "threads._id": new Types.ObjectId(threadId)}, {$pull: {"threads.$.messages": message}}, {new : true})).threads.filter(thread => thread._id.equals(new Types.ObjectId(threadId)))[0];
@@ -137,19 +134,19 @@ async like(communityId : string, threadId : string, messageId : string, req): Pr
     let threads : Thread[];
 
     if(!community) {
-      throw new ValidationException([`Community with id of ${communityId} doesn't exist!`]);
+      throw new HttpException(`Community with id of ${communityId} doesn't exist!`, HttpStatus.BAD_REQUEST);
     }
 
     if(threadId) {
       threads = await community.threads.filter(thread => thread._id.equals(new Types.ObjectId(threadId)));
       if(!(threads.length > 0)) {
-        throw new ValidationException([`Thread with id of ${threadId} doesn't exist in the community with id of ${communityId}!`]);
+        throw new HttpException(`Thread with id of ${threadId} doesn't exist in the community with id of ${communityId}!`, HttpStatus.BAD_REQUEST);
       }
     }
 
     if(threadId && messageId) {
       if(!(threads[0].messages.filter(message => message._id.equals(new Types.ObjectId(messageId))).length > 0)) {
-        throw new ValidationException([`Message with id of ${messageId} doesn't exist in the thread with id of ${threadId}!`]);
+        throw new HttpException(`Message with id of ${messageId} doesn't exist in the thread with id of ${threadId}!`, HttpStatus.BAD_REQUEST);
       }
     }
   }

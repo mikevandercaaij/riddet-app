@@ -64,6 +64,18 @@ export class User implements IUser{
 
   @Prop({
     default: [],
+    ref: 'Community',
+  })
+  joinedCommunities : [ObjectId]
+
+  @Prop({
+    default: [],
+    ref: 'Community',
+  })
+  createdCommunities : [ObjectId]
+
+  @Prop({
+    default: [],
     ref: 'User',
   })
   following : [ObjectId]

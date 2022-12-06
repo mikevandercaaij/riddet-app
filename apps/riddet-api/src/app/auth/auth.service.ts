@@ -20,7 +20,6 @@ export class AuthService {
     } 
 
     throw new HttpException(`Incorrect credentials!`, HttpStatus.BAD_REQUEST);
-
   }
 
   async register(createUserDto: CreateUserDto) {
@@ -30,11 +29,16 @@ export class AuthService {
 
   async login(user: any) {
     const payload = { username: user.username };
+
+    const loggedInUser = await this.userService.findByUsernameOrEmail(user.username);
+
     return {
+      id: loggedInUser._id,
       username: user.username,
-      firstname: user.firstname,
-      lastname: user.lastname,
-      email: user.email,
+      firstname: loggedInUser.firstname,
+      lastname: loggedInUser.lastname,
+      email: loggedInUser.email,
+      roles: loggedInUser.roles,
       access_token: this.jwtService.sign(payload),
     };
   }

@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcryptjs';
 import { Model, Types } from 'mongoose';
 import { Role } from '../auth/role.enum';
+import { Community, CommunityDocument } from '../community/community.schema';
 import { CommunityService } from '../community/community.service';
 import { ValidationException } from '../shared/filters/validation.exception';
 import { CreateUserDto } from './user.dto';
@@ -13,6 +14,7 @@ import { User, UserDocument } from './user.schema';
 export class UserService {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectModel(Community.name) private communityModel: Model<CommunityDocument>,
     @Inject(forwardRef(() => CommunityService)) private communityService : CommunityService){}
 
   async findByUsernameOrEmail(username: string): Promise<User | undefined> {
@@ -129,6 +131,45 @@ export class UserService {
 
     return [user,otherUser]
   }
+
+  //community arrays
+  async addJoinedCommunity(userId : string, communityId: string): Promise<User> {
+    await this.doesExist(userId);
+
+    return await this.userModel.findOneAndUpdate({ _id: userId }, { $push: { joinedCommunities: communityId } }, {new: true});
+  }
+
+  async removeJoinedCommunity(userId : string, communityId: string): Promise<User> {
+    await this.doesExist(userId);
+
+    return await this.userModel.findOneAndUpdate({ _id: userId }, { $pull: { joinedCommunities: communityId } }, {new: true});
+  }
+
+    //community array fillers
+    async addCreatedCommunity(userId : string, communityId: string): Promise<User> {
+      await this.doesExist(userId);
+  
+
+      const user = await this.userModel.findOne({ _id: userId });
+
+      for await (const createdCommunityId of user.createdCommunities) {
+        await this.communityModel.updateMany({ _id: createdCommunityId, "createdBy._id": new Types.ObjectId(userId) }, { $push:  {"createdBy.$[_id]createdCommunities": communityId } } );
+      }
+
+      return await this.userModel.findOneAndUpdate({ _id: userId }, { $push: { createdCommunities: communityId } }, {new: true});
+    }
+
+    async removeCreatedCommunity(userId : string, communityId: string): Promise<User> {
+      await this.doesExist(userId);
+
+      const user = await this.userModel.findOne({ _id: userId });
+
+      for await (const createdCommunityId of user.createdCommunities) {
+        await this.communityModel.updateMany({ _id: createdCommunityId, "createdBy._id": new Types.ObjectId(userId) }, { $pull:  {"createdBy.$[_id]createdCommunities": communityId } } );
+      }
+
+      return await this.userModel.findOneAndUpdate({ _id: userId }, { $pull: { createdCommunities: communityId } }, {new: true});
+    }
 
   //validation
 

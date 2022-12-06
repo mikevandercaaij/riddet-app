@@ -1,7 +1,6 @@
-import { Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { ValidationException } from "../shared/filters/validation.exception";
 import { CategoryDto } from "./category.dto";
 import { Category, CategoryDocument } from "./category.schema";
 
@@ -33,7 +32,7 @@ export class CategoryService {
 
     async validate(id : string, name: string): Promise<void> {
         if(await this.categoryModel.find({$and: [{_id: {$ne: id}}, {name: name}]}).countDocuments() > 0) {
-            throw new ValidationException([`Category with name of ${name} already exists!`]);
+          throw new HttpException(`Category with name of ${name} already exists!`, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -41,7 +40,7 @@ export class CategoryService {
         const category = await this.categoryModel.findOne({_id: id});
     
         if(!category) {
-          throw new ValidationException([`Category with id of ${id} doesn't exist!`]);
+          throw new HttpException(`Category with id of ${id} doesn't exist!`, HttpStatus.BAD_REQUEST);
         }
     }
 }
