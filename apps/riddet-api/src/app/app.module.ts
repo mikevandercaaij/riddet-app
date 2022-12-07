@@ -6,7 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { APP_GUARD } from '@nestjs/core';
 import { CommunityModule } from '../app/community/community.module';
 import { ThreadModule } from '../app/thread/thread.module';
-import { environment } from '../environments/environment.prod';
+import { environment } from '../environments/environment';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
