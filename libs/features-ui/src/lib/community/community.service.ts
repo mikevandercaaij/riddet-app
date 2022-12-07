@@ -19,7 +19,6 @@ export class CommunityService {
       return this.http.get(this.configService.getApiEndpoint() + '/communities/' + communityId) as Observable<Community>;
     }
 
-
     create(communityData: object): Observable<Community | undefined> {
       console.log(`creating community at ${this.configService.getConfig().apiEndpoint}/communities`);
   
@@ -75,7 +74,7 @@ export class CommunityService {
         .pipe(
           map((community) => {
             console.dir(community);
-            this.alertService.error('Community has been deleted');
+            this.alertService.success('Community has been deleted');
             return community;
           }),
           catchError((error: any) => {
@@ -87,4 +86,52 @@ export class CommunityService {
           })
         );
     }
+
+
+    join(communityId: string): Observable<Community | undefined> {
+      console.log(`Joining community at ${this.configService.getConfig().apiEndpoint}/communities/${communityId}/join`);
+
+      return this.http
+          .post<Community>(`${this.configService.getConfig().apiEndpoint}/communities/${communityId}/join`, { null: null },
+              this.authService.getHttpOptions()
+          )
+          .pipe(
+              map((community) => {
+                  console.dir(community);
+                  this.alertService.success('You have joined the community');
+                  return community;
+              }),
+              catchError((error: any) => {
+                  console.log('error:', error);
+                  console.log('error.message:', error.message);
+                  console.log('error.error.message:', error.error.message);
+                  this.alertService.error(error.error.message || error.message);
+                  return of(undefined); 
+              })
+          );
+  }
+
+  leave(communityId: string): Observable<Community | undefined> {
+      console.log(`Leaving community at ${this.configService.getConfig().apiEndpoint}/communities/${communityId}/leave`);
+
+      return this.http
+          .post<Community>(`${this.configService.getConfig().apiEndpoint}/communities/${communityId}/leave`,
+              { null: null },
+              this.authService.getHttpOptions()
+          )
+          .pipe(
+              map((community) => {
+                  console.dir(community);
+                  this.alertService.success('You have left the community');
+                  return community;
+              }),
+              catchError((error: any) => {
+                  console.log('error:', error);
+                  console.log('error.message:', error.message);
+                  console.log('error.error.message:', error.error.message);
+                  this.alertService.error(error.error.message || error.message);
+                  return of(undefined); 
+              })
+          );
+  }
 }

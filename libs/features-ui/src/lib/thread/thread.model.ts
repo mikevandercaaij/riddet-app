@@ -1,5 +1,6 @@
 import { IThread } from "@riddet-app/data";
 import { Types } from "mongoose";
+import { User } from "../user/user.model";
 
 export class Thread implements IThread {
     _id = Types.ObjectId;
@@ -10,5 +11,5 @@ export class Thread implements IThread {
     externLink = '';
     views = 0;
     messages = [];
-    createdBy = Types.ObjectId;
+    createdBy = User
 }

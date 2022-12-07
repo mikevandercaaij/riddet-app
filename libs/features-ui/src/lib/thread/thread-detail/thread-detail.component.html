@@ -1,4 +1,4 @@
-<div *ngIf="thread$ | async as thread" class="col">
+<div *ngIf="thread" class="col">
   <div
     style="display: flex; align-items: center; justify-content: space-between"
   >
@@ -12,7 +12,7 @@
 
     <div>
       <button
-      *ngIf="authService.userMayEdit(thread.createdBy.toString())"
+      *ngIf="authService.userMayEdit(creatorId)"
         class="btn btn-primary"
         [routerLink]="[
           '/communities/',
@@ -26,7 +26,7 @@
       </button>
 
       <button
-      *ngIf="authService.userMayEdit(thread.createdBy.toString())"
+        *ngIf="authService.userMayEdit(creatorId)"
         type="button"
         class="btn btn-danger"
         data-bs-toggle="modal"
@@ -41,6 +41,14 @@
   <div class="d-flex justify-content-center">
     <div class="col-sm-12 col-md-6">
       <div class="card">
+        <div class="card-header space-between-div" >
+          <div>
+            {{ thread.publicationDate | date: 'dd-MM-yyyy HH:mm' }}
+          </div>
+          <div>
+            views: {{ thread.views }}
+          </div>
+        </div>
         <div class="card-body">
           <h5 class="card-title">{{ thread.title }}</h5>
           <p class="card-text">
@@ -59,33 +67,16 @@
             alt="{{ thread.title }}"
           />
         </div>
-      </div>
-
-      <div class="card" style="margin-top: 15px">
-        <div class="card-body">
-          <h5 class="card-title">Messages</h5>
-
-          <div class="d-flex justify-content py-2 pb-3" style="width:100% !important;">
-            <div class="second py-2 px-2"> <span class="text1">Type your note, and hit enter to add it</span>
-                <div class="d-flex justify-content-between py-1 pt-2">
-                    <div><img src="https://i.imgur.com/tPvlEdq.jpg" width="18"><span class="text2">Curtis</span></div>
-                    <div><span class="text3">Upvote?</span><span class="thumbup"><i class="bi bi-hand-thumbs-up"></i></span><span class="text4 text4o">1</span></div>
-                </div>
-            </div>
-        </div>
-
-          <form>
-            <textarea
-              style="margin: 15px 0"
-              class="form-control"
-              rows="3"
-            ></textarea>
-            <button type="submit" class="btn btn-primary">
-              Send Message
-            </button>
-          </form>
+        <div class="card-footer">
+          Created by: <a [routerLink]="['/users/', creatorId]">
+            {{ thread.createdBy.username}}
+          </a>
         </div>
       </div>
+      <riddet-app-message-list>
+        [communityId]="communityId.toString()"
+        [communityId]="thread._id.toString()"
+        </riddet-app-message-list>
     </div>
   </div>
 </div>

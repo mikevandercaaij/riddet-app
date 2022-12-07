@@ -30,7 +30,6 @@ export class ThreadEditComponent implements OnInit, OnDestroy {
 
       this.subs = this.route.paramMap.subscribe((params) => {
         this.communityId = params.get('communityId')?.toString()
-        console.log("id: " + this.communityId)
       });
 
       this.threadForm = new FormGroup({
@@ -85,12 +84,8 @@ export class ThreadEditComponent implements OnInit, OnDestroy {
       '(\\?[;&a-z\\d%_.~+=-]*)?'+ 
       '(\\#[-a-z\\d_]*)?$','i');
 
-      const regexp2 = new RegExp('^$');
 
-
-      console.log(regexp2.test(imageUrl) !== true)
-
-      if (regexp.test(imageUrl) !== true && regexp2.test(imageUrl) !== true) {
+      if (regexp.test(imageUrl) !== true) {
         return { imageUrl: false };
       } else {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

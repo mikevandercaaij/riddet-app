@@ -126,7 +126,7 @@ export class CommunityService {
         await this.doesExist(communityId);
 
         if((await this.communityModel.find({$and: [{_id : communityId}, { "createdBy._id" : req.user.id }]})).length > 0) {
-            throw new HttpException(`You cannot join a community you created!`, HttpStatus.BAD_REQUEST);
+            throw new HttpException(`You cannot join your own community!`, HttpStatus.BAD_REQUEST);
         }
         
         else if (await (await this.communityModel.find({ $and: [ {_id: communityId}, {participants: { $in : req.user.id}} ] })).length > 0) {
@@ -141,8 +141,10 @@ export class CommunityService {
     async leave(communityId : string, req) : Promise<Community> {
         await this.doesExist(communityId);
 
+        console.log(communityId)
+
         if((await this.communityModel.find({$and: [{_id : communityId}, { "createdBy._id" : req.user.id }]})).length > 0) {
-            throw new HttpException(`You cannot leave a community you created!`, HttpStatus.BAD_REQUEST);
+            throw new HttpException(`You cannot leave your own community!`, HttpStatus.BAD_REQUEST);
 
         }
         
@@ -150,7 +152,7 @@ export class CommunityService {
             throw new HttpException(`You are not a participant of this community!`, HttpStatus.BAD_REQUEST);
         }
 
-        await this.userService.removeJoinedCommunity(communityId, req.user.id,);
+        await this.userService.removeJoinedCommunity(req.user.id, communityId);
 
         return this.communityModel.findOneAndUpdate({ _id : communityId }, { $pull : { participants : req.user.id } }, { new: true });
     }
