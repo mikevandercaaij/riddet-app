@@ -48,7 +48,7 @@ const mongoose_1 = __webpack_require__("@nestjs/mongoose");
 const core_1 = __webpack_require__("@nestjs/core");
 const community_module_1 = __webpack_require__("./apps/riddet-api/src/app/community/community.module.ts");
 const thread_module_1 = __webpack_require__("./apps/riddet-api/src/app/thread/thread.module.ts");
-const environment_prod_1 = __webpack_require__("./apps/riddet-api/src/environments/environment.prod.ts");
+const environment_1 = __webpack_require__("./apps/riddet-api/src/environments/environment.ts");
 const app_controller_1 = __webpack_require__("./apps/riddet-api/src/app/app.controller.ts");
 const app_service_1 = __webpack_require__("./apps/riddet-api/src/app/app.service.ts");
 const jwt_auth_guard_1 = __webpack_require__("./apps/riddet-api/src/app/auth/jwt-auth.guard.ts");
@@ -61,7 +61,7 @@ let AppModule = class AppModule {
 AppModule = tslib_1.__decorate([
     (0, common_1.Module)({
         imports: [
-            mongoose_1.MongooseModule.forRoot(environment_prod_1.environment.DATABASE_CONNECTION),
+            mongoose_1.MongooseModule.forRoot(environment_1.environment.DATABASE_CONNECTION),
             community_module_1.CommunityModule,
             thread_module_1.ThreadModule,
             user_module_1.UserModule,
@@ -2874,17 +2874,16 @@ exports.UserService = UserService;
 
 /***/ }),
 
-/***/ "./apps/riddet-api/src/environments/environment.prod.ts":
+/***/ "./apps/riddet-api/src/environments/environment.ts":
 /***/ ((__unused_webpack_module, exports) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.environment = void 0;
 exports.environment = {
-    production: true,
+    production: false,
     //DIT IS LOKAAL
-    // DATABASE_CONNECTION: 'mongodb://127.0.0.1:27017/riddet',
-    DATABASE_CONNECTION: 'mongodb://mvdc2000:jhbhaAO95BxY4anP@ac-i23cy8u-shard-00-00.ryvfhc9.mongodb.net:27017,ac-i23cy8u-shard-00-01.ryvfhc9.mongodb.net:27017,ac-i23cy8u-shard-00-02.ryvfhc9.mongodb.net:27017/?ssl=true&replicaSet=atlas-zx8v9h-shard-0&authSource=admin&retryWrites=true&w=majority',
+    DATABASE_CONNECTION: 'mongodb://127.0.0.1:27017/riddet',
     //NEO4J
     NEO4J_HOST: 'localhost',
     NEO4J_PORT: 7687,
