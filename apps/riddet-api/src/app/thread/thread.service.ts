@@ -54,6 +54,9 @@ export class ThreadService {
                 content: {
                   $first: "$threads.content"
                 },
+                externLink: {
+                    $first: "$threads.externLink"
+                },
                 views: {
                   $first: "$threads.views"
                 },
@@ -93,7 +96,7 @@ export class ThreadService {
                     }
                 }}
             },
-            { $unwind : { path: "$threads", preserveNullAndEmptyArrays: true }},
+            { $unwind : { path: "$threads", preserveNullAndEmptyArrays: false }},
             { $lookup : { 
                 from : "users",
                 localField : "threads.createdBy",
@@ -117,6 +120,9 @@ export class ThreadService {
                 },
                 content: {
                   $first: "$threads.content"
+                },
+                externLink: {
+                    $first: "$threads.externLink"
                 },
                 views: {
                   $first: "$threads.views"

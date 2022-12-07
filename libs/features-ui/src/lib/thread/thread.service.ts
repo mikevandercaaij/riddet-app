@@ -1,42 +1,88 @@
 
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { ConfigService } from '@riddet-app/util-ui';
-import { Observable } from "rxjs";
+import { AlertService, ConfigService } from '@riddet-app/util-ui';
+import { catchError, map, Observable, of } from "rxjs";
+import { AuthService } from "../auth/auth.service";
 import { Thread } from "./thread.model";
 @Injectable({providedIn: 'root',})
 export class ThreadService {
-    private thread? : Thread
 
-    constructor(private http : HttpClient, private configService : ConfigService) {}
+    constructor(private http : HttpClient, 
+      private configService : ConfigService,
+      private alertService : AlertService,
+      private authService : AuthService) {}
   
     getList(communityId : string): Observable<Thread[]> {
       return this.http.get(this.configService.getApiEndpoint() + '/communities/' + communityId + '/threads') as Observable<Thread[]>;
   }
 
-    getById(threadId: string): Observable<Thread> {
-      return this.http.get(this.configService.getApiEndpoint() + '/threads/' + threadId) as Observable<Thread>;
+    getById(communityId :string, threadId: string): Observable<Thread> {
+      return this.http.get(`${this.configService.getApiEndpoint()}/communities/${communityId}/threads/${threadId}`) as Observable<Thread>;
     }
 
-    create(thread: Thread): void {
-        this.thread = { ...thread };
+    create(threadData: Thread, communityId : string): Observable<Thread | undefined> {
+      console.log(`creating thread at ${this.configService.getConfig().apiEndpoint}/communities/${communityId}/threads`);
+  
+      return this.http
+        .post<Thread>(`${this.configService.getConfig().apiEndpoint}/communities/${communityId}/threads`, threadData,
+          this.authService.getHttpOptions())
+        .pipe(
+          map((thread) => {
+            console.dir(thread);
+            this.alertService.success('Thread has been created');
+            return thread;
+          }),
+          catchError((error: any) => {
+            console.log('error:', error);
+            console.log('error.message:', error.message);
+            console.log('error.error.message:', error.error.message);
+            this.alertService.error(error.error.message || error.message);
+            return of(undefined); 
+          })
+        );
+    }
 
-        this.thread.publicationDate = new Date();
+    update(threadData: Thread, communityId : string, threadId : string): Observable<Thread | undefined> {
+      console.log(`updating thread at ${this.configService.getConfig().apiEndpoint}/communities/${communityId}/threads/${threadId}`);
+  
+      return this.http
+        .patch<Thread>(`${this.configService.getConfig().apiEndpoint}/communities/${communityId}/threads/${threadId}`, threadData,
+          this.authService.getHttpOptions())
+        .pipe(
+          map((thread) => {
+            console.dir(thread);
+            this.alertService.success('Thread has been updated');
+            return thread;
+          }),
+          catchError((error: any) => {
+            console.log('error:', error);
+            console.log('error.message:', error.message);
+            console.log('error.error.message:', error.error.message);
+            this.alertService.error(error.error.message || error.message);
+            return of(undefined); 
+          })
+        );
+    }
 
-        this.http.post(this.configService.getApiEndpoint() + '/threads', this.thread).subscribe();
-
-        console.log("Thread aangemaakt");
-      }
+    delete(communityId : string, threadId : string): Observable<Thread | undefined> {
+      console.log(`deleting thread at ${this.configService.getConfig().apiEndpoint}/communities/${communityId}/threads/${threadId}`);
     
-      update(updatedThread?: Thread): void {
-        this.http.patch(this.configService.getApiEndpoint() + '/threads/' + updatedThread?._id, updatedThread).subscribe();
-
-        console.log("Thread bewerkt");
-      }
-
-    delete(threadId: string) : void {
-        this.http.delete(this.configService.getApiEndpoint() + '/threads/' + threadId).subscribe();
-        
-        console.log("Thread verwijderd");
+      return this.http
+        .delete<Thread>(`${this.configService.getConfig().apiEndpoint}/communities/${communityId}/threads/${threadId}`, this.authService.getHttpOptions())
+        .pipe(
+          map((community) => {
+            console.dir(community);
+            this.alertService.error('Thread has been deleted');
+            return community;
+          }),
+          catchError((error: any) => {
+            console.log('error:', error);
+            console.log('error.message:', error.message);
+            console.log('error.error.message:', error.error.message);
+            this.alertService.error(error.error.message || error.message);
+            return of(undefined); 
+          })
+        );
     }
 }

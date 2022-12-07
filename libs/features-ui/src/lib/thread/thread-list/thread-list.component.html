@@ -15,10 +15,10 @@
   </button>
 </div>
 
-<p *ngIf="(threads$ | async)?.length === 0">Er zijn nog geen threads.</p>
+<p *ngIf="threads?.length === 0">Er zijn nog geen threads.</p>
 
 <div class="row row-cols-1 row-cols-md-2 g-4">
-  <div *ngFor="let thread of threads$ | async" class="col">
+  <div *ngFor="let thread of threads" class="col">
     <div
       class="card text-center"
       [routerLink]="['/communities/', communityId, 'threads', thread._id]"

@@ -2,6 +2,16 @@
 
 :root {
   --main-bg-color: #dae0e6;
+  --background: #f3efe0;
+  --nav-item-color: #f3efe0;
+}
+
+.main-content {
+  background-color: #fff;
+  padding: 25px;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+  margin-left: 0 !important;
+  margin-right: 0 !important;
 }
 
 body {
@@ -10,14 +20,25 @@ body {
   line-height: 24px;
   font-weight: 400;
   color: #212112;
-  background-size: 7%;
   overflow-x: hidden;
   transition: all 200ms linear;
   padding-bottom: 81px;
+  background-color: var(--background) !important;
+}
+
+h1 {
+  color: #222222;
+  font-weight: bold !important;
 }
 
 nav {
   margin-bottom: 25px;
+}
+
+.nav-link:focus,
+.nav-link:hover,
+.nav-item {
+  color: -var(--nav-item-color) !important;
 }
 
 .nav-link:hover,
@@ -65,4 +86,10 @@ nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.community-overview {
+  display: flex;
+  align-items: flex-end;
+  justify-content: end;
 }

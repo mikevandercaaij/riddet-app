@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
 import { Thread } from '../thread.model';
 import { ThreadService } from '../thread.service';
 
@@ -9,13 +8,19 @@ import { ThreadService } from '../thread.service';
   styleUrls: ['./thread-list.component.css'],
 })
 export class ThreadListComponent implements OnInit {
-  threads$: Observable<Thread[]> | undefined;
+  threads: Thread[]| undefined;
 
   constructor(private threadService: ThreadService) {}
 
   @Input() communityId: string | undefined;
 
   ngOnInit(): void {
-      this.threads$ = this.threadService.getList(this.communityId as string);
+      this.threadService.getList(this.communityId as string).subscribe(threads => {
+        threads.sort(function(a, b) {
+          return (a.publicationDate > b.publicationDate) ? -1 : ((a.publicationDate > b.publicationDate) ? 1 : 0);
+      });
+        
+        this.threads = threads;
+      });
   }
 }

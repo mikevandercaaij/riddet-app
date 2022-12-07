@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
+import { AuthService } from '../../auth/auth.service';
 import { Thread } from '../thread.model';
 import { ThreadService } from '../thread.service';
 
@@ -18,7 +19,9 @@ export class ThreadDetailComponent implements OnInit, OnDestroy {
   constructor(
     private threadService: ThreadService,    
     private route: ActivatedRoute,
-    private router: Router) {}
+    private router: Router,
+    public authService : AuthService
+    ) {}
 
 
   ngOnInit(): void {
@@ -27,7 +30,7 @@ export class ThreadDetailComponent implements OnInit, OnDestroy {
       this.communityId = params.get('communityId')?.toString();
       
       if(this.threadId) {
-        this.thread$ = this.threadService.getById(this.threadId);
+        this.thread$ = this.threadService.getById(this.communityId as string, this.threadId);
       }
     });
   }
@@ -37,9 +40,12 @@ export class ThreadDetailComponent implements OnInit, OnDestroy {
   }
 
   delete() : void {
-    if(this.threadId) {
-      this.threadService.delete(this.threadId);
-      this.router.navigate(['/communities/', this.communityId]);
+    if(this.communityId && this.threadId) {
+      this.threadService.delete(this.communityId as string, this.threadId).subscribe((thread) => {
+        if (thread) {
+          this.router.navigate(['/communities', this.communityId]);
+        }
+      });
     }
   }
 }
