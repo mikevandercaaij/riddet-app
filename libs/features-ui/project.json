@@ -4,13 +4,6 @@
   "projectType": "library",
   "sourceRoot": "libs/features-ui/src",
   "prefix": "riddet-app",
-  "budgets": [
-    {
-      "type": "initial",
-      "maximumWarning": "2mb",
-      "maximumError": "5mb"
-    }
-  ],
   "targets": {
     "test": {
       "executor": "@nrwl/jest:jest",
