@@ -14,11 +14,7 @@ export class MessageService {
       private authService : AuthService) {}
   
     getList(communityId : string, threadId : string): Observable<Message[]> {
-      
-      console.log(communityId)
-      console.log(threadId)
-
-      return this.http.get(`${this.configService.getApiEndpoint()}/communities/${communityId}/threads/${threadId}`) as Observable<Message[]>;
+      return this.http.get(`${this.configService.getApiEndpoint()}/communities/${communityId}/threads/${threadId}/messages`) as Observable<Message[]>;
     }
 
 //     getById(communityId :string, threadId: string): Observable<Thread> {

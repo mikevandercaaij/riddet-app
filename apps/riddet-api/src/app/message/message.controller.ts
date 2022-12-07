@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, Logger, Param, Patch, Post, Req } from "@nestjs/common";
+import { Public } from "../auth/auth.module";
 import { ParseObjectIdPipe } from "../shared/pipes/ParseObjectIdPipe";
 import { Thread } from "../thread/thread.schema";
 import { MessageDto } from "./message.dto";
@@ -9,6 +10,7 @@ import { MessageService } from "./message.service";
 export class MessageController {
   constructor(private readonly messageService: MessageService) {}
 
+  @Public()
   @Get('communities/:communityId/threads/:threadId/messages/:messageId')
   async getById(
     @Param('communityId', ParseObjectIdPipe) communityId : string,
@@ -21,6 +23,7 @@ export class MessageController {
     return await this.messageService.getById(communityId, threadId, messageId);
     }
 
+    @Public()
     @Get('communities/:communityId/threads/:threadId/messages')
     async getAll(
       @Param('communityId', ParseObjectIdPipe) communityId : string,

@@ -104,7 +104,6 @@ export class MessageService {
           messages: {
             $push: "$threads.messages"   
           },
- 
       }},
       { $unset: ["messages.createdBy.password", "messages.createdBy.__v"]},
   ]))[0].messages.map(message => { return { ...message, createdBy: message.createdBy[0] }}) 
