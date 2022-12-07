@@ -7,11 +7,12 @@
       style="margin-bottom: 15px"
       [routerLink]="['/communities/', communityId]"
     >
-      <i class="bi bi-arrow-left-short"></i> Ga terug
+      <i class="bi bi-arrow-left-short"></i> Go Back
     </button>
 
     <div>
       <button
+      *ngIf="authService.userMayEdit(thread.createdBy.toString())"
         class="btn btn-primary"
         [routerLink]="[
           '/communities/',
@@ -21,17 +22,18 @@
           'edit'
         ]"
       >
-        <i class="bi bi-pencil-square"></i> Bewerk
+        <i class="bi bi-pencil-square"></i> Edit
       </button>
 
       <button
+      *ngIf="authService.userMayEdit(thread.createdBy.toString())"
         type="button"
         class="btn btn-danger"
         data-bs-toggle="modal"
         data-bs-target="#deleteModal"
         style="display: inline-block; margin: 5px"
       >
-        <i class="bi bi-trash3"></i> Verwijder
+        <i class="bi bi-trash3"></i> Delete
       </button>
     </div>
   </div>
@@ -61,7 +63,17 @@
 
       <div class="card" style="margin-top: 15px">
         <div class="card-body">
-          <h5 class="card-title">Reacties</h5>
+          <h5 class="card-title">Messages</h5>
+
+          <div class="d-flex justify-content py-2 pb-3" style="width:100% !important;">
+            <div class="second py-2 px-2"> <span class="text1">Type your note, and hit enter to add it</span>
+                <div class="d-flex justify-content-between py-1 pt-2">
+                    <div><img src="https://i.imgur.com/tPvlEdq.jpg" width="18"><span class="text2">Curtis</span></div>
+                    <div><span class="text3">Upvote?</span><span class="thumbup"><i class="bi bi-hand-thumbs-up"></i></span><span class="text4 text4o">1</span></div>
+                </div>
+            </div>
+        </div>
+
           <form>
             <textarea
               style="margin: 15px 0"
@@ -69,7 +81,7 @@
               rows="3"
             ></textarea>
             <button type="submit" class="btn btn-primary">
-              Bericht aanmaken
+              Send Message
             </button>
           </form>
         </div>
@@ -78,46 +90,51 @@
   </div>
 </div>
 
-<!-- Modal -->
-<div
-  class="modal fade"
-  id="deleteModal"
-  data-bs-backdrop="static"
-  data-bs-keyboard="false"
-  tabindex="-1"
-  aria-labelledby="staticBackdropLabel"
-  aria-hidden="true"
->
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="staticBackdropLabel">Thread verwijderen</h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
-      </div>
-      <div class="modal-body">
-        Weet je zeker dat je deze thread wilt verwijderen? De thread zal
-        permanent worden verwijderd en deze actie kan niet ongedaan worden
-        gemaakt.
-      </div>
-      <div class="modal-footer">
-        <button
-          type="button"
-          class="btn btn-danger"
-          (click)="delete()"
-          data-bs-dismiss="modal"
-        >
-          <i class="bi bi-trash3"></i> Verwijderen
-        </button>
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-          <i class="bi bi-x-lg"></i>
-          Annuleren
-        </button>
+  <!-- Modal -->
+  <div
+    class="modal fade"
+    id="deleteModal"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
+    tabindex="-1"
+    aria-labelledby="staticBackdropLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">
+            Delete Thread
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          Are you sure about deleting this thread? This action isn't reversible!
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-danger"
+            (click)="delete()"
+            data-bs-dismiss="modal"
+          >
+            <i class="bi bi-trash3"></i> Delete
+          </button>
+          <button
+            
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            <i class="bi bi-x-lg"></i>
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
   </div>
-</div>

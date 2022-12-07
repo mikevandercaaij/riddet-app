@@ -10,11 +10,9 @@ import { ThreadListComponent } from './thread-list/thread-list.component';
 import { ThreadComponent } from './thread.component';
 
 const routes: Routes = [
-  { path: 'communities/:communityId/threads', component: ThreadComponent, children: [ 
-    { path: 'new', component: ThreadEditComponent, title: 'Create Thread', data: { editMode: false, title: 'Thread aanmaken'}},
-    { path: ':threadId', component: ThreadDetailComponent, title: 'Thread details', },
-    { path: ':threadId/edit', component: ThreadEditComponent, title: 'Edit Thread', data: { editMode: true, title: 'Thread bewerken' }},
-  ]},
+    { path: 'communities/:communityId/threads/new', component: ThreadEditComponent, title: 'Create Thread', data: { editMode: false, title: 'Create Thread'}},
+    { path: 'communities/:communityId/threads/:threadId', component: ThreadDetailComponent, title: 'Thread details', },
+    { path: 'communities/:communityId/threads/:threadId/edit', component: ThreadEditComponent, title: 'Edit Thread', data: { editMode: true, title: 'Edit Thread' }},
 ];
 @NgModule({
   declarations: [

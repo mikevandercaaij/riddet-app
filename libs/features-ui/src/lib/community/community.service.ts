@@ -8,7 +8,6 @@ import { Community } from "./community.model";
 
 @Injectable({providedIn: 'root',})
 export class CommunityService {
-     private community? : Community;
 
     constructor(private http : HttpClient, private configService : ConfigService, private authService : AuthService, private alertService : AlertService ) {}
 

@@ -1,197 +1,153 @@
 <div class="row">
-  <div class="col-sm-12 col-md-6">
-    <div class="card" style="margin-bottom: 15px">
-      <div class="card-body">
-        <h5 class="card-title">{{ title }}</h5>
+  <div class="d-flex justify-content-center">
+    <div class="col-sm-12 col-md-6">
+      <div class="card" style="margin-bottom: 15px">
+        <div class="card-body">
+          <h5 class="card-title">{{ title }}</h5>
+          <!-- FORM -->
+          <form
+            [formGroup]="threadForm"
+            (ngSubmit)="onSubmit()"
+            class="row g-3"
+          >
+            <div class="col-12">
+              <label for="inputTitle" class="form-label">Title</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="title"
+                id="inputTitle"
+                aria-describedby="titleHelp"
+                [ngClass]="{
+                  'is-invalid':
+                  threadForm.get('title')?.invalid &&
+                  threadForm.get('title')?.touched
+                }"
+              />
+              <span
+                *ngIf="
+                  !threadForm.get('title')?.valid &&
+                  threadForm.get('title')?.touched
+                "
+                class="invalid-feedback"
+              >
+                <p id="title-invalid">
+                  Title must be at least 5 characters long!
+                </p>
+              </span>
+            </div>
 
-        <!--EDIT FORM-->
-        <form
-          *ngIf="editMode"
-          #threadForm="ngForm"
-          name="form"
-          (ngSubmit)="threadForm.form.valid && onSubmit()"
-          novalidate
-          class="row g-3"
-        >
-          <div class="col-12">
-            <label for="nameInput" class="form-label">Titel</label>
-            <input
-              type="text"
-              class="form-control"
-              name="threadName"
-              [(ngModel)]="thread!.title"
-              #threadName="ngModel"
-              [ngClass]="{
+            <div class="col-12">
+              <label for="inputContent" class="form-label">Content</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="content"
+                id="inputTitle"
+                aria-describedby="contentHelp"/>
+            </div>
+
+            <div class="col-12">
+              <label for="inputImageUrl" class="form-label">Image URL</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="imageUrl"
+                id="inputImageUrl"
+                aria-describedby="imageUrlHelp"
+                [ngClass]="{
                 'is-invalid':
-                  threadName.invalid && (threadName.dirty || threadName.touched)
+                threadForm.get('imageUrl')?.invalid &&
+                threadForm.get('imageUrl')?.touched
               }"
-              required
-              minlength="5"
             />
-            <div
-              *ngIf="threadName.invalid && threadName.touched"
+            <span
+              *ngIf="
+                !threadForm.get('imageUrl')?.valid &&
+                threadForm.get('imageUrl')?.touched
+              "
               class="invalid-feedback"
             >
-              <div>Naam moet uit minimaal minimaal 5 karakters bestaan!</div>
+              <p id="imageUrl-invalid">
+                Please enter a valid Image URL!
+              </p>
+            </span>
             </div>
-          </div>
 
-          <div class="col-12">
-            <label for="descriptionInput" class="form-label">Inhoud</label>
-            <textarea
-              class="form-control"
-              name="threadContent"
-              [(ngModel)]="thread!.content"
-              id="contentInput"
-              rows="5"
-            ></textarea>
-          </div>
-
-          <div class="col-12">
-            <label for="imageUrlInput" class="form-label">Foto URL</label>
-            <input
-              type="text"
-              class="form-control"
-              name="threadImageUrl"
-              [(ngModel)]="thread!.imageUrl"
-              id="imageUrlInput"
-            />
-          </div>
-
-          <div class="col-12">
-            <label for="externLinkInput" class="form-label">Externe link</label>
-            <input
-              type="text"
-              class="form-control"
-              name="threadExternLink"
-              [(ngModel)]="thread!.externLink"
-              id="externLinkInput"
-            />
-          </div>
-
-          <div class="text-center">
-            <button
-              style="margin-right: 5px"
-              type="submit"
-              class="btn btn-success"
-              [disabled]="!threadForm.valid"
-            >
-              Opslaan
-            </button>
-            <button
-              style="margin-left: 5px"
-              type="reset"
-              class="btn btn-danger"
-              [routerLink]="['/communities', communityId, 'threads', threadId]"
-            >
-              Annuleren
-            </button>
-          </div>
-        </form>
-        <!--EDIT FORM END-->
-
-        <!--CREATE FORM-->
-        <form
-          *ngIf="!editMode"
-          #threadForm="ngForm"
-          name="form"
-          (ngSubmit)="threadForm.form.valid && onSubmit()"
-          novalidate
-          class="row g-3"
-        >
-          <div class="col-12">
-            <label for="titleInput" class="form-label">Titel</label>
-            <input
-              type="text"
-              class="form-control"
-              name="threadTitle"
-              [(ngModel)]="thread!.title"
-              id="titleInput"
-              #threadTitle="ngModel"
-              [ngClass]="{
+            <div class="col-12">
+              <label for="inputExternLink" class="form-label">Extern Link</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="externLink"
+                id="inputExternLink"
+                aria-describedby="externLinkHelp"
+                [ngClass]="{
                 'is-invalid':
-                  threadTitle.invalid &&
-                  (threadTitle.dirty || threadTitle.touched)
+                threadForm.get('externLink')?.invalid &&
+                threadForm.get('externLink')?.touched
               }"
-              required
-              minlength="5"
             />
-            <div
-              *ngIf="threadTitle.invalid && threadTitle.touched"
+            <span
+              *ngIf="
+                !threadForm.get('externLink')?.valid &&
+                threadForm.get('externLink')?.touched
+              "
               class="invalid-feedback"
             >
-              <div>Naam moet uit minimaal minimaal 5 karakters bestaan!</div>
+              <p id="externLink-invalid">
+                Please enter a valid link!
+              </p>
+            </span>
             </div>
-          </div>
 
-          <div class="col-12">
-            <label for="contentInput" class="form-label">Inhoud</label>
-            <textarea
-              class="form-control"
-              name="threadContent"
-              [(ngModel)]="thread!.content"
-              id="contentInput"
-              rows="5"
-            ></textarea>
-          </div>
+            <div class="text-center">
+                <button
+                  *ngIf="!editMode"
+                  style="margin-right: 5px"
+                  type="submit"
+                  class="btn btn-primary"
+                  [disabled]="!threadForm.valid"
+                >
+                  Create
+                </button>
 
-          <div class="col-12">
-            <label for="imageUrlInput" class="form-label">Foto URL</label>
-            <input
-              type="text"
-              class="form-control"
-              name="threadImageUrl"
-              [(ngModel)]="thread!.imageUrl"
-              id="threadInput"
-            />
-          </div>
+                <!--EDIT BUTTON-->
+                <button
+                *ngIf="editMode"
+                style="margin-right: 5px"
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="!threadForm.valid"
+              >
+                Edit
+              </button>
 
-          <div class="col-12">
-            <label for="externLinkInput" class="form-label">Externe link</label>
-            <input
-              type="text"
-              class="form-control"
-              name="threadExternLink"
-              [(ngModel)]="thread!.externLink"
-              id="externLinkInput"
-            />
-          </div>
+                <!--EDIT CANCEL BUTTON-->
+                <button 
+                  *ngIf="editMode"
+                  style="margin-left: 5px"
+                  type="reset"
+                  class="btn btn-danger"
+                  [routerLink]="['/communities', communityId, 'threads', threadId]"
+                >
+                  Cancel
+                </button>
 
-          <div class="text-center">
-            <button
-              style="margin-right: 5px"
-              type="submit"
-              class="btn btn-success"
-              [disabled]="!threadForm.valid"
-            >
-              Aanmaken
-            </button>
-            <button
-              style="margin-left: 5px"
-              type="reset"
-              class="btn btn-danger"
-              [routerLink]="['/communities', communityId]"
-            >
-              Annuleren
-            </button>
-          </div>
-        </form>
-        <!--CREATE FORM END-->
-      </div>
-    </div>
-  </div>
-
-  <div class="col-sm-12 col-md-6">
-    <div class="card" *ngIf="thread">
-      <div class="card-header">Object</div>
-      <div
-        class="card-body"
-        style="display: flex; justify-content: center; align-items: center"
-      >
-        <pre style="margin-bottom: 0"
-          >{{ thread | json }}
-      </pre
-        >
+                <!--EDIT CANCEL BUTTON-->
+                <button 
+                *ngIf="!editMode"
+                style="margin-left: 5px"
+                type="reset"
+                class="btn btn-danger"
+                [routerLink]="['/communities', communityId]"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+          <!-- END FORM -->
+        </div>
       </div>
     </div>
   </div>
