@@ -5,7 +5,6 @@ import { Model, Types } from 'mongoose';
 import { Role } from '../auth/role.enum';
 import { Community, CommunityDocument } from '../community/community.schema';
 import { CommunityService } from '../community/community.service';
-import { Neo4jService } from '../neo4j/neo4j.service';
 import { ValidationException } from '../shared/filters/validation.exception';
 import { CreateUserDto } from './user.dto';
 import { User, UserDocument } from './user.schema';
@@ -17,7 +16,8 @@ export class UserService {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(Community.name) private communityModel: Model<CommunityDocument>,
     @Inject(forwardRef(() => CommunityService)) private communityService : CommunityService,
-    private readonly neo4jService: Neo4jService){}
+    // private readonly neo4jService: Neo4jService
+    ){}
 
   async findByUsernameOrEmail(username: string): Promise<User | undefined> {
     return await this.userModel.findOne({$or: [{username}, { email : username }]});
@@ -72,15 +72,17 @@ export class UserService {
 
       const user = await new this.userModel(mergedUser).save();
 
-      await this.neo4jService.write(`
-      CREATE
-      (n:User {
-      id: '${user._id.toString()}',
-      username: '${user.username}', 
-      dateOfBirth: '${user.dateOfBirth.toISOString()}'
-     })`,
-    {});
 
+      //TODO: add to neo4j
+
+    //   await this.neo4jService.write(`
+    //   CREATE
+    //   (n:User {
+    //   id: '${user._id.toString()}',
+    //   username: '${user.username}', 
+    //   dateOfBirth: '${user.dateOfBirth.toISOString()}'
+    //  })`,
+    // {});
       return user;
   }
 

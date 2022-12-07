@@ -1,8 +1,11 @@
 export const environment = {
   production: true,
+  //DIT IS LOKAAL
+
 
   DATABASE_CONNECTION: 'mongodb://127.0.0.1:27017/riddet',
 
+  
   //NEO4J
   NEO4J_HOST: 'localhost',
   NEO4J_PORT: 7687,
