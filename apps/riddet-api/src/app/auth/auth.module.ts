@@ -23,6 +23,7 @@ import { Role } from './role.enum';
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '2d' },
     }),
+
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy],
   exports: [AuthService],

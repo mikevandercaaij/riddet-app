@@ -1,20 +1,3 @@
-<div
-  style="
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 15px;
-  "
->
-  <h2>Threads</h2>
-  <button
-    class="btn btn-primary"
-    [routerLink]="['/communities/', communityId, 'threads', 'new']"
-  >
-    <i class="bi bi-plus"></i> Thread aanmaken
-  </button>
-</div>
-
 <p *ngIf="threads?.length === 0">Er zijn nog geen threads.</p>
 
 <div class="row row-cols-1 row-cols-md-2 g-4">

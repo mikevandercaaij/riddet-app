@@ -1,8 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
-import { Thread } from '../thread.model';
 import { ThreadService } from '../thread.service';
 
 @Component({
@@ -11,10 +10,11 @@ import { ThreadService } from '../thread.service';
   styleUrls: ['./thread-detail.component.css'],
 })
 export class ThreadDetailComponent implements OnInit, OnDestroy {
-  thread$: Observable<Thread> | undefined
+  thread: any | undefined
   subscription?: Subscription;
-  threadId: string | undefined;
-  communityId: string | undefined
+  threadId: string | null = null;
+  communityId: string | null = null;
+  creatorId  = '';
 
   constructor(
     private threadService: ThreadService,    
@@ -23,17 +23,14 @@ export class ThreadDetailComponent implements OnInit, OnDestroy {
     public authService : AuthService
     ) {}
 
-
-  ngOnInit(): void {
-    this.subscription = this.route.paramMap.subscribe((params) => {
-      this.threadId = params.get('threadId')?.toString();
-      this.communityId = params.get('communityId')?.toString();
-      
-      if(this.threadId) {
-        this.thread$ = this.threadService.getById(this.communityId as string, this.threadId);
-      }
-    });
-  }
+    ngOnInit(): void {
+      this.subscription = this.route.paramMap.subscribe(async params => {
+        this.threadId = params.get('threadId');
+        this.communityId = params.get('communityId');
+        
+        await this.init();
+      });
+    }
 
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
@@ -46,6 +43,14 @@ export class ThreadDetailComponent implements OnInit, OnDestroy {
           this.router.navigate(['/communities', this.communityId]);
         }
       });
+    }
+  }
+
+  async init() {
+    if (this.threadId) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-non-null-asserted-optional-chain
+      this.thread = await this.threadService.getById(this.communityId!.toString(), this.threadId?.toString()!).toPromise();
+      this.creatorId = this.thread.createdBy._id;
     }
   }
 }

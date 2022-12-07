@@ -1,0 +1,15 @@
+<div class="card" style="margin-top: 15px">
+  <div class="card-body">
+    <h5 class="card-title">Messages</h5>
+    <div *ngFor="let message of messages">
+      <div class="d-flex justify-content py-2 pb-3" style="width:100% !important;">
+        <div class="second py-2 px-2"> <span class="text1">{{message.text}}</span>
+            <div class="d-flex justify-content-between py-1 pt-2">
+                <div><img src="https://i.imgur.com/tPvlEdq.jpg" width="18"><span class="text2">User</span></div>
+                <div><span class="text3">Upvote?</span><span class="thumbup"><i class="bi bi-hand-thumbs-up"></i></span><span class="text4 text4o">10</span></div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

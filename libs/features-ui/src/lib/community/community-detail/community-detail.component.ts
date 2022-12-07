@@ -15,6 +15,7 @@ export class CommunityDetailComponent implements OnInit, OnDestroy {
   communityId: string | undefined;
   community$: Observable<Community> | undefined;
   categoryString : string | undefined
+  partOfCommunity = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -24,14 +25,18 @@ export class CommunityDetailComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.subscription = this.route.paramMap.subscribe((params) => {
+    this.subscription = this.route.paramMap.subscribe(async (params) => {
       this.communityId = params.get('id')?.toString();
+      
       if(this.communityId) {
         this.community$ = this.communityService.getById(this.communityId);
 
         this.community$.subscribe((community) => {
           this.categoryString = community.categories.map((category) => category.name).join(', ');
         });
+
+        await this.isPartOfCommunity();
+
       }
     });
   }
@@ -44,9 +49,34 @@ export class CommunityDetailComponent implements OnInit, OnDestroy {
     if(this.communityId) {
       this.communityService.delete(this.communityId).subscribe((community) => {
         if (community) {
-          this.router.navigate(['/communities']);
+          this.router.navigate(['/communities', 'created']);
         }
       });
     }
+  }
+
+  join(): void {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    this.communityService.join(this.communityId!).subscribe(async (community) => {
+      if (community) {
+        this.router.navigate(['/communities', this.communityId]);
+        await this.isPartOfCommunity();
+      }
+    });
+  }
+
+  leave(): void {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    this.communityService.leave(this.communityId!).subscribe(async (community) => {
+      if (community) {
+        this.router.navigate(['/communities', this.communityId]);
+        await this.isPartOfCommunity();
+      }
+    });
+  }
+
+  async isPartOfCommunity() {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    this.partOfCommunity = await this.authService.partOfCommunity(this.communityId as string);
   }
 }

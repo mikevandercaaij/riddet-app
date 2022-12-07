@@ -100,7 +100,7 @@ export class CommunityEditComponent implements OnInit, OnDestroy {
         } else {
           this.communityService.create(community).subscribe((community) => {
             if (community) {
-              this.router.navigate(['/communities']);
+              this.router.navigate(['/communities', 'created']);
             }
           });
         }

@@ -1,0 +1,41 @@
+.addtxt {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  text-align: center;
+  font-size: 13px;
+  width: 350px;
+  background-color: #e5e8ed;
+  font-weight: 500;
+}
+
+.second {
+  width: 100%;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+}
+
+.text {
+  font-size: 13px;
+  font-weight: 500;
+  margin-right: 4px;
+  color: #828386;
+}
+.text3o {
+  color: #00a5f4;
+}
+
+.text4i {
+  color: #00a5f4;
+}
+.text4o {
+  color: white;
+}
+.thumbup {
+  font-size: 13px;
+  font-weight: 500;
+  margin-right: 5px;
+}
+.thumbupo {
+  color: #17a2b8;
+}

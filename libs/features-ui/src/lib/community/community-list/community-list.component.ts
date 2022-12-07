@@ -26,7 +26,7 @@ import { Community } from './../community.model';
     if (this.type === 'all') {
       this.subscription = this.communityService.getList("/communities").subscribe((communities) => (this.communities = communities.sort(function(a, b) {
           return (a.creationDate > b.creationDate) ? -1 : ((a.creationDate > b.creationDate) ? 1 : 0);
-      })));
+      }).filter((community) => community.isPublic)));
     } else if (this.type === 'created') {
       
       this.subscription = this.communityService.getList("/communities/created").subscribe((communities) => (this.communities = communities.sort(function(a, b) {

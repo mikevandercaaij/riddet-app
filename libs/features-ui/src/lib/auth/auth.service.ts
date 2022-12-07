@@ -2,7 +2,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertService, ConfigService } from '@riddet-app/util-ui';
-import { Types } from 'mongoose';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { User } from '../user/user.model';
@@ -22,7 +21,8 @@ export class AuthService {
     private configService: ConfigService,
     private alertService: AlertService,
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private httpClient : HttpClient
   ) {
  
     this.getUserFromLocalStorage()
@@ -147,7 +147,7 @@ export class AuthService {
     console.log('logout - removing local user info');
     localStorage.removeItem(this.CURRENT_USER);
     this.currentUser$.next(undefined);
-    this.alertService.success('You have been logged out.');
+    this.alertService.error('You have been logged out.');
 }
 
   getUserFromLocalStorage(): Observable<User> {
@@ -178,16 +178,43 @@ export class AuthService {
     
     this.getUserFromLocalStorage().subscribe((user) => {
       isAdmin = user.roles.includes(Role.Admin);
-      isOwnerOfData = new Types.ObjectId(user._id).equals(new Types.ObjectId(itemUserId));
+      isOwnerOfData = user._id.toString() === itemUserId;
     }).unsubscribe();
 
     return (isAdmin || isOwnerOfData) ? true : false;
   }
 
-  partOfCommunity(communityId: string): Observable<boolean> {
-    return this.currentUser$.pipe(
-      map((user: User | undefined) => (user ? user.joinedCommunities.includes(new Types.ObjectId(communityId)) : false))
-    ); 
+  isOwnerOfData(itemUserId: string): boolean {
+    let isOwnerOfData;
+    
+    this.getUserFromLocalStorage().subscribe((user) => {
+      isOwnerOfData = user._id.toString() === itemUserId;
+    }).unsubscribe();
+
+    return (isOwnerOfData) ? true : false;
   }
+
+
+  async partOfCommunity(communityId: string): Promise<boolean> {
+    let userId = '' as string | undefined;
+
+    this.currentUser$.subscribe((p) => {
+      userId = p?._id.toString();
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const user = await this.getById(userId!).toPromise();
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    if (user!.joinedCommunities.filter(p => p.toString() === communityId.toString()).length > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  getById(userId: string): Observable<User> {
+    return this.httpClient.get<User>(`${this.configService.getConfig().apiEndpoint}/users/${userId}`, this.getHttpOptions()) as Observable<User>;
+  } 
 
 }
