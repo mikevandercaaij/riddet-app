@@ -4,6 +4,13 @@
   "projectType": "application",
   "sourceRoot": "apps/riddet-app/src",
   "prefix": "riddet-app",
+  "budgets": [
+    {
+      "type": "initial",
+      "maximumWarning": "2mb",
+      "maximumError": "5mb"
+    }
+  ],
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
@@ -26,13 +33,6 @@
         "scripts": [
           "node_modules/jquery/dist/jquery.min.js",
           "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
-        ],
-        "budgets": [
-          {
-            "type": "initial",
-            "maximumWarning": "2mb",
-            "maximumError": "5mb"
-          }
         ]
       },
       "configurations": {
