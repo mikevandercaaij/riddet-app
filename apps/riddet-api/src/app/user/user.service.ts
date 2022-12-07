@@ -5,6 +5,7 @@ import { Model, Types } from 'mongoose';
 import { Role } from '../auth/role.enum';
 import { Community, CommunityDocument } from '../community/community.schema';
 import { CommunityService } from '../community/community.service';
+import { Neo4jService } from '../neo4j/neo4j.service';
 import { ValidationException } from '../shared/filters/validation.exception';
 import { CreateUserDto } from './user.dto';
 import { User, UserDocument } from './user.schema';
@@ -15,7 +16,8 @@ export class UserService {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(Community.name) private communityModel: Model<CommunityDocument>,
-    @Inject(forwardRef(() => CommunityService)) private communityService : CommunityService){}
+    @Inject(forwardRef(() => CommunityService)) private communityService : CommunityService,
+    private readonly neo4jService: Neo4jService){}
 
   async findByUsernameOrEmail(username: string): Promise<User | undefined> {
     return await this.userModel.findOne({$or: [{username}, { email : username }]});
@@ -68,7 +70,18 @@ export class UserService {
 
       const mergedUser = {...createUserDto, creationDate: new Date(), isActive: true, roles: [Role.User], password: await bcrypt.hashSync(createUserDto.password, 10)};
 
-      return new this.userModel(mergedUser).save();
+      const user = await new this.userModel(mergedUser).save();
+
+      await this.neo4jService.write(`
+      CREATE
+      (n:User {
+      id: '${user._id.toString()}',
+      username: '${user.username}', 
+      dateOfBirth: '${user.dateOfBirth.toISOString()}'
+     })`,
+    {});
+
+      return user;
   }
 
   async update(updateUserId: string, user: Partial<User>, req): Promise<User> {
