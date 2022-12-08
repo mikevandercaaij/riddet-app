@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Message } from '../message.model';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from '../message.service';
 
 @Component({
@@ -9,12 +8,15 @@ import { MessageService } from '../message.service';
   styleUrls: ['./message-list.component.css'],
 })
 export class MessageListComponent implements OnInit {
-  messages: Message[] | undefined;
+  messages: any[] | undefined;
   communityId: string | undefined;
   threadId: string | undefined;
 
+
   constructor(private messageService: MessageService,
-    private route : ActivatedRoute) {}
+    private route : ActivatedRoute,
+    private router : Router
+    ) {}
 
   ngOnInit(): void {
 
@@ -27,8 +29,43 @@ export class MessageListComponent implements OnInit {
     });
 
     this.messageService.getList(this.communityId as string, this.threadId as string ).subscribe(messages => {
+      messages.sort((a, b) => {
+        return new Date(b.publicationDate).getTime() - new Date(a.publicationDate).getTime();
+      });
+
+      messages.forEach(message => {
+        message.createdBy = message.createdBy as any;
+      })
+
       this.messages = messages;
-      console.log(this.messages)
+    });
+  }
+
+  convertDate(date: Date) {
+    return new Date(date).toLocaleString('default', { month: 'long', day: 'numeric', year: 'numeric' });
+  }
+
+  edit(messageId : string): void {
+    this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
+        this.router.navigate(['/communities', this.communityId, 'threads', this.threadId, 'messages', messageId, 'edit' ]));
+
+  }
+
+  delete(messageId : string): void {
+
+    console.log("delete message: " + messageId)
+
+    this.messageService.delete(this.communityId as string, this.threadId as string, messageId).subscribe((message) => {
+      if (message) {
+        this.router.navigate(['/communities', this.communityId, 'threads', this.threadId]);
+      }
+    });
+  }
+
+
+  like(messageId: string) {
+    this.messageService.like(this.communityId as string, messageId, this.threadId as string).subscribe(() => {
+      //likes
     });
   }
 }

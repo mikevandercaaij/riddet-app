@@ -163,7 +163,9 @@ export class AuthService {
   getHttpOptions(): object {
     let token;
     this.getUserFromLocalStorage().subscribe((p) => {
-      token = p.access_token;
+      if(p) {
+        token = p.access_token;
+      }
     }).unsubscribe();
 
     return { headers: new HttpHeaders({
@@ -177,8 +179,8 @@ export class AuthService {
     let isOwnerOfData;
     
     this.getUserFromLocalStorage().subscribe((user) => {
-      isAdmin = user.roles.includes(Role.Admin);
-      isOwnerOfData = user._id.toString() === itemUserId;
+      isAdmin = user?.roles.includes(Role.Admin);
+      isOwnerOfData = user?._id.toString() === itemUserId;
     }).unsubscribe();
 
     return (isAdmin || isOwnerOfData) ? true : false;
@@ -188,7 +190,7 @@ export class AuthService {
     let isOwnerOfData;
     
     this.getUserFromLocalStorage().subscribe((user) => {
-      isOwnerOfData = user._id.toString() === itemUserId;
+      isOwnerOfData = user?._id.toString() === itemUserId;
     }).unsubscribe();
 
     return (isOwnerOfData) ? true : false;
@@ -202,8 +204,12 @@ export class AuthService {
       userId = p?._id.toString();
     });
 
+    let user : User | undefined;
+
+    if(userId === undefined) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const user = await this.getById(userId!).toPromise();
+      user = await this.getById(userId!).toPromise();
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     if (user!.joinedCommunities.filter(p => p.toString() === communityId.toString()).length > 0) {

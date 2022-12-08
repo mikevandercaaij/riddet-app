@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
+import { User } from '../../user/user.model';
 import { CommunityService } from '../community.service';
 import { Community } from './../community.model';
 
@@ -16,6 +17,7 @@ export class CommunityDetailComponent implements OnInit, OnDestroy {
   community$: Observable<Community> | undefined;
   categoryString : string | undefined
   partOfCommunity = false;
+  loggedInUser$!: Observable<User | undefined>;
 
   constructor(
     private route: ActivatedRoute,
@@ -36,7 +38,7 @@ export class CommunityDetailComponent implements OnInit, OnDestroy {
         });
 
         await this.isPartOfCommunity();
-
+        this.loggedInUser$ = this.authService.currentUser$;
       }
     });
   }

@@ -68,14 +68,16 @@
           />
         </div>
         <div class="card-footer">
-          Created by: <a [routerLink]="['/users/', creatorId]">
+          Created by: <a [routerLink]="['/profile', creatorId]">
             {{ thread.createdBy.username}}
           </a>
         </div>
       </div>
+
+      <riddet-app-message-edit>
+      </riddet-app-message-edit>
+
       <riddet-app-message-list>
-        [communityId]="communityId.toString()"
-        [communityId]="thread._id.toString()"
         </riddet-app-message-list>
     </div>
   </div>

@@ -15,6 +15,8 @@ export class ThreadDetailComponent implements OnInit, OnDestroy {
   threadId: string | null = null;
   communityId: string | null = null;
   creatorId  = '';
+  editMode = false;
+  title = '';
 
   constructor(
     private threadService: ThreadService,    
@@ -24,6 +26,9 @@ export class ThreadDetailComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit(): void {
+      this.title = this.route.snapshot.data['title'] || undefined;
+      this.editMode = this.route.snapshot.data['editMode'];
+
       this.subscription = this.route.paramMap.subscribe(async params => {
         this.threadId = params.get('threadId');
         this.communityId = params.get('communityId');
