@@ -6,7 +6,7 @@ import { User } from "../user/user.model";
 
 
 export class Community implements ICommunity {
-    _id = Types.ObjectId;
+    _id = new Types.ObjectId();
     name = '';
     description = '';
     creationDate = new Date();

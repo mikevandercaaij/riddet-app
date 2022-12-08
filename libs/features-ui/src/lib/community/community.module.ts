@@ -12,7 +12,6 @@ import { CommunityEditComponent } from "./community-edit/community-edit.componen
 import { CommunityListComponent } from "./community-list/community-list.component";
 import { CommunityComponent } from "./community.component";
 
-
 const routes: Routes = [
 { path: 'communities',  component: CommunityComponent, children: [
     { path: '', component: CommunityListComponent, title: 'All Communities', data: { overviewType: 'all' } },
@@ -42,7 +41,8 @@ const routes: Routes = [
         RouterModule.forChild(routes),
         ThreadModule,
         AuthUiModule
-    ]
+    ],
+    
 })
   
   export class CommunityModule {}

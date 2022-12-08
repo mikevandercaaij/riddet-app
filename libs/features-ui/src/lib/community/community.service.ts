@@ -1,34 +1,33 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from "@angular/core";
-import { AlertService, ConfigService } from '@riddet-app/util-ui';
+import { AlertService } from '@riddet-app/util-ui';
 import { catchError, map, Observable, of } from "rxjs";
 import { AuthService } from '../auth/auth.service';
 import { Community } from "./community.model";
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import { environment } from "../../../../../apps/riddet-app/src/environments/environment";
 
 @Injectable({providedIn: 'root',})
 export class CommunityService {
 
-    constructor(private http : HttpClient, private configService : ConfigService, private authService : AuthService, private alertService : AlertService ) {}
+    constructor(private http : HttpClient, private authService : AuthService, private alertService : AlertService ) {}
 
     getList(endpoint : string): Observable<Community[]> {
-      return this.http.get(this.configService.getApiEndpoint() + endpoint, this.authService.getHttpOptions()) as Observable<Community[]>;
+      return this.http.get(environment.SERVER_API_URL + endpoint, this.authService.getHttpOptions()) as Observable<Community[]>;
     }
 
     getById(communityId: string):  Observable<Community> {
-      return this.http.get(this.configService.getApiEndpoint() + '/communities/' + communityId) as Observable<Community>;
+      return this.http.get(environment.SERVER_API_URL + '/communities/' + communityId) as Observable<Community>;
     }
 
     create(communityData: object): Observable<Community | undefined> {
-      console.log(`creating community at ${this.configService.getConfig().apiEndpoint}/communities`);
-  
       return this.http
-        .post<Community>(`${this.configService.getConfig().apiEndpoint}/communities`, communityData,
+        .post<Community>(`${environment.SERVER_API_URL}/communities`, communityData,
           this.authService.getHttpOptions()
         )
         .pipe(
           map((community) => {
-            console.dir(community);
             this.alertService.success('Community has been created');
             return community;
           }),
@@ -43,15 +42,12 @@ export class CommunityService {
     }
 
     update(communityData: object, communityId : string): Observable<Community | undefined> {
-      console.log(`updating community at ${this.configService.getConfig().apiEndpoint}/communities/${communityId}`);
-    
       return this.http
-        .patch<Community>(`${this.configService.getConfig().apiEndpoint}/communities/${communityId}`, communityData,
+        .patch<Community>(`${environment.SERVER_API_URL}/communities/${communityId}`, communityData,
           this.authService.getHttpOptions()
         )
         .pipe(
           map((community) => {
-            console.dir(community);
             this.alertService.success('Community has been updated');
             return community;
           }),
@@ -67,13 +63,10 @@ export class CommunityService {
 
 
     delete(communityId : string): Observable<Community | undefined> {
-      console.log(`deleting community at ${this.configService.getConfig().apiEndpoint}/communities/${communityId}`);
-    
       return this.http
-        .delete<Community>(`${this.configService.getConfig().apiEndpoint}/communities/${communityId}`, this.authService.getHttpOptions())
+        .delete<Community>(`${environment.SERVER_API_URL}/communities/${communityId}`, this.authService.getHttpOptions())
         .pipe(
           map((community) => {
-            console.dir(community);
             this.alertService.success('Community has been deleted');
             return community;
           }),
@@ -89,15 +82,12 @@ export class CommunityService {
 
 
     join(communityId: string): Observable<Community | undefined> {
-      console.log(`Joining community at ${this.configService.getConfig().apiEndpoint}/communities/${communityId}/join`);
-
       return this.http
-          .post<Community>(`${this.configService.getConfig().apiEndpoint}/communities/${communityId}/join`, { null: null },
+          .post<Community>(`${environment.SERVER_API_URL}/communities/${communityId}/join`, { null: null },
               this.authService.getHttpOptions()
           )
           .pipe(
               map((community) => {
-                  console.dir(community);
                   this.alertService.success('You have joined the community');
                   return community;
               }),
@@ -112,16 +102,13 @@ export class CommunityService {
   }
 
   leave(communityId: string): Observable<Community | undefined> {
-      console.log(`Leaving community at ${this.configService.getConfig().apiEndpoint}/communities/${communityId}/leave`);
-
       return this.http
-          .post<Community>(`${this.configService.getConfig().apiEndpoint}/communities/${communityId}/leave`,
+          .post<Community>(`${environment.SERVER_API_URL}/communities/${communityId}/leave`,
               { null: null },
               this.authService.getHttpOptions()
           )
           .pipe(
               map((community) => {
-                  console.dir(community);
                   this.alertService.success('You have left the community');
                   return community;
               }),

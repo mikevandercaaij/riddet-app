@@ -27,6 +27,7 @@ const routes: Routes = [
   ],
   declarations: [LoginComponent, RegisterComponent],
   providers: [ LoggedInAuthGuard],
-  exports: [LoginComponent, RegisterComponent]
+  exports: [LoginComponent, RegisterComponent],
+
 })
 export class AuthUiModule {}

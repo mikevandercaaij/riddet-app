@@ -3,5 +3,6 @@ import { CategoryService } from "./category.service";
 
 @NgModule({
     providers: [CategoryService],
+
 })
 export class CommunityModule {}
