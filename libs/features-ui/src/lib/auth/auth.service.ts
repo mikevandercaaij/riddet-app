@@ -1,11 +1,13 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertService, ConfigService } from '@riddet-app/util-ui';
+import { AlertService } from '@riddet-app/util-ui';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { User } from '../user/user.model';
 import { Role } from '../user/user.roles.enum';
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import { environment } from 'apps/riddet-app/src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +20,6 @@ export class AuthService {
   });
 
   constructor(
-    private configService: ConfigService,
     private alertService: AlertService,
     private http: HttpClient,
     private router: Router,
@@ -44,11 +45,11 @@ export class AuthService {
   }
 
   login(username: string, password: string): Observable<User | undefined> {
-    console.log(`login at ${this.configService.getConfig().apiEndpoint}/auth/login`);
+    console.log(`login at ${environment.SERVER_API_URL}/auth/login`);
 
     return this.http
       .post<User>(
-        `${this.configService.getConfig().apiEndpoint}/auth/login`,
+        `${environment.SERVER_API_URL}/auth/login`,
         { username: username, password: password },
         { headers: this.headers }
       )
@@ -70,7 +71,7 @@ export class AuthService {
   }
 
   register(userData: User): Observable<User | undefined> {
-    console.log(`register at ${this.configService.getConfig().apiEndpoint}/auth/register`);
+    console.log(`register at ${environment.SERVER_API_URL}/auth/register`);
     console.log(userData);
 
     const anyDate = userData.dateOfBirth as any;
@@ -98,7 +99,7 @@ export class AuthService {
     console.log(user)
 
     return this.http
-      .post<User>(`${this.configService.getConfig().apiEndpoint}/auth/register`, user, {
+      .post<User>(`${environment.SERVER_API_URL}/auth/register`, user, {
         headers: this.headers,
       })
       .pipe(
@@ -120,7 +121,7 @@ export class AuthService {
   }
 
   validateToken(userData: User): Observable<User | undefined> {
-    const url = `${this.configService.getConfig().apiEndpoint}/auth/profile`;
+    const url = `${environment.SERVER_API_URL}/auth/profile`;
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
@@ -214,7 +215,7 @@ export class AuthService {
   }
 
   getById(userId: string): Observable<User> {
-    return this.httpClient.get<User>(`${this.configService.getConfig().apiEndpoint}/users/${userId}`, this.getHttpOptions()) as Observable<User>;
+    return this.httpClient.get<User>(`${environment.SERVER_API_URL}/users/${userId}`, this.getHttpOptions()) as Observable<User>;
   } 
 
 }
