@@ -4,7 +4,11 @@
 // import { Subscription } from 'rxjs';
 // import { ThreadService } from '../thread.service';
 
-import { Component } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { FormControl, FormGroup, Validators } from "@angular/forms";
+import { ActivatedRoute, Router } from "@angular/router";
+import { Subscription } from "rxjs";
+import { MessageService } from "../message.service";
 
 @Component({
   selector: 'riddet-app-message-edit',
@@ -13,108 +17,86 @@ import { Component } from "@angular/core";
 })
 
 
-//implements OnInit, OnDestroy
-export class MessageEditComponent {
+export class MessageEditComponent implements OnInit, OnDestroy {
+  title: string | undefined;
+  editMode: boolean | undefined
+  threadId: string | undefined
+  communityId: string | undefined
+  messageId: string | undefined
+  subs?: Subscription;
+  messageForm: FormGroup = new FormGroup({});
+
+    constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private messageService: MessageService){}
 
 
-//   title: string | undefined;
-//   editMode: boolean | undefined
-//   threadId: string | undefined
-//   communityId: string | undefined
-//   subs?: Subscription;
-//   threadForm: FormGroup = new FormGroup({});
+    ngOnInit(): void {
+      this.title = this.route.snapshot.data['title'] || undefined;
+      this.editMode = this.route.snapshot.data['editMode'];
 
-//     constructor(
-//     private route: ActivatedRoute,
-//     private router: Router,
-//     private threadService: ThreadService){}
+      console.log(this.editMode)
 
 
-//     ngOnInit(): void {
-//       this.title = this.route.snapshot.data['title'] || undefined;
-//       this.editMode = this.route.snapshot.data['editMode'];
+      this.subs = this.route.paramMap.subscribe((params) => {
+        this.communityId = params.get('communityId')?.toString()
+        this.threadId = params.get('threadId')?.toString()
+      });
 
-//       this.subs = this.route.paramMap.subscribe((params) => {
-//         this.communityId = params.get('communityId')?.toString()
-//         console.log("id: " + this.communityId)
-//       });
-
-//       this.threadForm = new FormGroup({
-//         title: new FormControl(null, [Validators.required, this.validTitle.bind(this)]),
-//         content: new FormControl(null),
-//         imageUrl: new FormControl(null, [Validators.required, this.validUrl.bind(this)]),
-//         externLink: new FormControl(null, [Validators.required, this.validUrl.bind(this)])
-//       });
-
-//       if(this.editMode) {
-//         this.subs = this.route.paramMap.subscribe((params) => {
-//           this.threadId = params.get('threadId')?.toString()
-//         });
-
-//         this.subs = this.threadService.getById(this.communityId as string, this.threadId as string).subscribe((thread) => {
-//           this.threadForm.patchValue({title: thread.title, content: thread.content, imageUrl: thread.imageUrl, externLink: thread.externLink});
-//         });
-//         }
-//     }
-
-//     ngOnDestroy(): void {
-//       if (this.subs) {
-//         this.subs.unsubscribe();
-//       }
-//     }
-
-//     onSubmit() {
-//       if (this.threadForm.valid) {
-//         if(this.editMode) {
-//           this.threadService.update(this.threadForm.value, this.communityId as string, this.threadId as string).subscribe((community) => {
-//             if (community) {
-//               this.router.navigate(['/communities', this.communityId, 'threads', this.threadId]);
-//             }
-//           });
-//         } else {
-//           this.threadService.create(this.threadForm.value, this.communityId as string).subscribe((community) => {
-//             if (community) {
-//               this.router.navigate(['/communities', this.communityId]);
-//             }
-//           });
-//         }
-//       }
-//     }
+      this.messageForm = new FormGroup({
+        text: new FormControl(null, [Validators.required, this.validText.bind(this)]),
+      });
 
 
-//     validUrl(control: FormControl): { [s: string]: boolean } {
-//       const imageUrl = control.value;
-//       const regexp = new RegExp('^(https?:\\/\\/)?'+
-//       '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+
-//       '((\\d{1,3}\\.){3}\\d{1,3}))'+
-//       '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+
-//       '(\\?[;&a-z\\d%_.~+=-]*)?'+ 
-//       '(\\#[-a-z\\d_]*)?$','i');
+      if(this.editMode) {
+        (document.getElementById('navbarNavDropdown') as HTMLElement).scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
 
-//       const regexp2 = new RegExp('^$');
+        this.subs = this.route.paramMap.subscribe((params) => {
+          this.messageId = params.get('messageId')?.toString()
+        });
 
+        this.subs = this.messageService.getById(this.communityId as string, this.threadId as string, this.messageId as string).subscribe((message) => {
+          this.messageForm.patchValue({text: message.text});
+        });
+        }
+    }
 
-//       console.log(regexp2.test(imageUrl) !== true)
+    ngOnDestroy(): void {
+      if (this.subs) {
+        this.subs.unsubscribe();
+      }
+    }
 
-//       if (regexp.test(imageUrl) !== true && regexp2.test(imageUrl) !== true) {
-//         return { imageUrl: false };
-//       } else {
-//         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-//         return null!
-//       }
-//     }
+    onSubmit() {
+      if (this.messageForm.valid) {
+        if(this.editMode) {
+          this.messageService.update(this.messageForm.value, this.communityId as string, this.threadId as string, this.messageId as string).subscribe((message) => {
+            if (message) {
+              this.router.navigate(['/communities', this.communityId, 'threads', this.threadId]);
+            }
+          });
+        } else {
+          this.messageService.create(this.messageForm.value, this.communityId as string, this.threadId as string).subscribe((message) => {
+            if (message) {
+              this.router.navigateByUrl('/reload').then(() => this.router.navigate(['/communities', this.communityId, 'threads', this.threadId]))
+            }
+          });
+        }
+      }
+    }
 
-//     validTitle(control: FormControl): { [s: string]: boolean } {
-//       const description = control.value;
-//       const regexp = new RegExp(
-//         '.{5,}'
-//       );
+    validText(control: FormControl): { [s: string]: boolean } {
+      const text = control.value;
+      const regexp = new RegExp(
+        '.{1,}'
+      );
   
-//       if (regexp.test(description) !== true) {
-//         return { description: false };
-//       } else {
-//         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-//         return null!;
-//       }
-//     }
+      if (regexp.test(text) !== true) {
+        return { text: false };
+      } else {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        return null!;
+      }
+    }
 }

@@ -2,7 +2,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { AlertService, ConfigService } from '@riddet-app/util-ui';
-import { Observable } from "rxjs";
+import { catchError, map, Observable, of } from "rxjs";
 import { AuthService } from "../auth/auth.service";
 import { Message } from "./message.model";
 @Injectable({providedIn: 'root',})
@@ -17,72 +17,94 @@ export class MessageService {
       return this.http.get(`${this.configService.getApiEndpoint()}/communities/${communityId}/threads/${threadId}/messages`) as Observable<Message[]>;
     }
 
-//     getById(communityId :string, threadId: string): Observable<Thread> {
-//       return this.http.get(`${this.configService.getApiEndpoint()}/communities/${communityId}/threads/${threadId}`) as Observable<Thread>;
-//     }
+    getById(communityId :string, threadId: string, messageId: string): Observable<Message> {
+      return this.http.get(`${this.configService.getApiEndpoint()}/communities/${communityId}/threads/${threadId}/messages/${messageId}`) as Observable<Message>;
+    }
 
-//     create(threadData: Thread, communityId : string): Observable<Thread | undefined> {
-//       console.log(`creating thread at ${this.configService.getConfig().apiEndpoint}/communities/${communityId}/threads`);
+    create(messageData: Message, communityId : string, threadId: string): Observable<Message | undefined> {
+      console.log(`creating message at ${this.configService.getConfig().apiEndpoint}/communities/${communityId}/threads/${threadId}/messages`);
   
-//       return this.http
-//         .post<Thread>(`${this.configService.getConfig().apiEndpoint}/communities/${communityId}/threads`, threadData,
-//           this.authService.getHttpOptions())
-//         .pipe(
-//           map((thread) => {
-//             console.dir(thread);
-//             this.alertService.success('Thread has been created');
-//             return thread;
-//           }),
-//           catchError((error: any) => {
-//             console.log('error:', error);
-//             console.log('error.message:', error.message);
-//             console.log('error.error.message:', error.error.message);
-//             this.alertService.error(error.error.message || error.message);
-//             return of(undefined); 
-//           })
-//         );
-//     }
+    return this.http
+      .post<Message>(`${this.configService.getConfig().apiEndpoint}/communities/${communityId}/threads/${threadId}/messages`, messageData,
+        this.authService.getHttpOptions())
+      .pipe(
+        map((message) => {
+          console.dir(message);
+          this.alertService.success('Message has been created');
+          return message;
+        }),
+        catchError((error: any) => {
+          console.log('error:', error);
+          console.log('error.message:', error.message);
+          console.log('error.error.message:', error.error.message);
+          this.alertService.error(error.error.message || error.message);
+          return of(undefined); 
+        })
+      );
+    }
 
-//     update(threadData: Thread, communityId : string, threadId : string): Observable<Thread | undefined> {
-//       console.log(`updating thread at ${this.configService.getConfig().apiEndpoint}/communities/${communityId}/threads/${threadId}`);
+    update(messageData: Message, communityId : string, threadId : string, messageId: string): Observable<Message | undefined> {
+      console.log(`updating message at ${this.configService.getConfig().apiEndpoint}/communities/${communityId}/threads/${threadId}/messages/${messageId}`);
   
-//       return this.http
-//         .patch<Thread>(`${this.configService.getConfig().apiEndpoint}/communities/${communityId}/threads/${threadId}`, threadData,
-//           this.authService.getHttpOptions())
-//         .pipe(
-//           map((thread) => {
-//             console.dir(thread);
-//             this.alertService.success('Thread has been updated');
-//             return thread;
-//           }),
-//           catchError((error: any) => {
-//             console.log('error:', error);
-//             console.log('error.message:', error.message);
-//             console.log('error.error.message:', error.error.message);
-//             this.alertService.error(error.error.message || error.message);
-//             return of(undefined); 
-//           })
-//         );
-//     }
+      return this.http
+        .patch<Message>(`${this.configService.getConfig().apiEndpoint}/communities/${communityId}/threads/${threadId}/messages/${messageId}`, messageData,
+          this.authService.getHttpOptions())
+        .pipe(
+          map((message) => {
+            console.dir(message);
+            this.alertService.success('Message has been updated');
+            return message;
+          }),
+          catchError((error: any) => {
+            console.log('error:', error);
+            console.log('error.message:', error.message);
+            console.log('error.error.message:', error.error.message);
+            this.alertService.error(error.error.message || error.message);
+            return of(undefined); 
+          })
+        );
+    }
 
-//     delete(communityId : string, threadId : string): Observable<Thread | undefined> {
-//       console.log(`deleting thread at ${this.configService.getConfig().apiEndpoint}/communities/${communityId}/threads/${threadId}`);
+    delete(communityId : string, threadId : string, messageId : string): Observable<Message | undefined> {
+      console.log(`deleting messsage at ${this.configService.getConfig().apiEndpoint}/communities/${communityId}/threads/${threadId}/messages/${messageId}`);
     
-//       return this.http
-//         .delete<Thread>(`${this.configService.getConfig().apiEndpoint}/communities/${communityId}/threads/${threadId}`, this.authService.getHttpOptions())
-//         .pipe(
-//           map((community) => {
-//             console.dir(community);
-//             this.alertService.error('Thread has been deleted');
-//             return community;
-//           }),
-//           catchError((error: any) => {
-//             console.log('error:', error);
-//             console.log('error.message:', error.message);
-//             console.log('error.error.message:', error.error.message);
-//             this.alertService.error(error.error.message || error.message);
-//             return of(undefined); 
-//           })
-//         );
-//     }
+      return this.http
+        .delete<Message>(`${this.configService.getConfig().apiEndpoint}/communities/${communityId}/threads/${threadId}/messages/${messageId}`, this.authService.getHttpOptions())
+        .pipe(
+          map((message) => {
+            console.dir(message);
+            this.alertService.error('Thread has been deleted');
+            return message;
+          }),
+          catchError((error: any) => {
+            console.log('error:', error);
+            console.log('error.message:', error.message);
+            console.log('error.error.message:', error.error.message);
+            this.alertService.error(error.error.message || error.message);
+            return of(undefined); 
+          })
+        );
+    }
+
+
+    like(communityId : string, threadId : string, messageId : string): Observable<Message | undefined> {
+      console.log(`deleting messsage at ${this.configService.getConfig().apiEndpoint}/communities/${communityId}/threads/${threadId}/messages/${messageId}/like`);
+    
+      return this.http
+        .delete<Message>(`${this.configService.getConfig().apiEndpoint}/communities/${communityId}/threads/${threadId}/messages/${messageId}/like`, this.authService.getHttpOptions())
+        .pipe(
+          map((message) => {
+            console.dir(message);
+            this.alertService.error('Liked/disliked message');
+            return message;
+          }),
+          catchError((error: any) => {
+            console.log('error:', error);
+            console.log('error.message:', error.message);
+            console.log('error.error.message:', error.error.message);
+            this.alertService.error(error.error.message || error.message);
+            return of(undefined); 
+          })
+        );
+    }
 }

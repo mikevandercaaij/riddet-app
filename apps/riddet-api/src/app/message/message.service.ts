@@ -146,9 +146,9 @@ export class MessageService {
   async delete(communityId : string, threadId : string, messageId : string, req): Promise<Thread> {
     await this.doesExist(communityId, threadId, messageId);
 
-    const message = await this.getById(communityId, threadId, messageId);
+    const message = await this.getById(communityId, threadId, messageId) as any;
 
-    if(!(await this.isMyData(message.createdBy.toString(), req.user.id)) && !(req.user.roles.includes(Role.Admin))) {
+    if(!(await this.isMyData(message.createdBy._id.toString(), req.user.id)) && !(req.user.roles.includes(Role.Admin))) {
         throw new HttpException(`You cannot alter data that isn't yours!`, HttpStatus.BAD_REQUEST);
     }
 

@@ -7,17 +7,19 @@
   <i class="bi bi-arrow-left-short"></i> Go Back
 </button>
 
-<button *ngIf="partOfCommunity && !(authService.isOwnerOfData(community.createdBy._id.toString()))" (click)="leave()"
-class="btn btn-danger"
-style="margin-bottom: 15px">
-<i class="bi bi-box-arrow-in-left"></i> Leave Community
-</button>
-
-<button *ngIf="!partOfCommunity && !(authService.isOwnerOfData(community.createdBy._id.toString()))" (click)="join()"
-class="btn btn-success"
-style="margin-bottom: 15px">
-<i class="bi bi-box-arrow-in-right"></i> Join Community
-</button>
+<div *ngIf="loggedInUser$ | async">
+  <button *ngIf="partOfCommunity && !(authService.isOwnerOfData(community.createdBy._id.toString()))" (click)="leave()"
+  class="btn btn-danger"
+  style="margin-bottom: 15px">
+  <i class="bi bi-box-arrow-in-left"></i> Leave Community
+  </button>
+  
+  <button *ngIf="!partOfCommunity && !(authService.isOwnerOfData(community.createdBy._id.toString()))" (click)="join()"
+  class="btn btn-success"
+  style="margin-bottom: 15px">
+  <i class="bi bi-box-arrow-in-right"></i> Join Community
+  </button>
+</div>
 </div>
 
 

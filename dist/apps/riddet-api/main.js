@@ -1618,7 +1618,7 @@ let MessageService = class MessageService {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             yield this.doesExist(communityId, threadId, messageId);
             const message = yield this.getById(communityId, threadId, messageId);
-            if (!(yield this.isMyData(message.createdBy.toString(), req.user.id)) && !(req.user.roles.includes(role_enum_1.Role.Admin))) {
+            if (!(yield this.isMyData(message.createdBy._id.toString(), req.user.id)) && !(req.user.roles.includes(role_enum_1.Role.Admin))) {
                 throw new common_1.HttpException(`You cannot alter data that isn't yours!`, common_1.HttpStatus.BAD_REQUEST);
             }
             return (yield this.communityModel.findOneAndUpdate({ _id: new mongoose_2.Types.ObjectId(communityId), "threads._id": new mongoose_2.Types.ObjectId(threadId) }, { $pull: { "threads.$.messages": message } }, { new: true })).threads.filter(thread => thread._id.equals(new mongoose_2.Types.ObjectId(threadId)))[0];

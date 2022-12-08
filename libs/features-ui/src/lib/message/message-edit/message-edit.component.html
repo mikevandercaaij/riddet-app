@@ -1,0 +1,54 @@
+<div class="card" style="margin-top: 15px">
+  <div class="card-body">
+    <h5 id="form-title" class="card-title">{{ title }}</h5>
+
+    <form [formGroup]="messageForm" (ngSubmit)="onSubmit()" class="row g-3">
+      <div class="col-12">
+        <textarea
+          type="text"
+          class="form-control"
+          formControlName="text"
+          id="inputText"
+          aria-describedby="textHelp"
+          [ngClass]="{
+            'is-invalid':
+              messageForm.get('text')?.invalid &&
+              messageForm.get('text')?.touched
+          }"
+        ></textarea>
+        <span
+          *ngIf="
+            !messageForm.get('text')?.valid && messageForm.get('text')?.touched
+          "
+          class="invalid-feedback"
+        >
+          <p id="description-invalid">Please enter a valid message!</p>
+        </span>
+      </div>
+
+      <div class="col-12">
+        <!--CREATE BUTTON-->
+        <button
+          *ngIf="!editMode"
+          style="width: 100%"
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="!messageForm.valid"
+        >
+          Send
+        </button>
+
+        <!--EDIT BUTTON-->
+        <button
+          *ngIf="editMode"
+          style="margin-right: 5px"
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="!messageForm.valid"
+        >
+          Update
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -2,14 +2,11 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
+import { RouterModule } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MessageEditComponent } from './message-edit/message-edit.component';
 import { MessageListComponent } from './message-list/message-list.component';
 
-// const routes: Routes = [
-//     { path: 'communities/:communityId/threads/:threadId/messages', component: ThreadDetailComponent},
-//     { path: 'communities/:communityId/threads/:threadId/messages/edit', component: ThreadEditComponent, data: { editMode: true, title: 'Edit Message' }},
-// ];
 
 @NgModule({
   declarations: [
@@ -20,11 +17,11 @@ import { MessageListComponent } from './message-list/message-list.component';
     CommonModule,
     BrowserModule,
     FormsModule,
+    RouterModule,
     ReactiveFormsModule,
-    NgbModule,
-    // RouterModule.forChild(routes),
+    NgbModule
   ],
   providers: [],
-  exports: [MessageListComponent],
+  exports: [MessageListComponent, MessageEditComponent],
 })
 export class MessageModule {}
