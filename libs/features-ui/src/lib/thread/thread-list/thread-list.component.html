@@ -1,4 +1,4 @@
-<p *ngIf="threads?.length === 0">Er zijn nog geen threads.</p>
+<p *ngIf="threads?.length === 0">No threads have been created yet.</p>
 
 <div class="row row-cols-1 row-cols-md-2 g-4">
   <div *ngFor="let thread of threads" class="col">
@@ -19,7 +19,7 @@
       </div>
 
       <div class="card-footer text-muted">
-        Gepubliceerd op {{ thread.publicationDate | date: 'dd-MM-yy HH:mm' }}
+        Published on {{ thread.publicationDate | date: 'dd-MM-yy HH:mm' }}
       </div>
     </div>
   </div>
