@@ -5,6 +5,11 @@
       Deze applicatie is gemaakt in het kader van het vak 'Clientside web
       frameworks' van Avans Hogeschool Breda.
     </p>
+
+    <p>
+      <b style="color:red; text-decoration:underline;">Door gebrek aan tijd is het niet mogelijk de functionaliteiten volledig af te krijgen. Echt staat op deze pagina het idee volledig uitgewerkt met een erd + overzicht van entiteiten die afgenomen zijn van de huidige staat van dit project.</b>
+    </p>
+
     <h3>Riddet</h3>
     <p>
       <b>Casusbeschrijving:</b> <br />
@@ -109,12 +114,17 @@
       <li>username: string</li>
       <li>firstName: string</li>
       <li>lastName: string</li>
+      <li>email: string</li>
       <li>dateOfBirth: Date</li>
-      <li>emailAddress: string</li>
       <li>password: string</li>
       <li>userImageUrl: string</li>
       <li>creationDate: Date</li>
       <li>isActive: boolean</li>
+      <li>roles: Role[] (enum van rollen)</li>
+      <li>joinedCommunities: ObjectId[]</li>
+      <li>createdCommunities: ObjectId[]</li>
+      <li>following: ObjectId[]</li>
+      <li>followers: ObjectId[]</li>
     </ul>
   </div>
   <div class="col-sm-12 col-md-4">
@@ -126,6 +136,10 @@
       <li>creationDate: Date</li>
       <li>imageUrl: string</li>
       <li>isPublic: boolean</li>
+      <li>categories: Category[]</li>
+      <li>participants: ObjectId[]</li>
+      <li>threads: Thread[]</li>
+      <li>createdBy: User</li>
     </ul>
   </div>
   <div class="col-sm-12 col-md-4">
@@ -134,10 +148,13 @@
       <li>_id: ObjectId</li>
       <li>title: string</li>
       <li>content: string</li>
-      <li>publicationDate: Date</li>
       <li>imageUrl: string</li>
+      <li>views: number</li>
       <li>externLink: string</li>
-      <li>upvotes: Number</li>
+      <li>upvotes: ObjectId[]</li>
+      <li>publicationDate: Date</li>
+      <li>messages: Message[]</li>
+      <li>createdBy: Objectid</li>
     </ul>
   </div>
   <div class="col-sm-12 col-md-4">
@@ -145,16 +162,17 @@
     <ul>
       <li>_id: ObjectId</li>
       <li>text: string</li>
-      <li>likes: Number</li>
+      <li>likes: ObjectId[]</li>
       <li>dislikes: Date</li>
       <li>publicationDate: Date</li>
+      <li>createdBy: Object</li>
     </ul>
   </div>
   <div class="col-sm-12 col-md-4">
     <p>Category (strong entity)</p>
     <ul>
       <li>_id: ObjectId</li>
-      <li>categoryName: string</li>
+      <li>name: string</li>
     </ul>
   </div>
 </div>
