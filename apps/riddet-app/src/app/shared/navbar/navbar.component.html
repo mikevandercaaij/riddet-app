@@ -96,6 +96,9 @@
             class="dropdown-menu dropdown-menu-dark"
             aria-labelledby="navbarDarkDropdownMenuLink"
           >
+          <li>
+            <a class="dropdown-item" [routerLink]="['/profile',(loggedInUser$ | async)?._id]">Profile</a>
+          </li>
             <li>
               <a class="dropdown-item" (click)="logout()">Logout</a>
             </li>

@@ -93,3 +93,9 @@ nav {
   align-items: flex-end;
   justify-content: end;
 }
+
+.profile-page-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

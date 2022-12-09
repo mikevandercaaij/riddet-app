@@ -3,11 +3,18 @@
     <h5 class="card-title">Messages</h5>
 
     <div class="d-flex flex-start comment position-relative" *ngFor="let message of messages as any">
+      <a [routerLink]="['/profile', message.createdBy._id]">
       <img class="rounded-circle shadow-1-strong me-3"
         src="{{message.createdBy.userImageUrl}}" alt="{{message.createdBy.username}}" width="60"
         height="60" />
+      </a>
       <div>
-        <h6 class="fw-bold mb-1">{{message.createdBy.username}}</h6>
+      
+        <h6 class="fw-bold mb-1">
+          <a [routerLink]="['/profile', message.createdBy._id]">
+          {{message.createdBy.username}}
+          </a>
+        </h6>
         <div class="d-flex align-items-center mb-3">
           <p class="mb-0">
             {{convertDate(message.publicationDate)}}

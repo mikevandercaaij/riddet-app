@@ -41,6 +41,7 @@ export class AuthService {
       roles: loggedInUser.roles,
       userImageUrl: loggedInUser.userImageUrl,
       access_token: this.jwtService.sign(payload),
+      createdCommunities: loggedInUser.createdCommunities,
     };
   }
 }

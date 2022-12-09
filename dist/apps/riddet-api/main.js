@@ -264,6 +264,7 @@ let AuthService = class AuthService {
                 roles: loggedInUser.roles,
                 userImageUrl: loggedInUser.userImageUrl,
                 access_token: this.jwtService.sign(payload),
+                createdCommunities: loggedInUser.createdCommunities,
             };
         });
     }
@@ -1531,18 +1532,19 @@ let MessageService = class MessageService {
             yield this.doesExist(communityId, threadId, messageId);
             const oldMessage = yield this.communityModel.find({ _id: new mongoose_2.Types.ObjectId(communityId), "threads._id": new mongoose_2.Types.ObjectId(threadId) }, { threads: { $elemMatch: { _id: new mongoose_2.Types.ObjectId(threadId) } } }).then(threads => threads[0].threads[0].messages.filter(message => message._id.equals(new mongoose_2.Types.ObjectId(messageId)))[0]);
             const message = Object.assign(Object.assign({}, oldMessage), messageDto);
-            if (!(yield this.isMyData(message.createdBy.toString(), req.user.id)) && !(req.user.roles.includes(role_enum_1.Role.Admin))) {
+            const community = yield this.communityModel.findOne({ _id: communityId });
+            if (!(yield this.isMyData(message.createdBy.toString(), req.user.id)) && !(req.user.roles.includes(role_enum_1.Role.Admin)) && !(yield this.isMyData(community.createdBy._id.toString(), req.user.id.toString()))) {
                 throw new common_1.HttpException(`You cannot alter data that isn't yours!`, common_1.HttpStatus.BAD_REQUEST);
             }
-            return yield this.communityModel.findOneAndUpdate({ _id: new mongoose_2.Types.ObjectId(communityId), "threads._id": new mongoose_2.Types.ObjectId(threadId), "threads.messages._id": new mongoose_2.Types.ObjectId(messageId) }, { $set: { "threads.$[thread].messages.$[message]": message } }, { arrayFilters: [{ "thread._id": new mongoose_2.Types.ObjectId(threadId) }, { "message._id": new mongoose_2.Types.ObjectId(messageId) }] });
+            return yield this.communityModel.findOneAndUpdate({ _id: new mongoose_2.Types.ObjectId(communityId), "threads._id": new mongoose_2.Types.ObjectId(threadId), "threads.messages._id": new mongoose_2.Types.ObjectId(messageId) }, { $set: { "threads.$[thread].messages.$[message]": message } }, { arrayFilters: [{ "thread._id": new mongoose_2.Types.ObjectId(threadId) }, { "message._id": new mongoose_2.Types.ObjectId(messageId) }], new: true });
         });
     }
     delete(communityId, threadId, messageId, req) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             yield this.doesExist(communityId, threadId, messageId);
-            console.log("delete message");
             const message = yield this.communityModel.find({ _id: new mongoose_2.Types.ObjectId(communityId), "threads._id": new mongoose_2.Types.ObjectId(threadId) }, { threads: { $elemMatch: { _id: new mongoose_2.Types.ObjectId(threadId) } } }).then(threads => threads[0].threads[0].messages.filter(message => message._id.equals(new mongoose_2.Types.ObjectId(messageId)))[0]);
-            if (!(yield this.isMyData(message.createdBy.toString(), req.user.id)) && !(req.user.roles.includes(role_enum_1.Role.Admin))) {
+            const community = yield this.communityModel.findOne({ _id: communityId });
+            if (!(yield this.isMyData(message.createdBy.toString(), req.user.id)) && !(req.user.roles.includes(role_enum_1.Role.Admin)) && !(yield this.isMyData(community.createdBy._id.toString(), req.user.id.toString()))) {
                 throw new common_1.HttpException(`You cannot alter data that isn't yours!`, common_1.HttpStatus.BAD_REQUEST);
             }
             return yield this.communityModel.findOneAndUpdate({ _id: new mongoose_2.Types.ObjectId(communityId), "threads._id": new mongoose_2.Types.ObjectId(threadId) }, { $pull: { "threads.$.messages": message } }, { new: true });

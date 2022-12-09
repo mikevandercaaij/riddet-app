@@ -58,22 +58,24 @@ export class MessageService {
       const oldMessage = await this.communityModel.find({_id: new Types.ObjectId(communityId), "threads._id": new Types.ObjectId(threadId)}, {threads: {$elemMatch: {_id: new Types.ObjectId(threadId)}}}).then(threads => threads[0].threads[0].messages.filter(message => message._id.equals(new Types.ObjectId(messageId)))[0]);
       const message = {...oldMessage, ...messageDto};
 
-      if(!(await this.isMyData(message.createdBy.toString(), req.user.id)) && !(req.user.roles.includes(Role.Admin))) {
+      const community = await this.communityModel.findOne({_id : communityId});
+
+      if(!(await this.isMyData(message.createdBy.toString(), req.user.id)) && !(req.user.roles.includes(Role.Admin)) && !(await this.isMyData(community.createdBy._id.toString(), req.user.id.toString()))) {
         throw new HttpException(`You cannot alter data that isn't yours!`, HttpStatus.BAD_REQUEST);
       }
 
-      return await this.communityModel.findOneAndUpdate({_id: new Types.ObjectId(communityId), "threads._id": new Types.ObjectId(threadId), "threads.messages._id": new Types.ObjectId(messageId)}, {$set: {"threads.$[thread].messages.$[message]": message}}, {arrayFilters: [{ "thread._id": new Types.ObjectId(threadId) }, { "message._id": new Types.ObjectId(messageId) }]});
+      return await this.communityModel.findOneAndUpdate({_id: new Types.ObjectId(communityId), "threads._id": new Types.ObjectId(threadId), "threads.messages._id": new Types.ObjectId(messageId)}, {$set: {"threads.$[thread].messages.$[message]": message}}, {arrayFilters: [{ "thread._id": new Types.ObjectId(threadId) }, { "message._id": new Types.ObjectId(messageId) }], new : true});
     }
 
   async delete(communityId : string, threadId : string, messageId : string, req): Promise<Thread> {
     await this.doesExist(communityId, threadId, messageId);
 
-    console.log("delete message")
-
     const message = await this.communityModel.find({_id: new Types.ObjectId(communityId), "threads._id": new Types.ObjectId(threadId)}, {threads: {$elemMatch: {_id: new Types.ObjectId(threadId)}}}).then(threads => threads[0].threads[0].messages.filter(message => message._id.equals(new Types.ObjectId(messageId)))[0]);
 
-    if(!(await this.isMyData(message.createdBy.toString(), req.user.id)) && !(req.user.roles.includes(Role.Admin))) {
-        throw new HttpException(`You cannot alter data that isn't yours!`, HttpStatus.BAD_REQUEST);
+    const community = await this.communityModel.findOne({_id : communityId});
+
+    if(!(await this.isMyData(message.createdBy.toString(), req.user.id)) && !(req.user.roles.includes(Role.Admin)) && !(await this.isMyData(community.createdBy._id.toString(), req.user.id.toString()))) {
+      throw new HttpException(`You cannot alter data that isn't yours!`, HttpStatus.BAD_REQUEST);
     }
 
     return await this.communityModel.findOneAndUpdate({_id: new Types.ObjectId(communityId), "threads._id": new Types.ObjectId(threadId)}, {$pull: {"threads.$.messages": message }}, {new: true});
