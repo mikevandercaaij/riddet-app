@@ -36,6 +36,9 @@
       Creation Date: {{ community.creationDate | date: 'dd-MM-yyyy HH:mm' }}
     </p>
 
+    <p>
+      Created by: {{ community.createdBy.firstname }} {{ community.createdBy.lastname}} ({{ community.createdBy.username }})
+    </p>
 
     <button
       *ngIf="authService.userMayEdit(community.createdBy._id.toString())"

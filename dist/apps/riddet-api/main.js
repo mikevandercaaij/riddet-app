@@ -1501,92 +1501,15 @@ let MessageService = class MessageService {
     getById(communityId, threadId, messageId) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             yield this.doesExist(communityId, threadId, messageId);
-            const thread = (yield this.communityModel.aggregate([
-                { $match: { _id: new mongoose_2.Types.ObjectId(communityId) } },
-                { $unwind: { path: "$participants", preserveNullAndEmptyArrays: true } },
-                { $project: {
-                        _id: 0,
-                        "threads": {
-                            $filter: {
-                                input: "$threads",
-                                as: "thread",
-                                cond: true
-                            }
-                        }
-                    }
-                },
-                { $unwind: { path: "$threads", preserveNullAndEmptyArrays: false } },
-                { $unwind: { path: "$threads.createdBy", preserveNullAndEmptyArrays: true } },
-                { $lookup: {
-                        from: "users",
-                        localField: "threads.createdBy",
-                        foreignField: "_id",
-                        as: "threads.createdBy"
-                    } },
-                { $unwind: { path: "$threads.messages", preserveNullAndEmptyArrays: true } },
-                { $lookup: {
-                        from: "users",
-                        localField: "threads.messages.createdBy",
-                        foreignField: "_id",
-                        as: "threads.messages.createdBy"
-                    } },
-                { $set: {
-                        "threads.messages.createdBy": "$threads.messages.createdBy"
-                    } },
-                { $group: {
-                        _id: "$threads._id",
-                        messages: {
-                            $push: "$threads.messages"
-                        },
-                    } },
-                { $unset: ["messages.createdBy.password", "messages.createdBy.__v"] },
-            ]))[0].messages.filter(message => new mongoose_2.Types.ObjectId(message._id).equals(new mongoose_2.Types.ObjectId(messageId)))[0];
-            return Object.assign(Object.assign({}, thread), { createdBy: thread.createdBy[0] });
+            const community = yield this.communityModel.findOne({ _id: new mongoose_2.Types.ObjectId(communityId), "threads._id": new mongoose_2.Types.ObjectId(threadId), "messages._id": new mongoose_2.Types.ObjectId(messageId) });
+            return community.threads.filter(p => p._id.equals(new mongoose_2.Types.ObjectId(threadId)))[0].messages.filter(p => p._id.equals(new mongoose_2.Types.ObjectId(messageId)))[0];
         });
     }
     getAll(communityId, threadId) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             yield this.doesExist(communityId, threadId);
-            return (yield this.communityModel.aggregate([
-                { $match: { _id: new mongoose_2.Types.ObjectId(communityId) } },
-                { $unwind: { path: "$participants", preserveNullAndEmptyArrays: true } },
-                { $project: {
-                        _id: 0,
-                        "threads": {
-                            $filter: {
-                                input: "$threads",
-                                as: "thread",
-                                cond: true
-                            }
-                        }
-                    }
-                },
-                { $unwind: { path: "$threads", preserveNullAndEmptyArrays: false } },
-                { $unwind: { path: "$threads.createdBy", preserveNullAndEmptyArrays: true } },
-                { $lookup: {
-                        from: "users",
-                        localField: "threads.createdBy",
-                        foreignField: "_id",
-                        as: "threads.createdBy"
-                    } },
-                { $unwind: { path: "$threads.messages", preserveNullAndEmptyArrays: true } },
-                { $lookup: {
-                        from: "users",
-                        localField: "threads.messages.createdBy",
-                        foreignField: "_id",
-                        as: "threads.messages.createdBy"
-                    } },
-                { $set: {
-                        "threads.messages.createdBy": "$threads.messages.createdBy"
-                    } },
-                { $group: {
-                        _id: "$threads._id",
-                        messages: {
-                            $push: "$threads.messages"
-                        },
-                    } },
-                { $unset: ["messages.createdBy.password", "messages.createdBy.__v"] },
-            ]))[0].messages.map(message => { return Object.assign(Object.assign({}, message), { createdBy: message.createdBy[0] }); });
+            const community = yield this.communityModel.findOne({ _id: new mongoose_2.Types.ObjectId(communityId), "threads._id": new mongoose_2.Types.ObjectId(threadId) });
+            return community.threads.filter(p => p._id.equals(new mongoose_2.Types.ObjectId(threadId)))[0].messages;
         });
     }
     create(communityId, threadId, req, messageDto) {
@@ -1606,22 +1529,23 @@ let MessageService = class MessageService {
     update(communityId, threadId, messageId, messageDto, req) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             yield this.doesExist(communityId, threadId, messageId);
-            const oldMessage = yield this.getById(communityId, threadId, messageId);
+            const oldMessage = yield this.communityModel.find({ _id: new mongoose_2.Types.ObjectId(communityId), "threads._id": new mongoose_2.Types.ObjectId(threadId) }, { threads: { $elemMatch: { _id: new mongoose_2.Types.ObjectId(threadId) } } }).then(threads => threads[0].threads[0].messages.filter(message => message._id.equals(new mongoose_2.Types.ObjectId(messageId)))[0]);
             const message = Object.assign(Object.assign({}, oldMessage), messageDto);
             if (!(yield this.isMyData(message.createdBy.toString(), req.user.id)) && !(req.user.roles.includes(role_enum_1.Role.Admin))) {
                 throw new common_1.HttpException(`You cannot alter data that isn't yours!`, common_1.HttpStatus.BAD_REQUEST);
             }
-            return (yield this.communityModel.findOneAndUpdate({ _id: new mongoose_2.Types.ObjectId(communityId), "threads._id": new mongoose_2.Types.ObjectId(threadId) }, { $push: { "threads.$.messages": Object.assign(Object.assign({}, message), messageDto) } }, { new: true })).threads.filter(thread => thread._id.equals(new mongoose_2.Types.ObjectId(threadId)))[0].messages.filter(message => message._id.equals(new mongoose_2.Types.ObjectId(messageId)))[0];
+            return yield this.communityModel.findOneAndUpdate({ _id: new mongoose_2.Types.ObjectId(communityId), "threads._id": new mongoose_2.Types.ObjectId(threadId), "threads.messages._id": new mongoose_2.Types.ObjectId(messageId) }, { $set: { "threads.$[thread].messages.$[message]": message } }, { arrayFilters: [{ "thread._id": new mongoose_2.Types.ObjectId(threadId) }, { "message._id": new mongoose_2.Types.ObjectId(messageId) }] });
         });
     }
     delete(communityId, threadId, messageId, req) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             yield this.doesExist(communityId, threadId, messageId);
-            const message = yield this.getById(communityId, threadId, messageId);
-            if (!(yield this.isMyData(message.createdBy._id.toString(), req.user.id)) && !(req.user.roles.includes(role_enum_1.Role.Admin))) {
+            console.log("delete message");
+            const message = yield this.communityModel.find({ _id: new mongoose_2.Types.ObjectId(communityId), "threads._id": new mongoose_2.Types.ObjectId(threadId) }, { threads: { $elemMatch: { _id: new mongoose_2.Types.ObjectId(threadId) } } }).then(threads => threads[0].threads[0].messages.filter(message => message._id.equals(new mongoose_2.Types.ObjectId(messageId)))[0]);
+            if (!(yield this.isMyData(message.createdBy.toString(), req.user.id)) && !(req.user.roles.includes(role_enum_1.Role.Admin))) {
                 throw new common_1.HttpException(`You cannot alter data that isn't yours!`, common_1.HttpStatus.BAD_REQUEST);
             }
-            return (yield this.communityModel.findOneAndUpdate({ _id: new mongoose_2.Types.ObjectId(communityId), "threads._id": new mongoose_2.Types.ObjectId(threadId) }, { $pull: { "threads.$.messages": message } }, { new: true })).threads.filter(thread => thread._id.equals(new mongoose_2.Types.ObjectId(threadId)))[0];
+            return yield this.communityModel.findOneAndUpdate({ _id: new mongoose_2.Types.ObjectId(communityId), "threads._id": new mongoose_2.Types.ObjectId(threadId) }, { $pull: { "threads.$.messages": message } }, { new: true });
         });
     }
     like(communityId, threadId, messageId, req) {
@@ -2129,6 +2053,10 @@ let ThreadService = class ThreadService {
                     } },
                 { $unset: ["createdBy.password", "createdBy.__v", "messages.createdBy.password", "messages.createdBy.__v"] },
             ]))[0];
+            if (thread.messages[0]._id == undefined) {
+                delete thread.messages;
+                return Object.assign(Object.assign({}, thread), { createdBy: thread.createdBy[0] });
+            }
             return Object.assign(Object.assign({}, thread), { createdBy: thread.createdBy[0], messages: thread.messages.map(message => (Object.assign(Object.assign({}, message), { createdBy: message.createdBy[0] }))) });
         });
     }
@@ -2336,6 +2264,7 @@ let UserController = class UserController {
     }
 };
 tslib_1.__decorate([
+    (0, auth_module_1.Public)(),
     (0, common_1.Get)('users/:id'),
     tslib_1.__param(0, (0, common_1.Param)('id', ParseObjectIdPipe_1.ParseObjectIdPipe)),
     tslib_1.__metadata("design:type", Function),
@@ -2343,6 +2272,7 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", typeof (_b = typeof Promise !== "undefined" && Promise) === "function" ? _b : Object)
 ], UserController.prototype, "getById", null);
 tslib_1.__decorate([
+    (0, auth_module_1.Public)(),
     (0, common_1.Get)('users'),
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", []),

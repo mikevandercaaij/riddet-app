@@ -81,6 +81,11 @@ export class ThreadService {
             { $unset: ["createdBy.password", "createdBy.__v", "messages.createdBy.password", "messages.createdBy.__v"]},
         ]))[0]
 
+        if(thread.messages[0]._id == undefined) {
+            delete thread.messages;
+            return {...thread, createdBy : thread.createdBy[0]}
+        }
+
         return {...thread, createdBy : thread.createdBy[0], messages : thread.messages.map(message => ({...message, createdBy : message.createdBy[0]}))}
     }
 

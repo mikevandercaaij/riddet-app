@@ -205,23 +205,17 @@ export class AuthService {
       userId = p?._id.toString();
     });
 
-    let user : User | undefined;
+    const user = await this.getById(userId as string).toPromise();
 
-    if(userId === undefined) {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      user = await this.getById(userId!).toPromise();
+    if(user) {
+      if (user.joinedCommunities.filter(p => p.toString() === communityId.toString()).length > 0) {
+        return true;
+      }
     }
-
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    if (user!.joinedCommunities.filter(p => p.toString() === communityId.toString()).length > 0) {
-      return true;
-    } else {
-      return false;
-    }
+    return false
   }
 
   getById(userId: string): Observable<User> {
     return this.httpClient.get<User>(`${environment.SERVER_API_URL}/users/${userId}`, this.getHttpOptions()) as Observable<User>;
   } 
-
 }
