@@ -37,7 +37,7 @@ export class CommunityDetailComponent implements OnInit, OnDestroy {
           this.categoryString = community.categories.map((category) => category.name).join(', ');
         });
 
-        await this.isPartOfCommunity();
+        this.partOfCommunity = await this.isPartOfCommunity();
         this.loggedInUser$ = this.authService.currentUser$;
       }
     });
@@ -78,7 +78,6 @@ export class CommunityDetailComponent implements OnInit, OnDestroy {
   }
 
   async isPartOfCommunity() {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    this.partOfCommunity = await this.authService.partOfCommunity(this.communityId as string);
+    return this.partOfCommunity = await this.authService.partOfCommunity(this.communityId as string);
   }
 }

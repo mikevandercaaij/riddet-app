@@ -19,94 +19,16 @@ export class MessageService {
   async getById(communityId: string, threadId : string, messageId : string): Promise<Message> {
     await this.doesExist(communityId, threadId, messageId);
 
-    const thread = (await this.communityModel.aggregate([
-      { $match : { _id : new Types.ObjectId(communityId)}},
-      { $unwind : { path: "$participants", preserveNullAndEmptyArrays: true }},
-      { $project : {
-          _id : 0,
-          "threads" : {
-              $filter : {
-                  input : "$threads",
-                  as : "thread",
-                  cond : true
-              }
-          }}
-      },
-      { $unwind : { path: "$threads", preserveNullAndEmptyArrays: false }},
-      { $unwind : { path: "$threads.createdBy", preserveNullAndEmptyArrays: true }},
-
-      { $lookup : { 
-          from : "users",
-          localField : "threads.createdBy",
-          foreignField : "_id",
-          as : "threads.createdBy"
-      }},
-      { $unwind : { path: "$threads.messages", preserveNullAndEmptyArrays: true }},
-      { $lookup : { 
-          from : "users",
-          localField : "threads.messages.createdBy",
-          foreignField : "_id",
-          as : "threads.messages.createdBy"
-      }},
-      { $set: {
-          "threads.messages.createdBy": "$threads.messages.createdBy" 
-      }},
-      { $group: {
-          _id: "$threads._id",
-          messages: {
-            $push: "$threads.messages"   
-          },
-      }},
-      { $unset: ["messages.createdBy.password", "messages.createdBy.__v"]},
-  ]))[0].messages.filter(message => new Types.ObjectId(message._id).equals(new Types.ObjectId(messageId)))[0]
-
-  return { ...thread, createdBy: thread.createdBy[0] }
-
-  }
+    const community = await this.communityModel.findOne({_id: new Types.ObjectId(communityId), "threads._id": new Types.ObjectId(threadId), "messages._id": new Types.ObjectId(messageId)});
+    return community.threads.filter(p => p._id.equals(new Types.ObjectId(threadId)))[0].messages.filter(p => p._id.equals(new Types.ObjectId(messageId)))[0];
+}
 
   async getAll(communityId : string, threadId : string): Promise<Message[]> {
     await this.doesExist(communityId, threadId);
 
-    return (await this.communityModel.aggregate([
-      { $match : { _id : new Types.ObjectId(communityId)}},
-      { $unwind : { path: "$participants", preserveNullAndEmptyArrays: true }},
-      { $project : {
-          _id : 0,
-          "threads" : {
-              $filter : {
-                  input : "$threads",
-                  as : "thread",
-                  cond : true
-              }
-          }}
-      },
-      { $unwind : { path: "$threads", preserveNullAndEmptyArrays: false }},
-      { $unwind : { path: "$threads.createdBy", preserveNullAndEmptyArrays: true }},
+    const community = await this.communityModel.findOne({_id: new Types.ObjectId(communityId), "threads._id": new Types.ObjectId(threadId)});
+    return community.threads.filter(p => p._id.equals(new Types.ObjectId(threadId)))[0].messages;
 
-      { $lookup : { 
-          from : "users",
-          localField : "threads.createdBy",
-          foreignField : "_id",
-          as : "threads.createdBy"
-      }},
-      { $unwind : { path: "$threads.messages", preserveNullAndEmptyArrays: true }},
-      { $lookup : { 
-          from : "users",
-          localField : "threads.messages.createdBy",
-          foreignField : "_id",
-          as : "threads.messages.createdBy"
-      }},
-      { $set: {
-          "threads.messages.createdBy": "$threads.messages.createdBy" 
-      }},
-      { $group: {
-          _id: "$threads._id",
-          messages: {
-            $push: "$threads.messages"   
-          },
-      }},
-      { $unset: ["messages.createdBy.password", "messages.createdBy.__v"]},
-  ]))[0].messages.map(message => { return { ...message, createdBy: message.createdBy[0] }}) 
   }
 
   async create(communityId, threadId, req, messageDto : MessageDto) : Promise<Message> {
@@ -133,26 +55,28 @@ export class MessageService {
   async update(communityId: string, threadId: string, messageId: string, messageDto: MessageDto, req): Promise<Message> {
       await this.doesExist(communityId, threadId, messageId);
       
-      const oldMessage = await this.getById(communityId, threadId, messageId);
+      const oldMessage = await this.communityModel.find({_id: new Types.ObjectId(communityId), "threads._id": new Types.ObjectId(threadId)}, {threads: {$elemMatch: {_id: new Types.ObjectId(threadId)}}}).then(threads => threads[0].threads[0].messages.filter(message => message._id.equals(new Types.ObjectId(messageId)))[0]);
       const message = {...oldMessage, ...messageDto};
 
       if(!(await this.isMyData(message.createdBy.toString(), req.user.id)) && !(req.user.roles.includes(Role.Admin))) {
         throw new HttpException(`You cannot alter data that isn't yours!`, HttpStatus.BAD_REQUEST);
       }
 
-      return (await this.communityModel.findOneAndUpdate({_id: new Types.ObjectId(communityId), "threads._id": new Types.ObjectId(threadId)}, {$push: {"threads.$.messages": {...message, ...messageDto}}}, {new: true})).threads.filter(thread => thread._id.equals(new Types.ObjectId(threadId)))[0].messages.filter(message => message._id.equals(new Types.ObjectId(messageId)))[0];
+      return await this.communityModel.findOneAndUpdate({_id: new Types.ObjectId(communityId), "threads._id": new Types.ObjectId(threadId), "threads.messages._id": new Types.ObjectId(messageId)}, {$set: {"threads.$[thread].messages.$[message]": message}}, {arrayFilters: [{ "thread._id": new Types.ObjectId(threadId) }, { "message._id": new Types.ObjectId(messageId) }]});
     }
 
   async delete(communityId : string, threadId : string, messageId : string, req): Promise<Thread> {
     await this.doesExist(communityId, threadId, messageId);
 
-    const message = await this.getById(communityId, threadId, messageId) as any;
+    console.log("delete message")
 
-    if(!(await this.isMyData(message.createdBy._id.toString(), req.user.id)) && !(req.user.roles.includes(Role.Admin))) {
+    const message = await this.communityModel.find({_id: new Types.ObjectId(communityId), "threads._id": new Types.ObjectId(threadId)}, {threads: {$elemMatch: {_id: new Types.ObjectId(threadId)}}}).then(threads => threads[0].threads[0].messages.filter(message => message._id.equals(new Types.ObjectId(messageId)))[0]);
+
+    if(!(await this.isMyData(message.createdBy.toString(), req.user.id)) && !(req.user.roles.includes(Role.Admin))) {
         throw new HttpException(`You cannot alter data that isn't yours!`, HttpStatus.BAD_REQUEST);
     }
 
-    return (await this.communityModel.findOneAndUpdate({_id: new Types.ObjectId(communityId), "threads._id": new Types.ObjectId(threadId)}, {$pull: {"threads.$.messages": message}}, {new : true})).threads.filter(thread => thread._id.equals(new Types.ObjectId(threadId)))[0];
+    return await this.communityModel.findOneAndUpdate({_id: new Types.ObjectId(communityId), "threads._id": new Types.ObjectId(threadId)}, {$pull: {"threads.$.messages": message }}, {new: true});
   }
 
 

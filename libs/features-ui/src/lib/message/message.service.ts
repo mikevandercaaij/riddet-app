@@ -13,8 +13,31 @@ export class MessageService {
       private alertService : AlertService,
       private authService : AuthService) {}
   
-    getList(communityId : string, threadId : string): Observable<Message[]> {
-      return this.http.get(`${this.configService.getApiEndpoint()}/communities/${communityId}/threads/${threadId}/messages`) as Observable<Message[]>;
+    async getList(communityId : string, threadId : string): Promise<any[]> {
+      const returnArray : any[] = [];
+      let messagesAny : any[] = [];
+
+      const messages = await this.http.get<Message[]>(`${this.configService.getApiEndpoint()}/communities/${communityId}/threads/${threadId}/messages`).toPromise()
+        if(messages) {
+          messages.sort((a, b) => {
+            return new Date(b.publicationDate).getTime() - new Date(a.publicationDate).getTime();
+          });
+          messagesAny = messages as any[]
+        }
+      const users = await this.http.get(`${this.configService.getApiEndpoint()}/users`).toPromise()
+      const usersAny = users as any[]
+
+      for await (const message of messagesAny) {
+        for await (const user of usersAny) {
+          if (message.createdBy.toString() === user._id.toString()) {
+            delete message.createdBy
+            message.createdBy = user
+            returnArray.push(message)
+          }
+        }
+      }
+
+      return returnArray
     }
 
     getById(communityId :string, threadId: string, messageId: string): Observable<Message> {
@@ -88,14 +111,14 @@ export class MessageService {
 
 
     like(communityId : string, threadId : string, messageId : string): Observable<Message | undefined> {
-      console.log(`deleting messsage at ${this.configService.getConfig().apiEndpoint}/communities/${communityId}/threads/${threadId}/messages/${messageId}/like`);
+      console.log(`liking/unliking messsage at ${this.configService.getConfig().apiEndpoint}/communities/${communityId}/threads/${threadId}/messages/${messageId}/like`);
     
       return this.http
-        .delete<Message>(`${this.configService.getConfig().apiEndpoint}/communities/${communityId}/threads/${threadId}/messages/${messageId}/like`, this.authService.getHttpOptions())
+        .post<Message>(`${this.configService.getConfig().apiEndpoint}/communities/${communityId}/threads/${threadId}/messages/${messageId}/like`, {}, this.authService.getHttpOptions())
         .pipe(
           map((message) => {
             console.dir(message);
-            this.alertService.error('Liked/disliked message');
+            this.alertService.success('Liked/unliked message');
             return message;
           }),
           catchError((error: any) => {

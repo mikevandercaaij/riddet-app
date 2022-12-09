@@ -8,6 +8,8 @@ import { Component, OnDestroy, OnInit } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Subscription } from "rxjs";
+import { AuthService } from "../../auth/auth.service";
+import { ThreadService } from "../../thread/thread.service";
 import { MessageService } from "../message.service";
 
 @Component({
@@ -25,23 +27,33 @@ export class MessageEditComponent implements OnInit, OnDestroy {
   messageId: string | undefined
   subs?: Subscription;
   messageForm: FormGroup = new FormGroup({});
+  partOfCommunity = false;
+  threadCreatorId: string | undefined;
 
     constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private messageService: MessageService){}
+    private messageService: MessageService,
+    public authService : AuthService,
+    private threadService : ThreadService){}
 
 
     ngOnInit(): void {
       this.title = this.route.snapshot.data['title'] || undefined;
       this.editMode = this.route.snapshot.data['editMode'];
 
-      console.log(this.editMode)
-
-
-      this.subs = this.route.paramMap.subscribe((params) => {
+      this.subs = this.route.paramMap.subscribe(async (params) => {
         this.communityId = params.get('communityId')?.toString()
         this.threadId = params.get('threadId')?.toString()
+
+        this.partOfCommunity = await this.isPartOfCommunity()
+
+        this.threadService.getById(this.communityId as string, this.threadId as string).subscribe((thread) => {
+          this.threadCreatorId = (thread as any).createdBy._id.toString() as string;
+        });
+
+
+
       });
 
       this.messageForm = new FormGroup({
@@ -84,6 +96,10 @@ export class MessageEditComponent implements OnInit, OnDestroy {
           });
         }
       }
+    }
+
+    async isPartOfCommunity() : Promise<boolean> {
+      return this.partOfCommunity = await this.authService.partOfCommunity(this.communityId as string);
     }
 
     validText(control: FormControl): { [s: string]: boolean } {

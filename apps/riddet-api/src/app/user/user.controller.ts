@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Logger, Param, Patch, Post, Req } from '@nestjs/common';
-import { Roles } from '../auth/auth.module';
+import { Public, Roles } from '../auth/auth.module';
 import { Role } from '../auth/role.enum';
 import { ParseObjectIdPipe } from '../shared/pipes/ParseObjectIdPipe';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
@@ -10,6 +10,7 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Public()
   @Get('users/:id')
   async getById(
     @Param('id', ParseObjectIdPipe) id: string): Promise<User> {
@@ -19,6 +20,7 @@ export class UserController {
     return await this.userService.getById(id);
   }
 
+  @Public()
   @Get('users')
   async getAll(): Promise<User[]> {
       Logger.log(`Getting all users (READ)`);
