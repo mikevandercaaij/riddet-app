@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
+import { CommunityService } from '../../community/community.service';
 import { User } from '../../user/user.model';
 import { MessageService } from '../message.service';
 
@@ -22,7 +23,8 @@ export class MessageListComponent implements OnInit {
   constructor(private messageService: MessageService,
     private route : ActivatedRoute,
     private router : Router,
-    public authService: AuthService
+    public authService: AuthService,
+    private communityService: CommunityService
     ) {}
 
   ngOnInit(): void {

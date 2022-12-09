@@ -8,6 +8,7 @@ import { User } from '../user/user.model';
 import { Role } from '../user/user.roles.enum';
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { environment } from 'apps/riddet-app/src/environments/environment';
+import { Community } from '../community/community.model';
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +24,7 @@ export class AuthService {
     private alertService: AlertService,
     private http: HttpClient,
     private router: Router,
-    private httpClient : HttpClient
+    private httpClient : HttpClient,
   ) {
  
     this.getUserFromLocalStorage()
@@ -184,6 +185,7 @@ export class AuthService {
       isOwnerOfData = user?._id.toString() === itemUserId;
     }).unsubscribe();
 
+    console.log(isAdmin || isOwnerOfData)
     return (isAdmin || isOwnerOfData) ? true : false;
   }
 
@@ -192,6 +194,16 @@ export class AuthService {
     
     this.getUserFromLocalStorage().subscribe((user) => {
       isOwnerOfData = user?._id.toString() === itemUserId;
+    }).unsubscribe();
+
+    return (isOwnerOfData) ? true : false;
+  }
+
+  isOwnerOfCommunity(community: Community): boolean {
+    let isOwnerOfData;
+    
+    this.getUserFromLocalStorage().subscribe((user) => {
+        isOwnerOfData = community.createdBy._id.toString() === user?._id.toString();
     }).unsubscribe();
 
     return (isOwnerOfData) ? true : false;
@@ -218,4 +230,36 @@ export class AuthService {
   getById(userId: string): Observable<User> {
     return this.httpClient.get<User>(`${environment.SERVER_API_URL}/users/${userId}`, this.getHttpOptions()) as Observable<User>;
   } 
+
+  getAllUsers(): Observable<User[]> {
+    return this.httpClient.get<User[]>(`${environment.SERVER_API_URL}/users`, this.getHttpOptions()) as Observable<User[]>;
+  } 
+
+  follow(userId: string): Observable<User> {
+    return this.httpClient.post<User>(environment.SERVER_API_URL + `/users/${userId}/follow`, { null: null }, this.getHttpOptions()) as Observable<User>;
+  }
+
+  unfollow(userId: string): Observable<User> {
+    return this.httpClient.post<User>(environment.SERVER_API_URL + `/users/${userId}/unfollow`, { null: null }, this.getHttpOptions()) as Observable<User>;
+  }
+
+  async following(userId: string): Promise<boolean> {
+    let loggedInUserId = '' as string | undefined;
+    let loggedInUser: User | undefined;
+
+    this.currentUser$.subscribe((p) => {
+      loggedInUserId = p?._id.toString();
+    });
+
+    if(loggedInUserId) {
+    loggedInUser = await this.getById(loggedInUserId).toPromise();
+    }
+    if(loggedInUser) {
+      if (loggedInUser.following.filter(p => p._id.toString() === userId.toString()).length > 0) {
+        return true;
+      } 
+    } 
+    
+    return false;
+  }
 }

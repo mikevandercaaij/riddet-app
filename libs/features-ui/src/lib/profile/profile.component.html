@@ -1,0 +1,81 @@
+<div class="component">
+    <div class="row">
+        <div *ngIf="loggedInUser$ | async as user">
+            <div *ngIf="!loggedInProfile" class="col-12">
+                <div class="card">
+                    <div class="btn-group col-1">
+                        <button *ngIf="!following" (click)="follow()" class="btn btn-primary float-start"><i class="bi bi-plus"></i>Follow</button>
+                        <button *ngIf="following" (click)="unFollow()" class="btn btn-primary float-start"><i class="bi bi-dash"></i>Unfollow</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h1>Profile</h1>
+                    <hr>
+                    <p>Username: {{ user?.username }}</p>
+                    <p>Email address: {{ user?.email }}</p>
+                    <p>Name: {{ user?.firstname }} {{ user?.lastname }}</p>
+                    <p>Birth date: {{ user?.dateOfBirth | date: 'dd-MM-yyyy' }}</p>
+                    <p>Registered on: {{ user?.creationDate | date: 'dd-MM-yyyy' }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card h-100">
+                <div class="card-body card-profile-img">
+                    <img src="{{ user?.userImageUrl }}" class="profile-page-img">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6" style="padding-top: 15px;">
+            <div class="card">
+                <div class="card-body">
+                    <h1>Followers</h1>
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-6" *ngFor="let follower of user?.followers">
+                            <div class="card">
+                                <div class="card-body">
+                                    <a routerLink="/profile/{{ follower._id.toString() }}">
+                                        <h5 class="card-title">{{ follower.username }}</h5>
+                                    </a>
+                                    <p>{{ follower.emailAddress }}</p>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-6" style="padding-top: 15px;">
+            <div class="card">
+                <div class="card-body">
+                    <h1>Following</h1>
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-6" *ngFor="let following of user?.following">
+                            <div class="card">
+                                <div class="card-body">
+                                    <a routerLink="/profile/{{ following._id.toString() }}">
+                                        <h5 class="card-title">{{ following.username }}</h5>
+                                    </a>
+                                    <p>{{ following.emailAddress }}</p>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,7 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Types } from 'mongoose';
+import { Observable, Subscription } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
+import { User } from '../../user/user.model';
 import { ThreadService } from '../thread.service';
 
 @Component({
@@ -17,6 +19,8 @@ export class ThreadDetailComponent implements OnInit, OnDestroy {
   creatorId  = '';
   editMode = false;
   title = '';
+  upvoted = false;
+  loggedInUser$: Observable<User|undefined> = new Observable<User|undefined>();
 
   constructor(
     private threadService: ThreadService,    
@@ -28,6 +32,8 @@ export class ThreadDetailComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
       this.title = this.route.snapshot.data['title'] || undefined;
       this.editMode = this.route.snapshot.data['editMode'];
+
+      this.loggedInUser$ = this.authService.currentUser$;
 
       this.subscription = this.route.paramMap.subscribe(async params => {
         this.threadId = params.get('threadId');
@@ -53,10 +59,31 @@ export class ThreadDetailComponent implements OnInit, OnDestroy {
 
   async init() {
     if (this.threadId) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-non-null-asserted-optional-chain
-      this.thread = await this.threadService.getById(this.communityId!.toString(), this.threadId?.toString()!).toPromise();
+      this.thread = await this.threadService.getById(this.communityId?.toString() as string, this.threadId?.toString() as string).toPromise();
       this.creatorId = this.thread.createdBy._id;
+
+      const likes = this.thread.upvotes as Types.ObjectId[];
+
+      if (this.loggedInUser$) {
+        this.loggedInUser$.subscribe((p) => {
+
+          console.log()
+
+          if (likes.filter(l => l.toString() === p?._id.toString()).length > 0) {
+            this.upvoted = true;
+          } else {
+            this.upvoted = false;
+          }
+        })
+      }
     }
+  }
+
+  upvote() {
+      this.threadService.upvote(this.communityId as string, this.threadId as string).subscribe((p) => {
+      this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>
+      this.router.navigate(['/communities/' + this.communityId + '/threads/' + this.threadId]));
+    });
   }
 }
 

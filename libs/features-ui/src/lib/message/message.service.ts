@@ -96,7 +96,7 @@ export class MessageService {
         .pipe(
           map((message) => {
             console.dir(message);
-            this.alertService.error('Thread has been deleted');
+            this.alertService.error('Message has been deleted');
             return message;
           }),
           catchError((error: any) => {
