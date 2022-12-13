@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IUser } from '@riddet-app/data';
 import {
   IsBoolean,
-  IsDate, IsDefined, IsEmail, IsString, Matches, MinLength
+  IsDate, IsDefined, isEmail, IsEmail, IsString, Matches, MinLength
 } from 'class-validator';
 import { Document, ObjectId, Types } from 'mongoose';
 import { Role } from '../auth/role.enum';
@@ -16,28 +16,43 @@ export class User implements IUser{
   @IsString({ message: 'Username must be a string!' })
   @IsDefined({ message: 'Username is required!' })
   @MinLength(5, { message: 'Username must be at least 5 characters long!' })
-  @Prop()
+  @Prop({
+    required: true,
+    unique: true,
+  })
   username: string;
 
   @IsString({ message: 'Firstname must be a string!' })
   @IsDefined({ message: 'Firstname is required!' })
-  @Prop()
+  @Prop({
+    required: true,
+  })
   firstname: string;
   
   @IsString({ message: 'Lastname must be a string!' })
   @IsDefined({ message: 'Lastname is required!' })
-  @Prop()
+  @Prop({
+    required: true,
+  })
   lastname: string;
 
   @IsEmail({ message: 'Email must be a valid email!' })
   @IsString({ message: 'Email must be a string!' })
   @IsDefined({ message: 'Email is required!' })
-  @Prop()
+  @Prop({    required: true, unique: true,
+    validate: {
+      validator: isEmail,
+      message: 'Email address is invalid',
+    }})
   email: string;
 
   @Matches(/^\d{4}[./-]\d{2}[./-]\d{2}$/, { message: 'Date of birth must be a valid date! (YYYY-MM-DD)' })
   @IsDefined({ message: 'Date of birth is required!' })
-  @Prop()
+  @Prop({required: true,
+    validate: {
+      validator: IsDate,
+      message: 'Email address is invalid',
+    }})
   dateOfBirth: Date;
 
   @IsString({ message: 'Password must be a string!' })
@@ -56,7 +71,10 @@ export class User implements IUser{
   creationDate: Date;
 
   @IsBoolean({message: 'isActive must be a boolean!'})
-  @Prop()
+  @Prop({
+    required: true,
+    default: true,
+  })
   isActive: boolean;
 
   @Prop()
