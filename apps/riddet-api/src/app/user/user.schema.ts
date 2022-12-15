@@ -84,25 +84,25 @@ export class User implements IUser{
     default: [],
     ref: 'Community',
   })
-  joinedCommunities : [ObjectId]
+  joinedCommunities : ObjectId[]
 
   @Prop({
     default: [],
     ref: 'Community',
   })
-  createdCommunities : [ObjectId]
+  createdCommunities : ObjectId[]
 
   @Prop({
     default: [],
     ref: 'User',
   })
-  following : [ObjectId]
+  following : ObjectId[]
 
   @Prop({
     default: [],
     ref: 'User',
   })
-  followers : [ObjectId]
+  followers : ObjectId[]
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
