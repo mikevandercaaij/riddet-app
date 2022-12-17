@@ -7,7 +7,7 @@ import { CreateUserDto, UpdateUserDto } from './user.dto';
 import { User } from './user.schema';
 import { UserService } from './user.service';
 
-describe('User controller - Integration tests', () => {
+describe('User controller (INTEGRATION TESTS)', () => {
     let app: TestingModule;
     let userController: UserController;
     let userService: UserService;

@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Logger, Param, Post } from '@nestjs/common';
-import { Roles } from '../auth/auth.module';
+import { Public, Roles } from '../auth/auth.module';
 import { Role } from '../auth/role.enum';
 import { ParseObjectIdPipe } from '../shared/pipes/ParseObjectIdPipe';
 import { CategoryDto } from './category.dto';
@@ -26,8 +26,7 @@ export class CommunitiesController {
       return this.categoryService.getAll();
   }
 
-
-  @Roles(Role.Admin)
+  @Public()
   @Post()
   async create(@Body() categoryDto: CategoryDto): Promise<Category> {
       Logger.log(`Creating category (CREATE)`);

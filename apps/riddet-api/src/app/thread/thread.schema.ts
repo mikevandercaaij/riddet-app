@@ -51,6 +51,7 @@ export class Thread implements IThread {
 
   @Prop({
     ref: 'User',
+    type: Types.ObjectId
   })
   createdBy: ObjectId
 }

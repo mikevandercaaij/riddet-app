@@ -76,8 +76,6 @@ export class CommunityService {
 
         await this.userService.addCreatedCommunity(req.user.id, community._id);
 
-        console.log(community.threads)
-
         return community;
     }
 

@@ -31,6 +31,7 @@ export class Message implements IMessage{
 
   @Prop({
     ref: 'User',
+    type: Types.ObjectId
   })
   createdBy : ObjectId
 }

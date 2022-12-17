@@ -515,7 +515,7 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", typeof (_c = typeof Promise !== "undefined" && Promise) === "function" ? _c : Object)
 ], CommunitiesController.prototype, "getAll", null);
 tslib_1.__decorate([
-    (0, auth_module_1.Roles)(role_enum_1.Role.Admin),
+    (0, auth_module_1.Public)(),
     (0, common_1.Post)(),
     tslib_1.__param(0, (0, common_1.Body)()),
     tslib_1.__metadata("design:type", Function),
@@ -1119,7 +1119,6 @@ let CommunityService = class CommunityService {
             const mergedCommunity = new this.communityModel(Object.assign(Object.assign({}, createCommunityDto), { creationDate: new Date(), categories: embedCategories, createdBy: creator }));
             const community = yield this.communityModel.create(mergedCommunity);
             yield this.userService.addCreatedCommunity(req.user.id, community._id);
-            console.log(community.threads);
             return community;
         });
     }
@@ -1468,6 +1467,7 @@ tslib_1.__decorate([
 tslib_1.__decorate([
     (0, mongoose_1.Prop)({
         ref: 'User',
+        type: mongoose_2.Types.ObjectId
     }),
     tslib_1.__metadata("design:type", typeof (_b = typeof mongoose_2.ObjectId !== "undefined" && mongoose_2.ObjectId) === "function" ? _b : Object)
 ], Message.prototype, "createdBy", void 0);
@@ -1956,6 +1956,7 @@ tslib_1.__decorate([
 tslib_1.__decorate([
     (0, mongoose_1.Prop)({
         ref: 'User',
+        type: mongoose_2.Types.ObjectId
     }),
     tslib_1.__metadata("design:type", typeof (_b = typeof mongoose_2.ObjectId !== "undefined" && mongoose_2.ObjectId) === "function" ? _b : Object)
 ], Thread.prototype, "createdBy", void 0);
@@ -2480,32 +2481,47 @@ tslib_1.__decorate([
     (0, class_validator_1.IsString)({ message: 'Username must be a string!' }),
     (0, class_validator_1.IsDefined)({ message: 'Username is required!' }),
     (0, class_validator_1.MinLength)(5, { message: 'Username must be at least 5 characters long!' }),
-    (0, mongoose_1.Prop)(),
+    (0, mongoose_1.Prop)({
+        required: true,
+        unique: true,
+    }),
     tslib_1.__metadata("design:type", String)
 ], User.prototype, "username", void 0);
 tslib_1.__decorate([
     (0, class_validator_1.IsString)({ message: 'Firstname must be a string!' }),
     (0, class_validator_1.IsDefined)({ message: 'Firstname is required!' }),
-    (0, mongoose_1.Prop)(),
+    (0, mongoose_1.Prop)({
+        required: true,
+    }),
     tslib_1.__metadata("design:type", String)
 ], User.prototype, "firstname", void 0);
 tslib_1.__decorate([
     (0, class_validator_1.IsString)({ message: 'Lastname must be a string!' }),
     (0, class_validator_1.IsDefined)({ message: 'Lastname is required!' }),
-    (0, mongoose_1.Prop)(),
+    (0, mongoose_1.Prop)({
+        required: true,
+    }),
     tslib_1.__metadata("design:type", String)
 ], User.prototype, "lastname", void 0);
 tslib_1.__decorate([
     (0, class_validator_1.IsEmail)({ message: 'Email must be a valid email!' }),
     (0, class_validator_1.IsString)({ message: 'Email must be a string!' }),
     (0, class_validator_1.IsDefined)({ message: 'Email is required!' }),
-    (0, mongoose_1.Prop)(),
+    (0, mongoose_1.Prop)({ required: true, unique: true,
+        validate: {
+            validator: class_validator_1.isEmail,
+            message: 'Email address is invalid',
+        } }),
     tslib_1.__metadata("design:type", String)
 ], User.prototype, "email", void 0);
 tslib_1.__decorate([
     (0, class_validator_1.Matches)(/^\d{4}[./-]\d{2}[./-]\d{2}$/, { message: 'Date of birth must be a valid date! (YYYY-MM-DD)' }),
     (0, class_validator_1.IsDefined)({ message: 'Date of birth is required!' }),
-    (0, mongoose_1.Prop)(),
+    (0, mongoose_1.Prop)({ required: true,
+        validate: {
+            validator: class_validator_1.IsDate,
+            message: 'Email address is invalid',
+        } }),
     tslib_1.__metadata("design:type", typeof (_a = typeof Date !== "undefined" && Date) === "function" ? _a : Object)
 ], User.prototype, "dateOfBirth", void 0);
 tslib_1.__decorate([
@@ -2528,7 +2544,10 @@ tslib_1.__decorate([
 ], User.prototype, "creationDate", void 0);
 tslib_1.__decorate([
     (0, class_validator_1.IsBoolean)({ message: 'isActive must be a boolean!' }),
-    (0, mongoose_1.Prop)(),
+    (0, mongoose_1.Prop)({
+        required: true,
+        default: true,
+    }),
     tslib_1.__metadata("design:type", Boolean)
 ], User.prototype, "isActive", void 0);
 tslib_1.__decorate([
